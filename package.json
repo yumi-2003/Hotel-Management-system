@@ -1,0 +1,9 @@
+{
+    "name": "hotelmanagementsystem",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "npx concurrently \"npm run server\" \"npm run client\"",
+        "server": "npm run dev --prefix server",
+        "client": "npm run dev --prefix client"
+    }
+}
