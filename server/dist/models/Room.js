@@ -41,6 +41,7 @@ var RoomStatus;
     RoomStatus["RESERVED"] = "reserved";
     RoomStatus["OCCUPIED"] = "occupied";
     RoomStatus["CLEANING"] = "cleaning";
+    RoomStatus["DIRTY"] = "dirty";
     RoomStatus["MAINTENANCE"] = "maintenance";
 })(RoomStatus || (exports.RoomStatus = RoomStatus = {}));
 const RoomSchema = new mongoose_1.Schema({

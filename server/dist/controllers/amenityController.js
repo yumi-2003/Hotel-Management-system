@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAmenities = exports.createAmenity = void 0;
+exports.deleteAmenity = exports.updateAmenity = exports.getAmenities = exports.createAmenity = void 0;
 const Amenity_1 = __importDefault(require("../models/Amenity"));
 const createAmenity = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -35,3 +35,33 @@ const getAmenities = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.getAmenities = getAmenities;
+const updateAmenity = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const amenity = yield Amenity_1.default.findByIdAndUpdate(id, req.body, { returnDocument: 'after' });
+        if (!amenity) {
+            res.status(404).json({ message: 'Amenity not found' });
+            return;
+        }
+        res.json(amenity);
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error updating amenity', error });
+    }
+});
+exports.updateAmenity = updateAmenity;
+const deleteAmenity = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const amenity = yield Amenity_1.default.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' });
+        if (!amenity) {
+            res.status(404).json({ message: 'Amenity not found' });
+            return;
+        }
+        res.json({ message: 'Amenity deleted successfully (soft delete)' });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Error deleting amenity', error });
+    }
+});
+exports.deleteAmenity = deleteAmenity;

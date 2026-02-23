@@ -1,25 +1,27 @@
-import { Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
-import User, { UserRole } from '../models/User';
-import { generateToken } from '../utils/token';
-import { sendResetCodeEmail } from '../utils/emailService';
+import { Request, Response } from "express";
+import bcrypt from "bcryptjs";
+import User, { UserRole } from "../models/User";
+import { generateToken } from "../utils/token";
+import { sendResetCodeEmail } from "../utils/emailService";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { fullName, email, phone, password, role } = req.body;
+    const { fullName, email, phone, password } = req.body;
 
     // Password validation
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9!@#$%^&*(),.?":{}|<>]).{8,}$/;
     if (!passwordRegex.test(password)) {
-      res.status(400).json({ 
-        message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number or special character.' 
+      res.status(400).json({
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number or special character.",
       });
       return;
     }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      res.status(400).json({ message: 'User already exists' });
+      res.status(400).json({ message: "User already exists" });
       return;
     }
 
@@ -31,7 +33,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       email,
       phone,
       passwordHash,
-      role: role || UserRole.GUEST
+      role: UserRole.GUEST,
     });
 
     res.status(201).json({
@@ -42,12 +44,12 @@ export const register = async (req: Request, res: Response): Promise<void> => {
         email: user.email,
         phone: user.phone,
         profileImage: user.profileImage,
-        role: user.role
-      }
+        role: user.role,
+      },
     });
   } catch (error) {
-    console.error('Registration Error:', error);
-    res.status(500).json({ message: 'Server error', error });
+    console.error("Registration Error:", error);
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
@@ -57,22 +59,22 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      res.status(400).json({ message: 'Invalid credentials' });
+      res.status(400).json({ message: "Invalid credentials" });
       return;
     }
 
-    if (user.status === 'blocked') {
-      res.status(403).json({ message: 'User account is blocked' });
+    if (user.status === "blocked") {
+      res.status(403).json({ message: "User account is blocked" });
       return;
     }
 
     const isMatch = await bcrypt.compare(password, user.passwordHash);
     if (!isMatch) {
-      res.status(400).json({ message: 'Invalid credentials' });
+      res.status(400).json({ message: "Invalid credentials" });
       return;
     }
 
-    console.log('Login successful for:', email);
+    console.log("Login successful for:", email);
     res.json({
       token: generateToken((user._id as any).toString(), user.role),
       user: {
@@ -81,22 +83,25 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         email: user.email,
         phone: user.phone,
         profileImage: user.profileImage,
-        role: user.role
-      }
+        role: user.role,
+      },
     });
   } catch (error) {
-    console.error('Login Error:', error);
-    res.status(500).json({ message: 'Server error', error });
+    console.error("Login Error:", error);
+    res.status(500).json({ message: "Server error", error });
   }
 };
 
-export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+export const forgotPassword = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
 
     if (!user) {
-      res.status(404).json({ message: 'User with this email does not exist' });
+      res.status(404).json({ message: "User with this email does not exist" });
       return;
     }
 
@@ -110,36 +115,41 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 
     await sendResetCodeEmail(email, resetCode);
 
-    res.json({ message: 'Password reset code sent to your email' });
+    res.json({ message: "Password reset code sent to your email" });
   } catch (error: any) {
-    console.error('Forgot Password Error:', error);
-    res.status(500).json({ 
-      message: 'Failed to send reset code', 
+    console.error("Forgot Password Error:", error);
+    res.status(500).json({
+      message: "Failed to send reset code",
       error: error.message || error,
-      details: error.stack
+      details: error.stack,
     });
   }
 };
 
-export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+export const resetPassword = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const { email, code, newPassword } = req.body;
-    const user = await User.findOne({ 
-      email, 
+    const user = await User.findOne({
+      email,
       resetPasswordCode: code,
-      resetPasswordExpires: { $gt: new Date() }
+      resetPasswordExpires: { $gt: new Date() },
     });
 
     if (!user) {
-      res.status(400).json({ message: 'Invalid or expired reset code' });
+      res.status(400).json({ message: "Invalid or expired reset code" });
       return;
     }
 
     // Password validation
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9!@#$%^&*(),.?":{}|<>]).{8,}$/;
     if (!passwordRegex.test(newPassword)) {
-      res.status(400).json({ 
-        message: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number or special character.' 
+      res.status(400).json({
+        message:
+          "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number or special character.",
       });
       return;
     }
@@ -150,9 +160,9 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    res.json({ message: 'Password reset successful' });
+    res.json({ message: "Password reset successful" });
   } catch (error) {
-    console.error('Reset Password Error:', error);
-    res.status(500).json({ message: 'Failed to reset password', error });
+    console.error("Reset Password Error:", error);
+    res.status(500).json({ message: "Failed to reset password", error });
   }
 };

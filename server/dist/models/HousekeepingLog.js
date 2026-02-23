@@ -44,12 +44,13 @@ var HousekeepingStatus;
 })(HousekeepingStatus || (exports.HousekeepingStatus = HousekeepingStatus = {}));
 const HousekeepingLogSchema = new mongoose_1.Schema({
     roomId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Room', required: true },
-    staffId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User', required: true },
+    staffId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'User' },
     status: {
         type: String,
         enum: Object.values(HousekeepingStatus),
         required: true
     },
+    task: { type: String, required: true },
     note: { type: String }
-}, { timestamps: { createdAt: false, updatedAt: true } });
+}, { timestamps: { createdAt: true, updatedAt: true } });
 exports.default = mongoose_1.default.model('HousekeepingLog', HousekeepingLogSchema);

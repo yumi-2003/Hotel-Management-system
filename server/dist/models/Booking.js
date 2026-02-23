@@ -39,6 +39,7 @@ var BookingStatus;
 (function (BookingStatus) {
     BookingStatus["PENDING_PAYMENT"] = "pending_payment";
     BookingStatus["CONFIRMED"] = "confirmed";
+    BookingStatus["CONFIRMED_UNPAID"] = "confirmed_unpaid";
     BookingStatus["CHECKED_IN"] = "checked_in";
     BookingStatus["CHECKED_OUT"] = "checked_out";
     BookingStatus["CANCELLED"] = "cancelled";
@@ -63,6 +64,9 @@ const BookingSchema = new mongoose_1.Schema({
         default: BookingStatus.PENDING_PAYMENT
     },
     bookedRooms: [BookedRoomSchema],
-    totalPrice: { type: Number, required: true }
+    subtotalAmount: { type: Number, required: true },
+    taxAmount: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
+    paymentId: { type: mongoose_1.Schema.Types.ObjectId, ref: 'Payment' }
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('Booking', BookingSchema);

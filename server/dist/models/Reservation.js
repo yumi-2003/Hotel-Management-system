@@ -56,6 +56,9 @@ const ReservationSchema = new mongoose_1.Schema({
     adultsCount: { type: Number, required: true },
     childrenCount: { type: Number, required: true },
     roomsCount: { type: Number, required: true },
+    subtotalAmount: { type: Number, required: true },
+    taxAmount: { type: Number, required: true },
+    totalAmount: { type: Number, required: true },
     status: {
         type: String,
         enum: Object.values(ReservationStatus),

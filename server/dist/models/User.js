@@ -53,6 +53,7 @@ const UserSchema = new mongoose_1.Schema({
     email: { type: String, required: true, unique: true },
     phone: { type: String },
     passwordHash: { type: String, required: true },
+    profileImage: { type: String },
     role: {
         type: String,
         enum: Object.values(UserRole),
@@ -62,6 +63,9 @@ const UserSchema = new mongoose_1.Schema({
         type: String,
         enum: Object.values(UserStatus),
         default: UserStatus.ACTIVE
-    }
+    },
+    resetPasswordCode: { type: String },
+    resetPasswordExpires: { type: Date },
+    tasksAssigned: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'HousekeepingLog' }]
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('User', UserSchema);

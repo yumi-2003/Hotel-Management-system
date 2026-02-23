@@ -45,6 +45,10 @@ const RoomTypeSchema = new mongoose_1.Schema({
     sizeSqm: { type: Number },
     images: [{ type: String }],
     amenities: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'Amenity' }],
-    isActive: { type: Boolean, default: true }
+    rating: { type: Number, default: 0 },
+    numReviews: { type: Number, default: 0 },
+    discount: { type: Number, default: 0 },
+    isActive: { type: Boolean, default: true },
+    isFeatured: { type: Boolean, default: false }
 }, { timestamps: true });
 exports.default = mongoose_1.default.model('RoomType', RoomTypeSchema);

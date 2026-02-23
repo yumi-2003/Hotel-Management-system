@@ -1,5 +1,13 @@
-import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React from "react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface RevenueChartProps {
@@ -7,6 +15,21 @@ interface RevenueChartProps {
 }
 
 const RevenueChart: React.FC<RevenueChartProps> = ({ data }) => {
+  if (!data || data.length === 0) {
+    return (
+      <Card className="col-span-4">
+        <CardHeader>
+          <CardTitle>Weekly Revenue</CardTitle>
+        </CardHeader>
+        <CardContent className="pl-2 flex items-center justify-center h-[350px]">
+          <p className="text-muted-foreground">
+            No revenue data available for the past week.
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -17,32 +40,32 @@ const RevenueChart: React.FC<RevenueChartProps> = ({ data }) => {
           <AreaChart data={data}>
             <defs>
               <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#8884d8" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <XAxis 
-              dataKey="_id" 
-              stroke="#888888" 
-              fontSize={12} 
-              tickLine={false} 
-              axisLine={false} 
+            <XAxis
+              dataKey="_id"
+              stroke="#888888"
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
             />
-            <YAxis 
-              stroke="#888888" 
-              fontSize={12} 
-              tickLine={false} 
-              axisLine={false} 
-              tickFormatter={(value) => `$${value}`} 
+            <YAxis
+              stroke="#888888"
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
+              tickFormatter={(value) => `$${value}`}
             />
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <Tooltip />
-            <Area 
-              type="monotone" 
-              dataKey="revenue" 
-              stroke="#8884d8" 
-              fillOpacity={1} 
-              fill="url(#colorRevenue)" 
+            <Area
+              type="monotone"
+              dataKey="revenue"
+              stroke="#8884d8"
+              fillOpacity={1}
+              fill="url(#colorRevenue)"
             />
           </AreaChart>
         </ResponsiveContainer>
