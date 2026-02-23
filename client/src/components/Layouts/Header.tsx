@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Home, LogIn, UserPlus, LayoutDashboard, Calendar, LogOut, Settings } from "lucide-react";
+import { Menu, X, Home, LogIn, UserPlus, LayoutDashboard, Calendar, LogOut, Settings, Sun, Moon } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { logoutUser } from "../../store/slices/authSlice";
 import { getDashboardRoute, UserRole } from "../../utils/roleUtils";
 import NotificationBell from "./NotificationBell";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -12,6 +13,7 @@ const Header = () => {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -48,6 +50,17 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
+  const ThemeToggleButton = ({ className = "" }: { className?: string }) => (
+    <button
+      onClick={toggleTheme}
+      aria-label="Toggle theme"
+      title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      className={`p-2 rounded-lg border border-border text-foreground hover:text-spa-teal hover:border-spa-teal/50 hover:bg-spa-teal/5 transition-all duration-200 ${className}`}
+    >
+      {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+    </button>
+  );
+
   const ProfileAvatar = ({ size = 'md', onClick }: { size?: 'sm' | 'md'; onClick?: () => void }) => (
     <button
       onClick={onClick}
@@ -80,7 +93,7 @@ const Header = () => {
         <nav className="hidden md:flex items-center gap-8">
           <Link
             to="/"
-            className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2 border border-slate-200 rounded-lg hover:border-spa-teal/30"
+            className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2 border border-border rounded-lg hover:border-spa-teal/30"
           >
             Home
           </Link>
@@ -90,7 +103,7 @@ const Header = () => {
               {user?.role !== UserRole.GUEST && (
                 <Link
                   to={getDashboardLink()}
-                  className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2 border border-slate-200 rounded-lg hover:border-spa-teal/30"
+                  className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2 border border-border rounded-lg hover:border-spa-teal/30"
                 >
                   Dashboard
                 </Link>
@@ -99,13 +112,14 @@ const Header = () => {
               {user?.role === UserRole.GUEST && (
                 <Link
                   to="/my-reservations"
-                  className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2 border border-slate-200 rounded-lg hover:border-spa-teal/30"
+                  className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2 border border-border rounded-lg hover:border-spa-teal/30"
                 >
                   My Bookings
                 </Link>
               )}
               <div className="flex items-center gap-4">
                 {isAuthenticated && <NotificationBell />}
+                <ThemeToggleButton />
                 <div className="relative" ref={profileRef}>
                   <div className="flex items-center gap-2">
                     <ProfileAvatar onClick={() => setIsProfileOpen(!isProfileOpen)} />
@@ -164,6 +178,7 @@ const Header = () => {
             </>
           ) : (
             <div className="flex items-center gap-2">
+              <ThemeToggleButton />
               <Link
                 to="/login"
                 className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2"
@@ -180,13 +195,17 @@ const Header = () => {
           )}
         </nav>
 
-        <button
-          className="md:hidden p-2 text-slate-600 hover:text-spa-teal transition active:opacity-50"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
+        {/* Mobile: theme toggle + hamburger */}
+        <div className="md:hidden flex items-center gap-2">
+          <ThemeToggleButton />
+          <button
+            className="p-2 text-foreground hover:text-spa-teal transition active:opacity-50"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </div>
 
       <div
@@ -196,15 +215,16 @@ const Header = () => {
         onClick={closeMenu}
       />
 
+      {/* Mobile drawer — use bg-card so it respects the theme */}
       <div
-        className={`fixed top-0 right-0 h-full w-[280px] bg-white z-50 md:hidden shadow-2xl transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-[280px] bg-card z-50 md:hidden shadow-2xl transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="p-6 flex flex-col h-full">
           <div className="flex justify-between items-center mb-8">
             <span className="text-xl font-bold text-spa-teal">Comftay Menu</span>
-            <button onClick={closeMenu} className="p-2 text-slate-400 hover:text-spa-teal">
+            <button onClick={closeMenu} className="p-2 text-muted-foreground hover:text-spa-teal">
               <X size={24} />
             </button>
           </div>
@@ -249,7 +269,7 @@ const Header = () => {
                       )}
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-bold text-slate-800 truncate">{displayName}</span>
+                      <span className="text-sm font-bold text-foreground truncate">{displayName}</span>
                       <span className="text-xs text-spa-teal font-semibold">{user?.role}</span>
                     </div>
                   </div>
@@ -286,9 +306,9 @@ const MobileNavLink = ({ to, icon, label, onClick }: { to: string; icon: React.R
   <Link
     to={to}
     onClick={onClick}
-    className="flex items-center gap-4 p-4 text-slate-700 hover:text-spa-teal hover:bg-spa-mint/10 rounded-2xl transition font-bold"
+    className="flex items-center gap-4 p-4 text-foreground hover:text-spa-teal hover:bg-spa-mint/10 rounded-2xl transition font-bold"
   >
-    <span className="text-slate-400">{icon}</span>
+    <span className="text-muted-foreground">{icon}</span>
     {label}
   </Link>
 );

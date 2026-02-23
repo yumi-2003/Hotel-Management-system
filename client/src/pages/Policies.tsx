@@ -2,13 +2,13 @@ import { ShieldCheck, FileText, Clock, Ban, AlertTriangle, CheckCircle } from 'l
 
 const Policies = () => {
   return (
-    <div className="min-h-screen bg-neutral-50 py-20 px-6">
+    <div className="min-h-screen bg-background py-20 px-6">
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-16">
           <div className="inline-flex p-3 rounded-2xl bg-spa-teal/10 text-spa-teal mb-6">
             <ShieldCheck size={32} />
           </div>
-          <h1 className="text-4xl font-bold text-[#0F2F2F] mb-4">Guest Policies</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4">Guest Policies</h1>
           <p className="text-muted-foreground max-w-xl mx-auto">Guidelines and rules to ensure a harmonious and premium stay for everyone at Comftay.</p>
         </header>
 
@@ -17,7 +17,7 @@ const Policies = () => {
           <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-border">
             <div className="flex items-center gap-3 mb-6">
                <Clock className="text-spa-teal" size={24} />
-               <h2 className="text-2xl font-bold text-[#0F2F2F]">Check-In & Check-Out</h2>
+               <h2 className="text-2xl font-bold text-foreground">Check-In & Check-Out</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                <div>
@@ -45,17 +45,17 @@ const Policies = () => {
           <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-border">
             <div className="flex items-center gap-3 mb-6">
                <FileText className="text-spa-teal" size={24} />
-               <h2 className="text-2xl font-bold text-[#0F2F2F]">Booking Cancellation</h2>
+               <h2 className="text-2xl font-bold text-foreground">Booking Cancellation</h2>
             </div>
             <div className="space-y-6 text-muted-foreground leading-relaxed">
-               <div className="p-6 bg-slate-50 rounded-2xl border border-border">
+               <div className="p-6 bg-muted rounded-2xl border border-border">
                   <div className="font-bold text-[#0F2F2F] mb-2 flex items-center gap-2">
                      <AlertTriangle size={18} className="text-amber-500" /> Standard Cancellation
                   </div>
                   <p className="text-sm">Reservations cancelled at least 48 hours prior to arrival date (local time) will receive a full refund. Cancellations made within 48 hours will be charged for the first night's stay plus any applicable taxes.</p>
                </div>
                
-               <div className="p-6 bg-slate-50 rounded-2xl border border-border">
+               <div className="p-6 bg-muted rounded-2xl border border-border">
                   <div className="font-bold text-[#0F2F2F] mb-2 flex items-center gap-2">
                      <Ban size={18} className="text-red-500" /> Non-Refundable Rates
                   </div>
@@ -67,7 +67,7 @@ const Policies = () => {
           {/* General House Rules */}
           <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-border">
             <div className="flex items-center gap-3 mb-8 text-spa-teal">
-               <h2 className="text-2xl font-bold text-[#0F2F2F]">General House Rules</h2>
+               <h2 className="text-2xl font-bold text-foreground">General House Rules</h2>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-8">
                {[
@@ -79,7 +79,7 @@ const Policies = () => {
                  <div key={i} className="flex gap-4">
                     <div className="w-2 h-2 rounded-full bg-spa-teal mt-2 shrink-0" />
                     <div>
-                       <div className="font-bold text-[#0F2F2F] mb-1">{rule.title}</div>
+                       <div className="font-bold text-foreground mb-1">{rule.title}</div>
                        <div className="text-sm text-muted-foreground leading-snug">{rule.desc}</div>
                     </div>
                  </div>

@@ -61,7 +61,7 @@ const ReceptionistDashboard = () => {
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-[#0F2F2F]">Receptionist Dashboard</h1>
+          <h1 className="text-3xl font-bold text-foreground">Receptionist Dashboard</h1>
           <p className="text-muted-foreground">Guest services and front desk operations</p>
         </div>
         <div className="bg-spa-mint/10 text-spa-teal px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider">
@@ -91,8 +91,8 @@ const ReceptionistDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white border border-border rounded-3xl p-8 shadow-sm">
-             <h2 className="text-xl font-bold text-[#0F2F2F] mb-6 flex items-center gap-2">
+          <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
+             <h2 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
                 <Search size={20} className="text-spa-teal" /> Arrivals Today
              </h2>
              <div className="space-y-3">
@@ -100,10 +100,10 @@ const ReceptionistDashboard = () => {
                    <div className="py-6 text-center text-xs text-muted-foreground">No arrivals today</div>
                 ) : (
                   todaysArrivals.slice(0, 10).map((booking: any) => (
-                    <div key={booking._id} className="flex flex-col gap-3 p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <div key={booking._id} className="flex flex-col gap-3 p-4 rounded-xl bg-muted border border-border">
                       <div className="flex items-center justify-between">
                         <div>
-                          <div className="font-bold text-sm text-[#0F2F2F]">{booking.guestId?.fullName || 'Guest'}</div>
+                          <div className="font-bold text-sm text-foreground">{booking.guestId?.fullName || 'Guest'}</div>
                           <div className="text-[10px] text-muted-foreground">Room: {booking.bookedRooms?.map((r: any) => r.roomId?.roomNumber).join(', ')}</div>
                         </div>
                         <div className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
@@ -171,8 +171,8 @@ const ReceptionistDashboard = () => {
           </div>
       </div>
 
-      <div className="bg-white border border-border rounded-3xl p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-[#0F2F2F] mb-6 flex items-center gap-2">
+      <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
+          <h2 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
             <Key size={20} className="text-orange-400" /> Departures Today
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -180,9 +180,9 @@ const ReceptionistDashboard = () => {
                <div className="col-span-full py-6 text-center text-xs text-muted-foreground">No departures today</div>
             ) : (
               todaysDepartures.map((booking: any) => (
-                <div key={booking._id} className="p-4 rounded-xl border border-border hover:border-spa-teal transition bg-white shadow-sm flex flex-col justify-between">
+                <div key={booking._id} className="p-4 rounded-xl border border-border hover:border-spa-teal transition bg-card shadow-sm flex flex-col justify-between">
                    <div className="mb-4">
-                      <div className="font-bold text-[#0F2F2F] mb-1">{booking.guestId?.fullName || 'Guest'}</div>
+                      <div className="font-bold text-foreground mb-1">{booking.guestId?.fullName || 'Guest'}</div>
                       <div className="text-[10px] text-muted-foreground uppercase font-black">Room: {booking.bookedRooms?.map((r: any) => r.roomId?.roomNumber).join(', ')}</div>
                    </div>
                    <div className="flex gap-2">
@@ -195,7 +195,7 @@ const ReceptionistDashboard = () => {
                           {processingId === booking._id ? <Loader2 size={12} className="animate-spin mx-auto" /> : 'Check Out'}
                         </button>
                       )}
-                      <Link to="/staff/bookings" className="flex-1 py-2 text-center bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-slate-200 transition-all">Details</Link>
+                      <Link to="/staff/bookings" className="flex-1 py-2 text-center bg-muted text-muted-foreground rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-muted/80 transition-all">Details</Link>
                    </div>
                 </div>
               ))

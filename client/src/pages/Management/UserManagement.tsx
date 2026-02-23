@@ -123,7 +123,7 @@ const CreateStaffModal = ({
     placeholder = "",
   ) => (
     <div>
-      <label className="block text-sm font-semibold text-[#0F2F2F] mb-1.5">
+      <label className="block text-sm font-semibold text-foreground mb-1.5">
         {label}
       </label>
       <input
@@ -144,7 +144,7 @@ const CreateStaffModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+      <div className="bg-card rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-border">
           <div className="flex items-center gap-3">
@@ -152,7 +152,7 @@ const CreateStaffModal = ({
               <UserPlus size={20} />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[#0F2F2F]">
+              <h2 className="text-xl font-bold text-foreground">
                 Create Staff Account
               </h2>
               <p className="text-xs text-muted-foreground">
@@ -162,7 +162,7 @@ const CreateStaffModal = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl hover:bg-slate-100 transition text-muted-foreground"
+            className="p-2 rounded-xl hover:bg-muted transition text-muted-foreground"
           >
             <X size={18} />
           </button>
@@ -179,7 +179,7 @@ const CreateStaffModal = ({
             {field("phone", "Phone (optional)", "tel", "+1-555-000-0000")}
             {/* Role selector */}
             <div>
-              <label className="block text-sm font-semibold text-[#0F2F2F] mb-1.5">
+              <label className="block text-sm font-semibold text-foreground mb-1.5">
                 Role
               </label>
               <div className="relative">
@@ -188,7 +188,7 @@ const CreateStaffModal = ({
                   onChange={(e) =>
                     setForm((f) => ({ ...f, role: e.target.value }))
                   }
-                  className="w-full appearance-none px-4 py-2.5 pr-10 rounded-xl border border-border focus:border-spa-teal focus:ring-2 focus:ring-spa-teal/20 outline-none text-sm font-medium bg-white cursor-pointer"
+                  className="w-full appearance-none px-4 py-2.5 pr-10 rounded-xl border border-border focus:border-spa-teal focus:ring-2 focus:ring-spa-teal/20 outline-none text-sm font-medium bg-background cursor-pointer"
                 >
                   {allowed.map((r) => (
                     <option key={r} value={r}>
@@ -206,7 +206,7 @@ const CreateStaffModal = ({
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-semibold text-[#0F2F2F] mb-1.5">
+            <label className="block text-sm font-semibold text-foreground mb-1.5">
               Temporary Password
             </label>
             <div className="relative">
@@ -223,7 +223,7 @@ const CreateStaffModal = ({
               <button
                 type="button"
                 onClick={() => setShowPw(!showPw)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-[#0F2F2F] transition"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
               >
                 {showPw ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -234,7 +234,7 @@ const CreateStaffModal = ({
           </div>
 
           {/* Role badge preview */}
-          <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-border">
+          <div className="flex items-center gap-2 p-3 bg-muted rounded-xl border border-border">
             <Shield size={14} className="text-spa-teal" />
             <span className="text-xs text-muted-foreground">
               Account will be created with
@@ -395,7 +395,7 @@ const UserManagement = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-[#0F2F2F] flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
             <Users className="text-spa-teal" />{" "}
             {isAdmin ? "User & Staff Management" : "Staff Management"}
           </h1>
@@ -419,7 +419,7 @@ const UserManagement = () => {
           {
             label: "Total Users",
             value: users.length,
-            color: "text-[#0F2F2F]",
+            color: "text-foreground",
           },
           { label: "Staff Members", value: staffCount, color: "text-spa-teal" },
           { label: "Active", value: activeCount, color: "text-green-600" },
@@ -431,7 +431,7 @@ const UserManagement = () => {
         ].map((s) => (
           <div
             key={s.label}
-            className="bg-white border border-border rounded-2xl p-4 shadow-sm"
+            className="bg-card border border-border rounded-2xl p-4 shadow-sm"
           >
             <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
             <div className="text-xs text-muted-foreground mt-0.5">
@@ -442,9 +442,9 @@ const UserManagement = () => {
       </div>
 
       {/* Table Card */}
-      <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
         {/* Filters */}
-        <div className="p-5 border-b border-border bg-slate-50/50 flex flex-col sm:flex-row gap-3">
+        <div className="p-5 border-b border-border bg-muted/30 flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -462,7 +462,7 @@ const UserManagement = () => {
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
-              className="px-4 py-2 rounded-xl border border-border bg-white outline-none focus:border-spa-teal text-sm"
+              className="px-4 py-2 rounded-xl border border-border bg-background outline-none focus:border-spa-teal text-sm"
             >
               <option value="">All Roles</option>
               {visibleRoleOptions.map((r) => (
@@ -485,7 +485,7 @@ const UserManagement = () => {
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+            <thead className="bg-muted text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
               <tr>
                 <th className="px-6 py-4">User</th>
                 <th className="px-6 py-4">Contact</th>
@@ -526,7 +526,7 @@ const UserManagement = () => {
                   return (
                     <tr
                       key={u._id}
-                      className="hover:bg-slate-50/50 transition-colors"
+                      className="hover:bg-muted/30 transition-colors"
                     >
                       {/* Avatar + Name */}
                       <td className="px-6 py-4">
@@ -544,7 +544,7 @@ const UserManagement = () => {
                             )}
                           </div>
                           <div>
-                            <div className="font-semibold text-sm text-[#0F2F2F]">
+                            <div className="font-semibold text-sm text-foreground">
                               {u.fullName}
                             </div>
                             <div className="text-[10px] text-muted-foreground">
@@ -672,7 +672,7 @@ const UserManagement = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="px-6 py-4 border-t border-border bg-slate-50/50">
+          <div className="px-6 py-4 border-t border-border bg-muted/30">
             <div className="flex items-center justify-between">
               <div className="text-sm text-muted-foreground">
                 Showing {users.length} of {totalUsers} users
@@ -708,7 +708,7 @@ const UserManagement = () => {
 
         {/* Footer count for single page */}
         {!loading && totalPages <= 1 && users.length > 0 && (
-          <div className="px-6 py-3 border-t border-border bg-slate-50/50 text-xs text-muted-foreground">
+          <div className="px-6 py-3 border-t border-border bg-muted/30 text-xs text-muted-foreground">
             Showing {users.length} users
           </div>
         )}

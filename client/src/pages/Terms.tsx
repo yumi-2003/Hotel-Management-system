@@ -2,7 +2,7 @@ import { FileText, Shield, Gavel, ExternalLink } from 'lucide-react';
 
 const Terms = () => {
   return (
-    <div className="min-h-screen bg-white py-20 px-6">
+    <div className="min-h-screen bg-background py-20 px-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-12">
           <h1 className="text-5xl font-black text-[#0F2F2F] mb-4">Terms & Conditions</h1>

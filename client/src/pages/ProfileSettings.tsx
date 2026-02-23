@@ -77,7 +77,7 @@ const ProfileSettings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-spa-mint/10 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-spa-mint/5 py-8 px-4">
       <div className="container mx-auto max-w-2xl">
         {/* Page Header */}
         <div className="mb-8">
@@ -94,14 +94,14 @@ const ProfileSettings = () => {
         )}
 
         {/* Profile Image Card */}
-        <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden mb-6">
+        <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden mb-6">
           <div className="h-24 bg-gradient-to-r from-spa-teal via-spa-teal-dark to-spa-teal relative">
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIi8+PC9zdmc+')] opacity-50" />
           </div>
           <div className="px-6 pb-6 -mt-12 flex flex-col items-center">
             {/* Avatar */}
             <div className="relative group">
-              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg">
+              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-card shadow-lg">
                 {profileImageUrl ? (
                   <img src={profileImageUrl} alt={displayName} className="w-full h-full object-cover" />
                 ) : (
@@ -141,7 +141,7 @@ const ProfileSettings = () => {
         </div>
 
         {/* Profile Form */}
-        <form onSubmit={handleSaveProfile} className="bg-white border border-border rounded-2xl shadow-sm p-6">
+        <form onSubmit={handleSaveProfile} className="bg-card border border-border rounded-2xl shadow-sm p-6">
           <h3 className="text-lg font-bold text-foreground mb-6">Personal Information</h3>
 
           <div className="space-y-5">
@@ -156,7 +156,7 @@ const ProfileSettings = () => {
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-3 border border-border rounded-xl bg-slate-50/50 focus:bg-white focus:border-spa-teal focus:ring-2 focus:ring-spa-teal/20 outline-none transition text-sm"
+                className="w-full px-4 py-3 border border-border rounded-xl bg-muted/50 focus:bg-background focus:border-spa-teal focus:ring-2 focus:ring-spa-teal/20 outline-none transition text-sm"
                 placeholder="Enter your full name"
                 required
               />
@@ -173,7 +173,7 @@ const ProfileSettings = () => {
                 type="email"
                 value={user?.email || ''}
                 readOnly
-                className="w-full px-4 py-3 border border-border rounded-xl bg-slate-100 text-muted-foreground cursor-not-allowed text-sm"
+                className="w-full px-4 py-3 border border-border rounded-xl bg-muted text-muted-foreground cursor-not-allowed text-sm"
               />
               <p className="text-xs text-muted-foreground mt-1.5">Email cannot be changed</p>
             </div>
@@ -189,7 +189,7 @@ const ProfileSettings = () => {
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                className="w-full px-4 py-3 border border-border rounded-xl bg-slate-50/50 focus:bg-white focus:border-spa-teal focus:ring-2 focus:ring-spa-teal/20 outline-none transition text-sm"
+                className="w-full px-4 py-3 border border-border rounded-xl bg-muted/50 focus:bg-background focus:border-spa-teal focus:ring-2 focus:ring-spa-teal/20 outline-none transition text-sm"
                 placeholder="+1 (555) 000-0000"
               />
             </div>

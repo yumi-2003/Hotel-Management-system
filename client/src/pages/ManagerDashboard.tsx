@@ -95,7 +95,7 @@ const ManagerDashboard = () => {
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-[#0F2F2F]">
+          <h1 className="text-3xl font-bold text-foreground">
             Manager Dashboard
           </h1>
           <p className="text-muted-foreground">
@@ -154,8 +154,8 @@ const ManagerDashboard = () => {
 
       {/* Arrivals/Departures Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white border border-border rounded-3xl p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-[#0F2F2F] mb-6">
+        <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
+          <h2 className="text-xl font-bold text-foreground mb-6">
             Today's Arrivals
           </h2>
           <div className="space-y-4">
@@ -167,10 +167,10 @@ const ManagerDashboard = () => {
               todaysArrivals.map((booking: any) => (
                 <div
                   key={booking._id}
-                  className="flex items-center justify-between p-4 rounded-xl border border-border bg-slate-50/30"
+                  className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30"
                 >
                   <div>
-                    <div className="font-bold text-[#0F2F2F]">
+                    <div className="font-bold text-foreground">
                       {booking.guestId?.fullName || "Guest"}
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -209,8 +209,8 @@ const ManagerDashboard = () => {
           </div>
         </div>
 
-        <div className="bg-white border border-border rounded-3xl p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-[#0F2F2F] mb-6">
+        <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
+          <h2 className="text-xl font-bold text-foreground mb-6">
             Today's Departures
           </h2>
           <div className="space-y-4">
@@ -222,10 +222,10 @@ const ManagerDashboard = () => {
               todaysDepartures.map((booking: any) => (
                 <div
                   key={booking._id}
-                  className="flex items-center justify-between p-4 rounded-xl border border-border bg-slate-50/30"
+                  className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30"
                 >
                   <div>
-                    <div className="font-bold text-[#0F2F2F]">
+                    <div className="font-bold text-foreground">
                       {booking.guestId?.fullName || "Guest"}
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -269,8 +269,8 @@ const ManagerDashboard = () => {
       </div>
 
       {/* Management Quick Links */}
-      <div className="bg-white border border-border rounded-3xl p-8 shadow-sm">
-        <h2 className="text-2xl font-bold text-[#0F2F2F] mb-6 flex items-center gap-2">
+      <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
+        <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
           <Settings size={22} className="text-spa-teal" /> Management Core
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -281,7 +281,7 @@ const ManagerDashboard = () => {
             <div className="w-12 h-12 rounded-xl bg-spa-teal/10 flex items-center justify-center text-spa-teal mb-4 group-hover:scale-110 transition-transform">
               <Key size={24} />
             </div>
-            <h3 className="font-bold text-[#0F2F2F]">Room Management</h3>
+            <h3 className="font-bold text-foreground">Room Management</h3>
             <p className="text-xs text-muted-foreground mt-1">
               Configure room types & pricing
             </p>
@@ -294,7 +294,7 @@ const ManagerDashboard = () => {
             <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500 mb-4 group-hover:scale-110 transition-transform">
               <ClipboardList size={24} />
             </div>
-            <h3 className="font-bold text-[#0F2F2F]">Amenities</h3>
+            <h3 className="font-bold text-foreground">Amenities</h3>
             <p className="text-xs text-muted-foreground mt-1">
               Manage global hotel features
             </p>
@@ -307,7 +307,7 @@ const ManagerDashboard = () => {
             <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4 group-hover:scale-110 transition-transform">
               <Calendar size={24} />
             </div>
-            <h3 className="font-bold text-[#0F2F2F]">Reservations</h3>
+            <h3 className="font-bold text-foreground">Reservations</h3>
             <p className="text-xs text-muted-foreground mt-1">
               Review guest bookings
             </p>
@@ -320,7 +320,7 @@ const ManagerDashboard = () => {
             <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-500 mb-4 group-hover:scale-110 transition-transform">
               <ClipboardList size={24} />
             </div>
-            <h3 className="font-bold text-[#0F2F2F]">Guest Stays</h3>
+            <h3 className="font-bold text-foreground">Guest Stays</h3>
             <p className="text-xs text-muted-foreground mt-1">
               Manage check-ins & check-outs
             </p>
@@ -333,7 +333,7 @@ const ManagerDashboard = () => {
             <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center text-spa-teal mb-4 group-hover:scale-110 transition-transform">
               <UserPlus size={24} />
             </div>
-            <h3 className="font-bold text-[#0F2F2F]">Staff Management</h3>
+            <h3 className="font-bold text-foreground">Staff Management</h3>
             <p className="text-xs text-muted-foreground mt-1">
               Create & manage staff accounts
             </p>
@@ -346,7 +346,7 @@ const ManagerDashboard = () => {
             <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500 mb-4 group-hover:scale-110 transition-transform">
               <BarChart3 size={24} />
             </div>
-            <h3 className="font-bold text-[#0F2F2F]">Financial Reports</h3>
+            <h3 className="font-bold text-foreground">Financial Reports</h3>
             <p className="text-xs text-muted-foreground mt-1">
               Analyze revenue & occupancy
             </p>

@@ -96,12 +96,12 @@ const MyReservations = () => {
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
         <div>
-          <h1 className="text-4xl font-black text-[#0F2F2F] tracking-tight">My Stays & Bookings</h1>
-          <p className="text-[#0F2F2F]/60 font-medium">Manage your active stays and future reservations</p>
+          <h1 className="text-4xl font-black text-foreground tracking-tight">My Stays & Bookings</h1>
+          <p className="text-muted-foreground font-medium">Manage your active stays and future reservations</p>
         </div>
         <div className="bg-spa-teal/5 border border-spa-teal/10 px-6 py-3 rounded-2xl">
           <p className="text-xs font-bold text-spa-teal uppercase tracking-widest mb-1">Signed in as</p>
-          <p className="font-bold text-[#0F2F2F]">{user?.fullName || user?.name}</p>
+          <p className="font-bold text-foreground">{user?.fullName || user?.name}</p>
         </div>
       </div>
       
@@ -136,7 +136,7 @@ const MyReservations = () => {
             <div className="w-10 h-10 bg-spa-teal text-white rounded-xl flex items-center justify-center shadow-lg shadow-spa-teal/20">
               <Home size={20} />
             </div>
-            <h2 className="text-2xl font-black text-slate-800 tracking-tight">Active Stays</h2>
+            <h2 className="text-2xl font-black text-foreground tracking-tight">Active Stays</h2>
           </div>
           <div className="grid grid-cols-1 gap-6">
             {activeStays.map(booking => (
@@ -153,23 +153,23 @@ const MyReservations = () => {
             <div className="w-10 h-10 bg-spa-mint text-spa-teal rounded-xl flex items-center justify-center">
               <Calendar size={20} />
             </div>
-            <h2 className="text-2xl font-black text-slate-800 tracking-tight">Reservations</h2>
+            <h2 className="text-2xl font-black text-foreground tracking-tight">Reservations</h2>
           </div>
           
           {(resLoading || bookingLoading) && reservations.length === 0 ? (
-            <div className="py-12 text-center bg-white border border-slate-100 rounded-3xl">
+            <div className="py-12 text-center bg-card border border-border rounded-3xl">
               <div className="animate-spin w-8 h-8 border-4 border-spa-teal border-t-transparent rounded-full mx-auto mb-4" />
-              <p className="text-slate-500 font-bold">Syncing your records...</p>
+              <p className="text-muted-foreground font-bold">Syncing your records...</p>
             </div>
           ) : reservations.length === 0 ? (
-            <div className="bg-white border border-dashed border-slate-200 rounded-3xl p-12 text-center">
-              <p className="text-slate-400 font-bold mb-4">No future reservations found</p>
+            <div className="bg-card border border-dashed border-border rounded-3xl p-12 text-center">
+              <p className="text-muted-foreground font-bold mb-4">No future reservations found</p>
               <button onClick={() => navigate('/')} className="text-spa-teal font-black border-b-2 border-spa-teal hover:text-spa-teal-dark transition">Book your next stay</button>
             </div>
           ) : (
             <div className="space-y-6">
               {reservations.map((reservation) => (
-                <div key={reservation._id} className="bg-white border border-slate-100 shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-all group">
+                <div key={reservation._id} className="bg-card border border-border shadow-sm rounded-3xl overflow-hidden hover:shadow-md transition-all group">
                    <div className="p-6">
                       <div className="flex justify-between items-start mb-6">
                          <div>
@@ -177,11 +177,11 @@ const MyReservations = () => {
                               reservation.status.toLowerCase() === 'confirmed' ? 'bg-green-100 text-green-700' :
                               reservation.status.toLowerCase() === 'confirmed_unpaid' ? 'bg-amber-100 text-amber-700' :
                               reservation.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-slate-100 text-slate-600'
+                              'bg-muted text-muted-foreground'
                             }`}>
                               {reservation.status.replace('_', ' ')}
                             </span>
-                            <h3 className="text-xl font-black text-slate-800 mt-2">
+                            <h3 className="text-xl font-black text-foreground mt-2">
                               {typeof reservation.roomType === 'object' ? reservation.roomType.typeName : 'Luxury Suite'}
                             </h3>
                          </div>
@@ -194,19 +194,19 @@ const MyReservations = () => {
                            </button>
                          )}
                       </div>
-                      <div className="flex justify-between items-center pt-6 border-t border-slate-50">
+                      <div className="flex justify-between items-center pt-6 border-t border-border">
                          <div className="flex gap-6">
                             <div>
-                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Check-in</p>
-                               <p className="text-sm font-bold text-slate-700">{format(new Date(reservation.checkInDate), 'MMM dd')}</p>
+                               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Check-in</p>
+                               <p className="text-sm font-bold text-foreground">{format(new Date(reservation.checkInDate), 'MMM dd')}</p>
                             </div>
                             <div>
-                               <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Check-out</p>
-                               <p className="text-sm font-bold text-slate-700">{format(new Date(reservation.checkOutDate), 'MMM dd')}</p>
+                               <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Check-out</p>
+                               <p className="text-sm font-bold text-foreground">{format(new Date(reservation.checkOutDate), 'MMM dd')}</p>
                             </div>
                          </div>
                          <div className="text-right">
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Total</p>
+                            <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">Total</p>
                             <p className="text-lg font-black text-spa-teal">${reservation.totalAmount}</p>
                          </div>
                       </div>
@@ -227,36 +227,36 @@ const BookingCard = ({ booking, status }: { booking: Booking, status: 'active' |
   const roomNumber = typeof booking.bookedRooms?.[0]?.roomId === 'object' ? booking.bookedRooms[0].roomId.roomNumber : 'N/A';
   
   return (
-    <div className={`bg-white border ${status === 'active' ? 'border-spa-teal/30 shadow-xl shadow-spa-teal/5' : 'border-slate-100'} rounded-3xl overflow-hidden`}>
+    <div className={`bg-card border ${status === 'active' ? 'border-spa-teal/30 shadow-xl shadow-spa-teal/5' : 'border-border'} rounded-3xl overflow-hidden`}>
       <div className="p-8">
         <div className="flex flex-col md:flex-row justify-between gap-8">
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                 status === 'active' ? 'bg-spa-teal text-white' : 'bg-slate-100 text-slate-600'
+                 status === 'active' ? 'bg-spa-teal text-white' : 'bg-muted text-muted-foreground'
                }`}>
                  {status === 'active' ? 'Currently Stay' : 'Completed'}
                </span>
-               <span className="text-xs font-mono text-slate-400">#{booking.bookingCode}</span>
+               <span className="text-xs font-mono text-muted-foreground">#{booking.bookingCode}</span>
             </div>
-            <h3 className="text-3xl font-black text-slate-800 mb-2">Luxury Oceanfront Suite</h3>
-            <p className="text-slate-500 font-medium flex items-center gap-2">
+            <h3 className="text-3xl font-black text-foreground mb-2">Luxury Oceanfront Suite</h3>
+            <p className="text-muted-foreground font-medium flex items-center gap-2">
               <Home size={16} className="text-spa-teal" />
-              Room assigned: <span className="text-slate-800 font-bold">{roomNumber}</span>
+              Room assigned: <span className="text-foreground font-bold">{roomNumber}</span>
             </p>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 md:border-l md:pl-8 border-slate-100">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 md:border-l md:pl-8 border-border">
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Check-in</p>
-              <p className="font-bold text-slate-800">{format(new Date(booking.checkInDate), 'MMM dd, yyyy')}</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Check-in</p>
+              <p className="font-bold text-foreground">{format(new Date(booking.checkInDate), 'MMM dd, yyyy')}</p>
             </div>
             <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Check-out</p>
-              <p className="font-bold text-slate-800">{format(new Date(booking.checkOutDate), 'MMM dd, yyyy')}</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Check-out</p>
+              <p className="font-bold text-foreground">{format(new Date(booking.checkOutDate), 'MMM dd, yyyy')}</p>
             </div>
             <div className="hidden sm:block">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Amount</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-1">Amount</p>
               <p className="font-bold text-spa-teal text-lg">${booking.totalPrice}</p>
             </div>
           </div>
