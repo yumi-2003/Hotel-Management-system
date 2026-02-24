@@ -120,31 +120,31 @@ const HousekeepingManagement = () => {
   const getStatusStyles = (status: string) => {
     switch (status) {
       case "clean":
-        return "bg-emerald-50 text-emerald-700 border-emerald-100";
+        return "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-500/20";
       case "cleaning":
-        return "bg-sky-50 text-sky-700 border-sky-100";
+        return "bg-sky-50 dark:bg-sky-500/10 text-sky-700 dark:text-sky-400 border-sky-100 dark:border-sky-500/20";
       case "dirty":
-        return "bg-rose-50 text-rose-700 border-rose-100";
+        return "bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-100 dark:border-rose-500/20";
       case "out_of_service":
-        return "bg-slate-100 text-slate-700 border-slate-200";
+        return "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700";
       default:
-        return "bg-gray-50 text-gray-700 border-gray-100";
+        return "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-100 dark:border-gray-700";
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
+    <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
           <div className="space-y-1">
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-4">
+            <h1 className="text-4xl font-black text-foreground tracking-tight flex items-center gap-4">
               <div className="w-12 h-12 bg-spa-teal rounded-2xl flex items-center justify-center shadow-lg shadow-spa-teal/20">
                 <ClipboardList className="text-white" size={28} />
               </div>
               Housekeeping Hub
             </h1>
-            <p className="text-slate-500 font-medium ml-16">
+            <p className="text-muted-foreground font-medium ml-16">
               Monitor and manage real-time cleaning operations
             </p>
           </div>
@@ -152,7 +152,7 @@ const HousekeepingManagement = () => {
             <Button
               onClick={fetchData}
               variant="outline"
-              className="rounded-xl border-slate-200 hover:bg-slate-50"
+              className="rounded-xl border-border hover:bg-muted"
             >
               <RefreshCw size={18} className={loading ? "animate-spin" : ""} />
             </Button>
@@ -168,11 +168,11 @@ const HousekeepingManagement = () => {
         {/* Stats Summary (Optional/Future) */}
 
         {/* Filters & Search */}
-        <div className="bg-white border border-slate-200 rounded-[2rem] shadow-sm overflow-hidden mb-8">
+        <div className="bg-card border border-border rounded-[2rem] shadow-sm overflow-hidden mb-8">
           <div className="p-8 flex flex-col lg:flex-row gap-6 items-center">
             <div className="relative flex-1 w-full">
               <Search
-                className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"
+                className="absolute left-5 top-1/2 -translate-y-1/2 text-muted-foreground/60"
                 size={20}
               />
               <input
@@ -180,19 +180,19 @@ const HousekeepingManagement = () => {
                 placeholder="Search by room, staff member, or task..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-14 pr-6 py-4 rounded-2xl bg-slate-50/50 border border-slate-200 focus:border-spa-teal focus:ring-4 focus:ring-spa-teal/5 outline-none transition-all text-slate-900 font-medium placeholder:text-slate-400"
+                className="w-full pl-14 pr-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal focus:ring-4 focus:ring-spa-teal/5 outline-none transition-all text-foreground font-medium placeholder:text-muted-foreground/50"
               />
             </div>
             <div className="flex items-center gap-4 w-full lg:w-auto">
               <div className="relative w-full lg:w-48">
                 <Filter
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/60 pointer-events-none"
                   size={16}
                 />
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="w-full pl-11 pr-4 py-4 rounded-2xl bg-slate-50/50 border border-slate-200 outline-none focus:border-spa-teal appearance-none font-bold text-slate-700 cursor-pointer"
+                  className="w-full pl-11 pr-4 py-4 rounded-2xl bg-muted/30 border border-border outline-none focus:border-spa-teal appearance-none font-bold text-foreground cursor-pointer"
                 >
                   <option value="">All Statuses</option>
                   <option value="dirty">Dirty</option>
@@ -208,25 +208,25 @@ const HousekeepingManagement = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-slate-50/50 border-y border-slate-100">
-                  <th className="pl-8 pr-4 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                <tr className="bg-muted/30 border-y border-border">
+                  <th className="pl-8 pr-4 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                     Room
                   </th>
-                  <th className="px-4 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-4 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                     Assigned Staff
                   </th>
-                  <th className="px-4 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-4 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                     Task Details
                   </th>
-                  <th className="px-4 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                  <th className="px-4 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest">
                     Status
                   </th>
-                  <th className="pl-4 pr-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">
+                  <th className="pl-4 pr-8 py-5 text-[11px] font-black text-muted-foreground uppercase tracking-widest text-right">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border">
                 {loading && logs.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-24 text-center">
@@ -261,12 +261,12 @@ const HousekeepingManagement = () => {
                             <Key size={20} />
                           </div>
                           <div>
-                            <span className="text-lg font-black text-slate-900 block leading-none">
+                            <span className="text-lg font-black text-foreground block leading-none">
                               {typeof l.room === "object"
                                 ? l.room.roomNumber
                                 : "-"}
                             </span>
-                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">
                               {typeof l.room === "object"
                                 ? `Floor ${l.room.floor}`
                                 : "Unknown Room"}
@@ -276,7 +276,7 @@ const HousekeepingManagement = () => {
                       </td>
                       <td className="px-4 py-6">
                         <div className="relative group/select">
-                          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-hover/select:text-spa-teal transition-colors">
+                          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 group-hover/select:text-spa-teal transition-colors">
                             <UserPlus size={14} />
                           </div>
                           <select
@@ -289,7 +289,7 @@ const HousekeepingManagement = () => {
                               handleAssignStaff(l._id, e.target.value)
                             }
                             disabled={updatingId === l._id}
-                            className={`pl-9 pr-8 py-2.5 rounded-xl border border-transparent bg-transparent hover:bg-white hover:border-slate-200 outline-none transition-all font-bold text-sm text-slate-700 appearance-none cursor-pointer focus:border-spa-teal focus:bg-white ${updatingId === l._id ? "opacity-50" : ""}`}
+                            className={`pl-9 pr-8 py-2.5 rounded-xl border border-transparent bg-transparent hover:bg-muted hover:border-border outline-none transition-all font-bold text-sm text-foreground appearance-none cursor-pointer focus:border-spa-teal focus:bg-card ${updatingId === l._id ? "opacity-50" : ""}`}
                           >
                             <option value="">Unassigned</option>
                             {staff.map((s) => (
@@ -302,15 +302,15 @@ const HousekeepingManagement = () => {
                       </td>
                       <td className="px-4 py-6">
                         <div className="max-w-xs">
-                          <div className="font-black text-slate-800 text-sm mb-1">
+                          <div className="font-black text-foreground text-sm mb-1">
                             {l.task}
                           </div>
                           {l.note ? (
-                            <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed italic">
+                            <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed italic">
                               "{l.note}"
                             </p>
                           ) : (
-                            <p className="text-[10px] text-slate-300 font-bold uppercase">
+                            <p className="text-[10px] text-muted-foreground/40 font-bold uppercase">
                               No specific notes
                             </p>
                           )}
@@ -340,7 +340,7 @@ const HousekeepingManagement = () => {
                               handleStatusUpdate(l._id, e.target.value)
                             }
                             disabled={updatingId === l._id}
-                            className="text-[10px] font-black uppercase tracking-widest text-spa-teal bg-white border border-spa-teal/20 rounded-lg px-3 py-1.5 cursor-pointer hover:bg-spa-teal hover:text-white transition-all outline-none"
+                            className="text-[10px] font-black uppercase tracking-widest text-spa-teal bg-card border border-spa-teal/20 rounded-lg px-3 py-1.5 cursor-pointer hover:bg-spa-teal hover:text-white transition-all outline-none"
                           >
                             <option value="dirty">Set Dirty</option>
                             <option value="cleaning">Set Cleaning</option>
@@ -364,11 +364,11 @@ const HousekeepingManagement = () => {
             </table>
           </div>
 
-          <div className="p-8 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center text-slate-500">
+          <div className="p-8 bg-muted/30 border-t border-border flex justify-between items-center text-muted-foreground">
             <p className="text-xs font-bold uppercase tracking-widest">
               Showing {filtered.length} task{filtered.length !== 1 ? "s" : ""}
             </p>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-300">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
               Last updated: {format(new Date(), "HH:mm:ss")}
             </p>
           </div>
@@ -378,14 +378,14 @@ const HousekeepingManagement = () => {
       {/* Add Task Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
-          <div className="bg-white rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-300 border border-white/20">
+          <div className="bg-card rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-300 border border-white/10">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+              <h2 className="text-2xl font-black text-foreground tracking-tight">
                 New Housekeeping Task
               </h2>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-muted-foreground hover:text-foreground"
               >
                 <Plus size={24} className="rotate-45" />
               </button>
@@ -393,7 +393,7 @@ const HousekeepingManagement = () => {
 
             <form onSubmit={handleAddLog} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
                   Location
                 </label>
                 <select
@@ -402,10 +402,10 @@ const HousekeepingManagement = () => {
                   onChange={(e) =>
                     setNewLog({ ...newLog, roomId: e.target.value })
                   }
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-spa-teal outline-none font-bold text-slate-700 transition-all appearance-none cursor-pointer"
+                  className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground transition-all appearance-none cursor-pointer"
                 >
                   {rooms.map((r) => (
-                    <option key={r._id} value={r._id}>
+                    <option key={r._id} value={r._id} className="bg-card">
                       Room {r.roomNumber} (
                       {r.roomType && typeof r.roomType === "object"
                         ? r.roomType.typeName
@@ -416,7 +416,7 @@ const HousekeepingManagement = () => {
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
                   Staff Member
                 </label>
                 <select
@@ -425,18 +425,18 @@ const HousekeepingManagement = () => {
                   onChange={(e) =>
                     setNewLog({ ...newLog, staffId: e.target.value })
                   }
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-spa-teal outline-none font-bold text-slate-700 transition-all appearance-none cursor-pointer"
+                  className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground transition-all appearance-none cursor-pointer"
                 >
-                  <option value="">Select Staff Member</option>
+                  <option value="" className="bg-card">Select Staff Member</option>
                   {staff.map((s) => (
-                    <option key={s._id} value={s._id}>
+                    <option key={s._id} value={s._id} className="bg-card">
                       {s.fullName}
                     </option>
                   ))}
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
                   Priority & Task
                 </label>
                 <select
@@ -444,16 +444,16 @@ const HousekeepingManagement = () => {
                   onChange={(e) =>
                     setNewLog({ ...newLog, task: e.target.value })
                   }
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-spa-teal outline-none font-bold text-slate-700 transition-all appearance-none cursor-pointer"
+                  className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground transition-all appearance-none cursor-pointer"
                 >
-                  <option value="Routine Cleaning">Routine Cleaning</option>
-                  <option value="Deep Cleaning">Deep Cleaning</option>
-                  <option value="Maintenance Check">Maintenance Check</option>
-                  <option value="Turn down Service">Turn down Service</option>
+                  <option value="Routine Cleaning" className="bg-card">Routine Cleaning</option>
+                  <option value="Deep Cleaning" className="bg-card">Deep Cleaning</option>
+                  <option value="Maintenance Check" className="bg-card">Maintenance Check</option>
+                  <option value="Turn down Service" className="bg-card">Turn down Service</option>
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
                   Additional Instructions
                 </label>
                 <textarea
@@ -461,7 +461,7 @@ const HousekeepingManagement = () => {
                   onChange={(e) =>
                     setNewLog({ ...newLog, note: e.target.value })
                   }
-                  className="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-spa-teal outline-none min-h-[120px] font-medium text-slate-700 transition-all resize-none"
+                  className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none min-h-[120px] font-medium text-foreground transition-all resize-none placeholder:text-muted-foreground/30"
                   placeholder="Enter any special requests or notes here..."
                 />
               </div>
@@ -470,7 +470,7 @@ const HousekeepingManagement = () => {
                   type="button"
                   variant="ghost"
                   onClick={() => setShowAddModal(false)}
-                  className="flex-1 rounded-2xl py-6 font-bold text-slate-500 h-auto"
+                  className="flex-1 rounded-2xl py-6 font-bold text-muted-foreground h-auto"
                 >
                   Cancel
                 </Button>
