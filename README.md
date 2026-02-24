@@ -22,6 +22,11 @@ Comftay is a premium, full-stack hotel management solution designed to streamlin
 - **Management Features**: Optimistic "Clear All" functionality (instant list clearing) and "Mark all as read" for efficient inbox management.
 - **Clean UI**: Visual loading states and automated "All Caught Up" empty state views.
 
+### 📊 Dashboard & Reporting (New!)
+- **Revenue Exports**: Managers and Admins can now download high-fidelity **Excel** (.xlsx) and professional **PDF** reports for annual and monthly revenue data.
+- **Visual Analytics**: The system uses `exceljs` for branded spreadsheets and `pdfkit-table` for structured, printable PDF documents.
+- **Performance Optimized**: Aggregation-based reporting ensures fast generation even with high transaction volumes.
+
 ### 🎨 Design & Experience
 - **Premium Aesthetics**: Glassmorphism elements, vibrant color palettes, and smooth micro-animations.
 - **Full Dark Mode**: A unified design system that adapts perfectly to dark and light modes across all modules, including the Pool Facility Control Center.
@@ -37,6 +42,7 @@ Comftay is a premium, full-stack hotel management solution designed to streamlin
 | **Auth** | JWT (JSON Web Tokens) with Bcrypt password hashing |
 | **Media** | Cloudinary (Image storage & transformation) |
 | **Comms** | Nodemailer (Email notifications) |
+| **Reporting**| ExcelJS, PDFKit, PDFKit-Table |
 
 ## 📂 Project Structure
 
@@ -51,10 +57,10 @@ HotelManagementSystem/
 │   │   └── types/          # Shared TypeScript interfaces
 ├── server/                 # Node.js backend (Express)
 │   ├── src/
-│   │   ├── controllers/    # API Route handlers
-│   │   ├── models/         # Mongoose Schemas (User, Room, Booking, etc.)
+│   │   ├── controllers/    # API Route handlers (Auth, Report, Pool, etc.)
+│   │   ├── models/         # Mongoose Schemas
 │   │   ├── routes/         # API Endpoint definitions
-│   │   └── middleware/     # Auth & validation logic
+│   │   └── middleware/     # Auth, Roles & File Upload logic
 ```
 
 ## 🚀 Getting Started
@@ -109,15 +115,54 @@ VITE_API_BASE_URL=http://localhost:4000/api
 
 ## 📡 API Reference
 
+### Auth
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new guest |
 | `POST` | `/api/auth/login` | Authenticate user & return JWT |
-| `GET` | `/api/rooms` | Fetch all available rooms with filters |
-| `POST` | `/api/reservations` | Create a new room reservation |
+| `POST` | `/api/auth/forgot-password` | Request password reset email |
+| `POST` | `/api/auth/reset-password` | Set new password with reset code |
+
+### Rooms & Facilities
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/rooms` | Fetch rooms with filters |
+| `PATCH`| `/api/rooms/:id/status` | Update room status (Staff only) |
+| `GET` | `/api/rooms/types` | List all room categories |
 | `GET` | `/api/pool/slots` | Fetch time-based pool availability |
-| `POST` | `/api/pool/reserve`| Book a private pool/spa slot |
-| `DELETE`| `/api/notifications/clear-all` | Permanently clear user notifications |
-| `GET` | `/api/dashboard/stats` | Operational statistics for staff/admin |
+| `POST` | `/api/pool/reserve` | Book a private pool/spa slot |
+| `PATCH`| `/api/pool/reservation/:id/cancel` | Cancel a pool slot |
+
+### Bookings & Reservations
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/reservations` | Create a temporary 15-min hold |
+| `GET` | `/api/reservations/my` | View guest's personal reservations |
+| `POST` | `/api/bookings` | Finalize booking & confirm stay |
+| `GET` | `/api/bookings/:id/invoice`| Generate digital receipt |
+| `POST` | `/api/bookings/:id/confirm-payment` | Manually mark as paid (Staff) |
+
+### Housekeeping & Maintenance
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/housekeeping` | List all task logs |
+| `PATCH`| `/api/housekeeping/:id/status` | Update task progress |
+| `PATCH`| `/api/housekeeping/:id/assign` | Delegate task to staff member |
+
+### Reporting & Analytics (New)
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/reports/revenue/excel` | Export annual revenue to Excel |
+| `GET` | `/api/reports/revenue/pdf` | Export annual revenue to PDF |
+| `GET` | `/api/dashboard/stats` | Operational KPIs & Chart data |
+
+### Profile & Notifications
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/profile` | Get current user's profile |
+| `POST` | `/api/profile/image` | Upload/Update profile picture |
+| `GET` | `/api/notifications` | Fetch user alerts |
+| `DELETE`| `/api/notifications/clear-all` | Clear all notifications |
 
 ## 📜 License
 This project is licensed under the **ISC License**.

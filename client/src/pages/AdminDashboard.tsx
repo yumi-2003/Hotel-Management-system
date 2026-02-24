@@ -6,8 +6,10 @@ import RoomStatusChart from '../components/dashboard/RoomStatusChart';
 import RoomTypeChart from '../components/dashboard/RoomTypeChart';
 import MonthlyRevenueChart from '../components/dashboard/MonthlyRevenueChart';
 import PaymentTable from '../components/dashboard/PaymentTable';
-import { DollarSign, Calendar, Users, Home } from 'lucide-react';
+import { DollarSign, Calendar, Users, Home, FileText, FileSpreadsheet, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { downloadRevenueExcel, downloadRevenuePDF } from '../services/reportService';
+import { toast } from 'react-hot-toast';
 
 interface DashboardData {
   kpi: {
@@ -37,6 +39,25 @@ const AdminDashboard = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [exporting, setExporting] = useState<string | null>(null);
+
+  const handleExport = async (format: 'excel' | 'pdf') => {
+    try {
+      setExporting(format);
+      const currentYear = new Date().getFullYear();
+      if (format === 'excel') {
+        await downloadRevenueExcel(currentYear);
+      } else {
+        await downloadRevenuePDF(currentYear);
+      }
+      toast.success(`${format.toUpperCase()} Report downloaded successfully`);
+    } catch (err) {
+      console.error(`Export ${format} failed`, err);
+      toast.error(`Failed to export ${format}`);
+    } finally {
+      setExporting(null);
+    }
+  };
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -72,6 +93,24 @@ const AdminDashboard = () => {
         <div>
           <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
           <p className="text-muted-foreground">Financial overview and operational health</p>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={() => handleExport('excel')}
+            disabled={!!exporting}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-lg shadow-emerald-600/20 transition-all font-bold text-sm disabled:opacity-50"
+          >
+            {exporting === 'excel' ? <Download className="h-4 w-4 animate-bounce" /> : <FileSpreadsheet className="h-4 w-4" />}
+            <span>{exporting === 'excel' ? 'Exporting...' : 'Excel Report'}</span>
+          </button>
+          <button
+            onClick={() => handleExport('pdf')}
+            disabled={!!exporting}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-lg shadow-red-600/20 transition-all font-bold text-sm disabled:opacity-50"
+          >
+            {exporting === 'pdf' ? <Download className="h-4 w-4 animate-bounce" /> : <FileText className="h-4 w-4" />}
+            <span>{exporting === 'pdf' ? 'Exporting...' : 'PDF Report'}</span>
+          </button>
         </div>
       </div>
 

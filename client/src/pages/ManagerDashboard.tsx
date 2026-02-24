@@ -16,7 +16,11 @@ import {
   UserPlus,
   Loader2,
   Waves,
+  FileText,
+  FileSpreadsheet,
+  Download,
 } from "lucide-react";
+import { downloadRevenueExcel, downloadRevenuePDF } from "../services/reportService";
 import { updateBookingStatus } from "../services/bookingService";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
@@ -29,6 +33,25 @@ const ManagerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [exporting, setExporting] = useState<string | null>(null);
+
+  const handleExport = async (format: 'excel' | 'pdf') => {
+    try {
+      setExporting(format);
+      const currentYear = new Date().getFullYear();
+      if (format === 'excel') {
+        await downloadRevenueExcel(currentYear);
+      } else {
+        await downloadRevenuePDF(currentYear);
+      }
+      toast.success(`${format.toUpperCase()} Report downloaded successfully`);
+    } catch (err) {
+      console.error(`Export ${format} failed`, err);
+      toast.error(`Failed to export ${format}`);
+    } finally {
+      setExporting(null);
+    }
+  };
 
   const fetchStats = async () => {
     try {
@@ -94,7 +117,7 @@ const ManagerDashboard = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
         <div>
           <h1 className="text-3xl font-bold text-foreground">
             Manager Dashboard
@@ -103,12 +126,33 @@ const ManagerDashboard = () => {
             Operational overview for {user?.fullName || "Manager"}
           </p>
         </div>
-        <div className="bg-spa-mint/10 text-spa-teal px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider">
-          {new Date().toLocaleDateString(undefined, {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-          })}
+        
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="bg-spa-mint/10 text-spa-teal px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider hidden sm:block">
+            {new Date().toLocaleDateString(undefined, {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            })}
+          </div>
+          
+          <button
+            onClick={() => handleExport('excel')}
+            disabled={!!exporting}
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-lg shadow-emerald-600/20 transition-all font-bold text-sm disabled:opacity-50"
+          >
+            {exporting === 'excel' ? <Download className="h-4 w-4 animate-bounce" /> : <FileSpreadsheet className="h-4 w-4" />}
+            <span>{exporting === 'excel' ? 'Exporting...' : 'Excel'}</span>
+          </button>
+          
+          <button
+            onClick={() => handleExport('pdf')}
+            disabled={!!exporting}
+            className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-lg shadow-red-600/20 transition-all font-bold text-sm disabled:opacity-50"
+          >
+            {exporting === 'pdf' ? <Download className="h-4 w-4 animate-bounce" /> : <FileText className="h-4 w-4" />}
+            <span>{exporting === 'pdf' ? 'Exporting...' : 'PDF'}</span>
+          </button>
         </div>
       </div>
 

@@ -13,6 +13,7 @@ import profileRoutes from './routes/profileRoutes';
 import userRoutes from './routes/userRoutes';
 import poolRoutes from './routes/poolRoutes';
 import notificationRoutes from './routes/notificationRoutes';
+import reportRoutes from './routes/report.routes';
 import Reservation, { ReservationStatus } from './models/Reservation';
 
 dotenv.config();
@@ -38,6 +39,7 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/pool', poolRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Database connection
 const MONGODB_URI = process.env.MONGODB_URI;
