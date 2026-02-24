@@ -6,8 +6,9 @@ Comftay is a premium, full-stack hotel management solution designed to streamlin
 
 ### 🏨 Core Management
 - **Intelligent Booking Engine**: A responsive, real-time booking bar with precise availability feedback and automated reservation expiry (15-minute hold).
+- **Infinity Pool & Spa Reservation**: A time-based booking system with 1-hour slots, atomic availability management, and automated capacity control.
 - **Dynamic Room Management**: Support for customized Room Types, individual Room status tracking (Occupied, Cleaning, Out of Service), and Amenity management.
-- **Housekeeping Automation**: Automated task assignment upon guest check-out, real-time status updates from housekeeping staff, and maintenance logging.
+- **Housekeeping Automation**: Automated task assignment upon guest check-out, real-time status updates for pool cleaning, and maintenance logging.
 
 ### 👤 User Roles & Dashboards
 - **Admin**: Full system control, user management, and core configuration.
@@ -23,7 +24,7 @@ Comftay is a premium, full-stack hotel management solution designed to streamlin
 
 ### 🎨 Design & Experience
 - **Premium Aesthetics**: Glassmorphism elements, vibrant color palettes, and smooth micro-animations.
-- **Full Dark Mode**: A unified design system that adapts perfectly to dark and light modes across all modules.
+- **Full Dark Mode**: A unified design system that adapts perfectly to dark and light modes across all modules, including the Pool Facility Control Center.
 - **Responsive Design**: Fully optimized for Desktop, Tablet, and Mobile devices.
 
 ## 🛠️ Technology Stack
@@ -113,6 +114,8 @@ VITE_API_BASE_URL=http://localhost:4000/api
 | `POST` | `/api/auth/login` | Authenticate user & return JWT |
 | `GET` | `/api/rooms` | Fetch all available rooms with filters |
 | `POST` | `/api/reservations` | Create a new room reservation |
+| `GET` | `/api/pool/slots` | Fetch time-based pool availability |
+| `POST` | `/api/pool/reserve`| Book a private pool/spa slot |
 | `DELETE`| `/api/notifications/clear-all` | Permanently clear user notifications |
 | `GET` | `/api/dashboard/stats` | Operational statistics for staff/admin |
 

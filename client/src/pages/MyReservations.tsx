@@ -8,7 +8,7 @@ import type { Reservation, Booking } from '../types';
 import PaymentSection from '../components/booking/PaymentSection';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { AlertTriangle, Calendar, Home } from 'lucide-react';
+import { AlertTriangle, Calendar, Home, Waves } from 'lucide-react';
 
 const MyReservations = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -140,6 +140,28 @@ const MyReservations = () => {
             </div>
             <h2 className="text-2xl font-black text-foreground tracking-tight">Active Stays</h2>
           </div>
+
+          <div className="mb-8 bg-[#0F2F2F] rounded-[2rem] p-8 text-white relative overflow-hidden group border border-white/5">
+            <div className="absolute -bottom-10 -right-10 p-4 opacity-10 group-hover:scale-110 transition-transform rotate-12">
+              <Waves size={200} />
+            </div>
+            <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
+              <div className="w-16 h-16 bg-spa-teal text-white rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-spa-teal/20">
+                <Waves size={32} />
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <h2 className="text-2xl font-black mb-2 tracking-tight">Infinity Pool Experience</h2>
+                <p className="text-slate-300 font-medium leading-relaxed">Relax and rejuvenate in our temperature-controlled infinity pool. Book your 60-minute private slot to ensure a serene experience.</p>
+              </div>
+              <button 
+                onClick={() => navigate('/pool/reserve')}
+                className="bg-spa-teal hover:bg-spa-teal-dark text-white font-black px-10 py-5 rounded-3xl transition-all shadow-xl shadow-spa-teal/20 hover:-translate-y-1 active:translate-y-0 whitespace-nowrap"
+              >
+                Reserve Slot
+              </button>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 gap-6">
             {activeStays.map(booking => (
               <BookingCard key={booking._id} booking={booking} status="active" />

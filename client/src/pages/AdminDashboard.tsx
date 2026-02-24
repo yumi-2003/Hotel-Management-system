@@ -138,6 +138,10 @@ const AdminDashboard = () => {
                  <h3 className="font-bold text-sm text-foreground group-hover:text-spa-teal transition-colors">Cleaning</h3>
                  <p className="text-[10px] text-muted-foreground">Daily Logs</p>
                </Link>
+               <Link to="/staff/pool" className="p-4 rounded-2xl bg-muted border border-border hover:border-spa-teal transition group">
+                 <h3 className="font-bold text-sm text-foreground group-hover:text-spa-teal transition-colors">Pool</h3>
+                 <p className="text-[10px] text-muted-foreground">Facility Status</p>
+               </Link>
             </div>
          </div>
       </div>

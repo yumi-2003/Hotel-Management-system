@@ -87,8 +87,8 @@ const PoolManagement = () => {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-black text-[#0F2F2F]">Facility Management</h1>
-            <p className="text-[#0F2F2F]/60 font-bold uppercase tracking-widest text-xs mt-1">Infinity Pool Control Center</p>
+            <h1 className="text-3xl font-black text-foreground">Facility Management</h1>
+            <p className="text-muted-foreground font-bold uppercase tracking-widest text-xs mt-1">Infinity Pool Control Center</p>
           </div>
           <Button variant="outline" onClick={fetchData} className="rounded-xl gap-2 font-bold">
             <RefreshCcw size={18} /> Refresh Data
@@ -98,8 +98,8 @@ const PoolManagement = () => {
         {message && (
           <div className={`mb-8 p-4 rounded-2xl border flex items-center gap-3 animate-in fade-in slide-in-from-top-2 ${
             message.type === 'success' 
-              ? 'bg-green-50 border-green-200 text-green-700' 
-              : 'bg-red-50 border-red-200 text-red-700'
+              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' 
+              : 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400'
           }`}>
             {message.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
             <p className="font-bold">{message.text}</p>
@@ -109,19 +109,19 @@ const PoolManagement = () => {
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Status Section */}
-            <div className="bg-white border border-border p-8 rounded-3xl shadow-sm space-y-6">
+            <div className="bg-card border border-border p-8 rounded-3xl shadow-sm space-y-6">
               <div className="flex items-center gap-3 text-spa-teal mb-2">
                 <Waves size={24} />
                 <h2 className="text-lg font-black uppercase tracking-widest">Operational Status</h2>
               </div>
               
               <div>
-                <label className="block text-sm font-black text-[#0F2F2F]/40 uppercase mb-2 tracking-wider">Current Status</label>
+                <label className="block text-sm font-black text-muted-foreground/60 uppercase mb-2 tracking-wider">Current Status</label>
                 <select 
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="w-full h-14 px-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold appearance-none bg-slate-50/50"
+                  className="w-full h-14 px-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold appearance-none bg-muted/50 text-foreground"
                 >
                   <option value="open">Open</option>
                   <option value="closed">Closed</option>
@@ -132,7 +132,7 @@ const PoolManagement = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-black text-[#0F2F2F]/40 uppercase mb-2 tracking-wider">Open Time</label>
+                  <label className="block text-sm font-black text-muted-foreground/60 uppercase mb-2 tracking-wider">Open Time</label>
                   <div className="relative">
                     <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-spa-teal/50" />
                     <input 
@@ -140,12 +140,12 @@ const PoolManagement = () => {
                       name="openingTime"
                       value={formData.openingTime}
                       onChange={handleChange}
-                      className="w-full h-14 pl-12 pr-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-slate-50/50"
+                      className="w-full h-14 pl-12 pr-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-muted/50 text-foreground"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-black text-[#0F2F2F]/40 uppercase mb-2 tracking-wider">Close Time</label>
+                  <label className="block text-sm font-black text-muted-foreground/60 uppercase mb-2 tracking-wider">Close Time</label>
                   <div className="relative">
                     <Clock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-spa-teal/50" />
                     <input 
@@ -153,7 +153,7 @@ const PoolManagement = () => {
                       name="closingTime"
                       value={formData.closingTime}
                       onChange={handleChange}
-                      className="w-full h-14 pl-12 pr-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-slate-50/50"
+                      className="w-full h-14 pl-12 pr-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-muted/50 text-foreground"
                     />
                   </div>
                 </div>
@@ -161,26 +161,26 @@ const PoolManagement = () => {
             </div>
 
             {/* Metrics Section */}
-            <div className="bg-white border border-border p-8 rounded-3xl shadow-sm space-y-6">
+            <div className="bg-card border border-border p-8 rounded-3xl shadow-sm space-y-6">
               <div className="flex items-center gap-3 text-spa-teal mb-2">
                 <Thermometer size={24} />
                 <h2 className="text-lg font-black uppercase tracking-widest">Metrics & Capacity</h2>
               </div>
 
               <div>
-                <label className="block text-sm font-black text-[#0F2F2F]/40 uppercase mb-2 tracking-wider">Temperature (°C)</label>
+                <label className="block text-sm font-black text-muted-foreground/60 uppercase mb-2 tracking-wider">Temperature (°C)</label>
                 <input 
                   type="number" 
                   name="temperature"
                   value={formData.temperature}
                   onChange={handleChange}
-                  className="w-full h-14 px-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-slate-50/50"
+                  className="w-full h-14 px-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-muted/50 text-foreground"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-black text-[#0F2F2F]/40 uppercase mb-2 tracking-wider">Occupancy</label>
+                  <label className="block text-sm font-black text-muted-foreground/60 uppercase mb-2 tracking-wider">Occupancy</label>
                   <div className="relative">
                     <Users size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-spa-teal/50" />
                     <input 
@@ -188,32 +188,32 @@ const PoolManagement = () => {
                       name="currentOccupancy"
                       value={formData.currentOccupancy}
                       onChange={handleChange}
-                      className="w-full h-14 pl-12 pr-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-slate-50/50"
+                      className="w-full h-14 pl-12 pr-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-muted/50 text-foreground"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-black text-[#0F2F2F]/40 uppercase mb-2 tracking-wider">Max Cap.</label>
+                  <label className="block text-sm font-black text-muted-foreground/60 uppercase mb-2 tracking-wider">Max Cap.</label>
                   <input 
                     type="number" 
                     name="maxCapacity"
                     value={formData.maxCapacity}
                     onChange={handleChange}
-                    className="w-full h-14 px-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-slate-50/50"
+                    className="w-full h-14 px-5 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-muted/50 text-foreground"
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-white border border-border p-8 rounded-3xl shadow-sm">
-            <label className="block text-sm font-black text-[#0F2F2F]/40 uppercase mb-4 tracking-wider">Internal Management Notes</label>
+          <div className="bg-card border border-border p-8 rounded-3xl shadow-sm">
+            <label className="block text-sm font-black text-muted-foreground/60 uppercase mb-4 tracking-wider">Internal Management Notes</label>
             <textarea 
               name="notes"
               value={formData.notes}
               onChange={handleChange}
               placeholder="E.g., pH levels checked at 9AM, minor tiles crack reported near north ladder..."
-              className="w-full h-32 p-6 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-slate-50/50 resize-none"
+              className="w-full h-32 p-6 rounded-2xl border border-border focus:border-spa-teal outline-none font-bold bg-muted/50 text-foreground resize-none"
             />
           </div>
 
@@ -239,7 +239,7 @@ const PoolManagement = () => {
 
         {pool && (
           <div className="mt-12 text-center">
-            <p className="text-xs font-black text-[#0F2F2F]/30 uppercase tracking-[0.2em]">
+            <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-[0.2em]">
               Last updated by {typeof pool.updatedBy === 'object' ? pool.updatedBy.fullName : 'System'} • {new Date(pool.updatedAt).toLocaleString()}
             </p>
           </div>

@@ -40,6 +40,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import BookingPage from "./pages/BookingPage";
 import BookingConfirmation from "./pages/BookingConfirmation";
+import PoolReservation from "./pages/PoolReservation";
 import { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -89,6 +90,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProfileSettings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pool/reserve"
+            element={
+              <ProtectedRoute>
+                <PoolReservation />
               </ProtectedRoute>
             }
           />

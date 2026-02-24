@@ -204,13 +204,33 @@ export interface Pool {
 }
 
 export interface UpdatePoolRequest {
-  status?: string;
-  currentOccupancy?: number;
-  maxCapacity?: number;
-  temperature?: number;
-  openingTime?: string;
-  closingTime?: string;
   notes?: string;
+}
+
+export interface PoolSlot {
+  _id: string;
+  startTime: string;
+  endTime: string;
+  maxPeople: number;
+  currentReserved: number;
+  date: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PoolReservationData {
+  _id: string;
+  userId: string | User;
+  roomId?: string | Room;
+  slotId: string | PoolSlot;
+  status: 'confirmed' | 'cancelled' | 'completed';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreatePoolReservationRequest {
+  slotId: string;
+  roomId?: string;
 }
 
 export interface Notification {

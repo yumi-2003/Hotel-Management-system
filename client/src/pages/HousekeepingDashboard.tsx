@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getDashboardStats } from '../services/api';
 import { getAllHousekeepingLogs, updateHousekeepingStatus } from '../services/housekeepingService';
 import StatsCard from '../components/dashboard/StatsCard';
@@ -6,7 +7,7 @@ import RoomStatusChart from '../components/dashboard/RoomStatusChart';
 import { 
   Brush, AlertCircle, 
   CheckCircle, ListChecks,
-  Play, CheckCircle2, Clock
+  Play, CheckCircle2, Clock, Waves
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import type { HousekeepingLog } from '../types';
@@ -147,6 +148,23 @@ const HousekeepingDashboard = () => {
           description="Available for check-in"
         />
       </div>
+
+      {data?.charts.roomStatusDistribution.find(d => d._id === 'cleaning') && (
+        <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-[2rem] flex items-center justify-between gap-6 animate-pulse">
+          <div className="flex items-center gap-4">
+             <div className="w-12 h-12 bg-blue-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Waves size={24} />
+             </div>
+             <div>
+                <h2 className="text-lg font-black text-blue-600 dark:text-blue-400">Facility Alert: Pool Cleaning Required</h2>
+                <p className="text-sm font-bold text-blue-500/70">Please check the Pool Management section for details.</p>
+             </div>
+          </div>
+          <Link to="/staff/pool" className="bg-blue-500 text-white px-6 py-3 rounded-2xl font-black text-xs hover:bg-blue-600 transition shadow-lg shadow-blue-500/20 whitespace-nowrap">
+            View Details
+          </Link>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-card border border-border rounded-[2rem] p-8 shadow-sm">

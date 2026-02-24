@@ -15,6 +15,7 @@ import {
   BarChart3,
   UserPlus,
   Loader2,
+  Waves,
 } from "lucide-react";
 import { updateBookingStatus } from "../services/bookingService";
 import { toast } from "react-hot-toast";
@@ -336,6 +337,19 @@ const ManagerDashboard = () => {
             <h3 className="font-bold text-foreground">Staff Management</h3>
             <p className="text-xs text-muted-foreground mt-1">
               Create & manage staff accounts
+            </p>
+          </Link>
+
+          <Link
+            to="/staff/pool"
+            className="group p-6 rounded-2xl border border-border hover:border-spa-teal hover:bg-spa-teal/[0.02] transition-all"
+          >
+            <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-500 mb-4 group-hover:scale-110 transition-transform">
+              <Waves size={24} />
+            </div>
+            <h3 className="font-bold text-foreground">Pool & Spa</h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              Manage facility status & capacity
             </p>
           </Link>
         </div>

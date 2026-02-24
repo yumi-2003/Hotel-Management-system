@@ -6,7 +6,7 @@ import StatsCard from '../components/dashboard/StatsCard';
 import RoomStatusChart from '../components/dashboard/RoomStatusChart';
 import { 
   Users, CheckCircle2, 
-  Key, Search, Loader2
+  Key, Search, Loader2, Waves
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -88,6 +88,17 @@ const ReceptionistDashboard = () => {
           icon={<CheckCircle2 className="text-green-500" />}
           description={`${data?.kpi.occupiedRooms} / ${data?.kpi.totalRooms} rooms`}
         />
+        <Link to="/staff/pool" className="bg-card border border-border rounded-3xl p-6 shadow-sm hover:border-spa-teal transition group">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+              <Waves size={24} />
+            </div>
+            <div>
+              <h3 className="font-bold text-foreground">Pool & Spa</h3>
+              <p className="text-[10px] text-muted-foreground">Manage facility status</p>
+            </div>
+          </div>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
