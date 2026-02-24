@@ -96,7 +96,7 @@ export default function RangeDatePicker({
 
       <PopoverContent
         align="start"
-        className="w-auto p-2 overflow-hidden rounded-3xl shadow-2xl border-none bg-white z-[100]"
+        className="w-auto p-2 overflow-hidden rounded-3xl shadow-2xl border border-border bg-card z-[100]"
       >
         <Calendar
           mode="range"

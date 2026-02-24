@@ -66,12 +66,12 @@ const FAQ = () => {
     : null;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Search Header */}
-      <section className="bg-slate-50 py-24 border-b border-border">
+      <section className="bg-muted/20 py-24 border-b border-border">
         <div className="max-w-4xl mx-auto px-6 text-center">
            <HelpCircle className="mx-auto text-spa-teal mb-6" size={48} />
-           <h1 className="text-4xl font-bold text-[#0F2F2F] mb-4">How can we help you?</h1>
+           <h1 className="text-4xl font-bold text-foreground mb-4">How can we help you?</h1>
            <p className="text-muted-foreground mb-10">Search our knowledge base or browse by category below.</p>
            
            <div className="relative max-w-2xl mx-auto">
@@ -81,7 +81,7 @@ const FAQ = () => {
                 placeholder="Search for questions (e.g. check-in, wifi, parking)..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-16 pr-6 py-5 rounded-2xl border border-border bg-white focus:border-spa-teal focus:ring-4 focus:ring-spa-teal/10 outline-none transition-all text-lg shadow-sm"
+                className="w-full pl-16 pr-6 py-5 rounded-2xl border border-border bg-background focus:border-spa-teal focus:ring-4 focus:ring-spa-teal/10 outline-none transition-all text-lg shadow-sm"
               />
            </div>
         </div>
@@ -91,11 +91,11 @@ const FAQ = () => {
       <section className="py-20 px-6 max-w-4xl mx-auto">
         {filteredQuestions ? (
           <div className="space-y-6">
-            <h3 className="text-xl font-bold text-[#0F2F2F] mb-8">Search Results for "{searchTerm}"</h3>
+            <h3 className="text-xl font-bold text-foreground mb-8">Search Results for "{searchTerm}"</h3>
             {filteredQuestions.length > 0 ? (
                filteredQuestions.map((f, i) => (
-                <div key={i} className="p-8 rounded-3xl bg-slate-50 border border-border">
-                   <h4 className="font-bold text-[#0F2F2F] mb-3 text-lg leading-snug">{f.q}</h4>
+                <div key={i} className="p-8 rounded-3xl bg-card border border-border">
+                   <h4 className="font-bold text-foreground mb-3 text-lg leading-snug">{f.q}</h4>
                    <p className="text-muted-foreground leading-relaxed">{f.a}</p>
                 </div>
                ))
@@ -118,14 +118,14 @@ const FAQ = () => {
                     return (
                       <div 
                         key={qIdx} 
-                        className={`border rounded-3xl transition-all duration-300 ${isOpen ? 'bg-spa-teal/[0.02] border-spa-teal shadow-lg' : 'bg-white border-border hover:border-spa-teal/40'}`}
+                        className={`border rounded-3xl transition-all duration-300 ${isOpen ? 'bg-spa-teal/[0.02] border-spa-teal shadow-lg' : 'bg-card border-border hover:border-spa-teal/40'}`}
                       >
                         <button 
                           onClick={() => toggleFAQ(globalIdx)}
                           className="w-full text-left px-8 py-6 flex justify-between items-center gap-4"
                         >
-                          <span className="font-bold text-[#0F2F2F] text-lg leading-snug">{faq.q}</span>
-                          <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isOpen ? 'bg-spa-teal text-white' : 'bg-slate-50 text-[#0F2F2F]'}`}>
+                          <span className="font-bold text-foreground text-lg leading-snug">{faq.q}</span>
+                          <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isOpen ? 'bg-spa-teal text-white' : 'bg-muted text-foreground'}`}>
                             {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                           </div>
                         </button>

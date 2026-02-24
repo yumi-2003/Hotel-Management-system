@@ -39,7 +39,7 @@ const Offers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Hero */}
       <section className="bg-[#0F2F2F] py-24 px-6 text-center">
         <div className="max-w-4xl mx-auto">
@@ -65,7 +65,7 @@ const Offers = () => {
                   : "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80";
 
                 return (
-                  <div key={room._id} className="bg-white rounded-[2.5rem] overflow-hidden shadow-sm flex flex-col lg:flex-row group border border-border">
+                  <div key={room._id} className="bg-card rounded-[2.5rem] overflow-hidden shadow-sm flex flex-col lg:flex-row group border border-border">
                     {/* Image */}
                     <div className="lg:w-1/2 h-80 lg:h-auto relative overflow-hidden">
                         <img 
@@ -84,12 +84,12 @@ const Offers = () => {
                           <Calendar size={16} />
                           <span className="text-xs uppercase tracking-widest font-black">Limited Time Offer</span>
                         </div>
-                        <h2 className="text-4xl font-bold text-[#0F2F2F] mb-2">{room.typeName}</h2>
+                        <h2 className="text-4xl font-bold text-foreground mb-2">{room.typeName}</h2>
                         <p className="text-spa-teal font-bold mb-8 uppercase tracking-wider text-sm">Luxury Stay & Premium Benefits</p>
                         
                         <div className="mb-10">
                           <div className="flex items-baseline gap-3 mb-2">
-                             <span className="text-4xl font-black text-[#0F2F2F]">${discountedPrice}</span>
+                             <span className="text-4xl font-black text-foreground">${discountedPrice}</span>
                              <span className="text-xl text-muted-foreground line-through decoration-red-400/50">${room.basePrice}</span>
                           </div>
                           <p className="text-muted-foreground leading-relaxed text-lg">
@@ -100,11 +100,11 @@ const Offers = () => {
                         <div className="flex flex-col sm:flex-row gap-4">
                           <Button 
                             onClick={() => navigate(`/rooms/${room._id}`)}
-                            className="bg-[#0F2F2F] hover:bg-black text-white px-10 py-7 rounded-2xl font-bold text-lg shadow-xl shadow-black/10 transition-all flex items-center justify-center gap-2"
+                            className="bg-foreground hover:bg-foreground/90 text-background px-10 py-7 rounded-2xl font-bold text-lg shadow-xl shadow-black/10 transition-all flex items-center justify-center gap-2"
                           >
                               View & Book Now <ArrowRight size={20} />
                           </Button>
-                          <Button variant="ghost" className="px-10 py-7 rounded-2xl font-bold text-lg text-[#0F2F2F] hover:bg-slate-50 border border-border">
+                          <Button variant="ghost" className="px-10 py-7 rounded-2xl font-bold text-lg text-foreground hover:bg-muted border border-border">
                               Package Details
                           </Button>
                         </div>
@@ -113,7 +113,7 @@ const Offers = () => {
                 );
               })
             ) : (
-              <div className="text-center py-20 bg-white rounded-[3rem] border border-dashed border-border">
+              <div className="text-center py-20 bg-muted/20 rounded-[3rem] border border-dashed border-border">
                  <Sparkles className="mx-auto text-slate-200 mb-4" size={48} />
                  <p className="text-muted-foreground font-bold">New seasonal offers arriving soon.</p>
               </div>

@@ -99,8 +99,8 @@ const BookingManagement = () => {
         </div>
       </div>
 
-      <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-border bg-slate-50/50 flex flex-col sm:flex-row gap-4">
+      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-border bg-muted/50 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -117,7 +117,7 @@ const BookingManagement = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-border bg-white outline-none focus:border-spa-teal"
+            className="px-4 py-2 rounded-xl border border-border bg-background outline-none focus:border-spa-teal"
           >
             <option value="">All Statuses</option>
             <option value="confirmed">Confirmed</option>
@@ -130,7 +130,7 @@ const BookingManagement = () => {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            <thead className="bg-muted text-xs font-bold text-muted-foreground uppercase tracking-wider">
               <tr>
                 <th className="px-6 py-4">Guest</th>
                 <th className="px-6 py-4">Room</th>
@@ -162,18 +162,18 @@ const BookingManagement = () => {
                 filtered.map((b) => (
                   <tr
                     key={b._id}
-                    className="group hover:bg-slate-50 transition-all duration-300"
+                    className="group hover:bg-muted/50 transition-all duration-300"
                   >
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-[#0F2F2F]/5 flex items-center justify-center text-[#0F2F2F] group-hover:bg-spa-teal group-hover:text-white transition-all duration-300">
+                        <div className="w-12 h-12 rounded-2xl bg-foreground/5 flex items-center justify-center text-foreground group-hover:bg-spa-teal group-hover:text-white transition-all duration-300">
                           <User
                             size={20}
                             className="transition-transform group-hover:scale-110"
                           />
                         </div>
                         <div>
-                          <div className="font-black text-[#0F2F2F] text-sm tracking-tight leading-tight mb-1">
+                          <div className="font-black text-foreground text-sm tracking-tight leading-tight mb-1">
                             {typeof b.user === "object"
                               ? b.user.fullName
                               : "Unknown Guest"}
@@ -191,10 +191,10 @@ const BookingManagement = () => {
                           <Key size={16} className="text-orange-500" />
                         </div>
                         <div>
-                          <div className="text-xs font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
+                          <div className="text-xs font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">
                             Room
                           </div>
-                          <div className="font-black text-[#0F2F2F] text-base leading-none">
+                          <div className="font-black text-foreground text-base leading-none">
                             {typeof b.room === "object"
                               ? b.room.roomNumber
                               : "Unassigned"}
@@ -205,13 +205,13 @@ const BookingManagement = () => {
                     <td className="px-6 py-5">
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center">
+                          <div className="w-6 h-6 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
                             <CheckCircle2
                               size={12}
                               className="text-emerald-500"
                             />
                           </div>
-                          <span className="text-xs font-black text-[#0F2F2F] tracking-tight">
+                          <span className="text-xs font-black text-foreground tracking-tight">
                             {b.checkInDate
                               ? new Date(b.checkInDate).toLocaleDateString(
                                   undefined,
@@ -225,10 +225,10 @@ const BookingManagement = () => {
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-orange-50 flex items-center justify-center">
+                          <div className="w-6 h-6 rounded-lg bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center">
                             <XCircle size={12} className="text-orange-500" />
                           </div>
-                          <span className="text-xs font-black text-[#0F2F2F] tracking-tight">
+                          <span className="text-xs font-black text-foreground tracking-tight">
                             {b.checkOutDate
                               ? new Date(b.checkOutDate).toLocaleDateString(
                                   undefined,
@@ -294,7 +294,7 @@ const BookingManagement = () => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-6 py-4 border-t border-border bg-slate-50/50">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-border bg-muted/50">
           <div className="text-sm text-muted-foreground">
             Showing {bookings.length} of {totalBookings} bookings
           </div>

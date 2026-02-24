@@ -82,11 +82,11 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
 
   return (
     <div className="w-full max-w-6xl mx-auto -mt-16 relative z-30">
-      <div className="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
+      <div className="bg-card rounded-3xl shadow-xl p-8 border border-border">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
           {/* Check-in */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-slate-700 ml-1">Check-in</label>
+            <label className="text-sm font-bold text-foreground ml-1">Check-in</label>
             <div className="relative group">
               <RangeDatePicker
                 value={dateRange}
@@ -101,7 +101,7 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
 
           {/* Check-out */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-slate-700 ml-1">Check-out</label>
+            <label className="text-sm font-bold text-foreground ml-1">Check-out</label>
             <div className="relative group">
               <RangeDatePicker
                 value={dateRange}
@@ -116,18 +116,18 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
 
           {/* Adults */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-slate-700 ml-1">Adults</label>
-            <div className="flex items-center justify-between px-4 py-3 bg-white border border-slate-200 rounded-xl h-[52px]">
+            <label className="text-sm font-bold text-foreground ml-1">Adults</label>
+            <div className="flex items-center justify-between px-4 py-3 bg-background border border-border rounded-xl h-[52px]">
               <button 
                 onClick={() => setAdults(p => Math.max(1, p - 1))}
-                className="text-slate-400 hover:text-spa-teal transition"
+                className="text-muted-foreground hover:text-spa-teal transition"
               >
                 <Minus size={18} />
               </button>
-              <span className="text-base font-bold text-slate-700">{adults}</span>
+              <span className="text-base font-bold text-foreground">{adults}</span>
               <button 
                 onClick={() => setAdults(p => Math.min(10, p + 1))}
-                className="text-slate-400 hover:text-spa-teal transition"
+                className="text-muted-foreground hover:text-spa-teal transition"
               >
                 <Plus size={18} />
               </button>
@@ -136,18 +136,18 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
 
           {/* Children */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-slate-700 ml-1">Children</label>
-            <div className="flex items-center justify-between px-4 py-3 bg-white border border-slate-200 rounded-xl h-[52px]">
+            <label className="text-sm font-bold text-foreground ml-1">Children</label>
+            <div className="flex items-center justify-between px-4 py-3 bg-background border border-border rounded-xl h-[52px]">
               <button 
                 onClick={() => setChildren(p => Math.max(0, p - 1))}
-                className="text-slate-400 hover:text-spa-teal transition"
+                className="text-muted-foreground hover:text-spa-teal transition"
               >
                 <Minus size={18} />
               </button>
-              <span className="text-base font-bold text-slate-700">{children}</span>
+              <span className="text-base font-bold text-foreground">{children}</span>
               <button 
                 onClick={() => setChildren(p => Math.min(10, p + 1))}
-                className="text-slate-400 hover:text-spa-teal transition"
+                className="text-muted-foreground hover:text-spa-teal transition"
               >
                 <Plus size={18} />
               </button>
@@ -156,13 +156,13 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
 
           {/* Room Category */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-bold text-slate-700 ml-1">Category</label>
+            <label className="text-sm font-bold text-foreground ml-1">Category</label>
             <div className="relative group">
               <select
                 value={selectedRoomType}
                 onChange={(e) => setSelectedRoomType(e.target.value)}
                 disabled={roomsLoading}
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 h-[52px] text-sm font-bold text-slate-700 outline-none appearance-none cursor-pointer disabled:opacity-50"
+                className="w-full bg-background border border-border rounded-xl px-4 py-3 h-[52px] text-sm font-bold text-foreground outline-none appearance-none cursor-pointer disabled:opacity-50"
               >
                 <option value="" disabled>
                   {roomsLoading ? "Loading..." : "Select type"}

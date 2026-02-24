@@ -2,7 +2,7 @@ import { Shield, Award, Heart, Sparkles } from 'lucide-react';
 
 const About = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex flex-col min-h-screen bg-background">
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center justify-center overflow-hidden bg-[#0F2F2F]">
         <div className="absolute inset-0 opacity-40">
@@ -26,7 +26,7 @@ const About = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
             <span className="text-spa-teal font-black uppercase tracking-[0.2em] text-sm mb-4 block">Our Story</span>
-            <h2 className="text-4xl font-bold text-[#0F2F2F] mb-8 leading-tight">Crafting Unforgettable Moments Since 2010</h2>
+            <h2 className="text-4xl font-bold text-foreground mb-8 leading-tight">Crafting Unforgettable Moments Since 2010</h2>
             <div className="space-y-6 text-muted-foreground leading-relaxed text-lg">
               <p>
                 What started as a single boutique concept in the heart of the city has grown into a premiere 
@@ -42,11 +42,11 @@ const About = () => {
             <div className="mt-12 grid grid-cols-2 gap-8 border-t border-border pt-12">
               <div>
                 <div className="text-4xl font-black text-spa-teal mb-2">150+</div>
-                <div className="text-sm font-bold text-[#0F2F2F] uppercase tracking-wider">Premium Rooms</div>
+                <div className="text-sm font-bold text-foreground uppercase tracking-wider">Premium Rooms</div>
               </div>
               <div>
                 <div className="text-4xl font-black text-spa-teal mb-2">24/7</div>
-                <div className="text-sm font-bold text-[#0F2F2F] uppercase tracking-wider">Guest Concierge</div>
+                <div className="text-sm font-bold text-foreground uppercase tracking-wider">Guest Concierge</div>
               </div>
             </div>
           </div>
@@ -67,9 +67,9 @@ const About = () => {
       </section>
 
       {/* Values Section */}
-      <section className="bg-slate-50 py-24">
+      <section className="bg-muted/20 py-24">
         <div className="max-w-7xl mx-auto px-6 text-center mb-16">
-          <h2 className="text-4xl font-bold text-[#0F2F2F] mb-4">The Pillars of Comftay</h2>
+          <h2 className="text-4xl font-bold text-foreground mb-4">The Pillars of Comftay</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">Our commitment to excellence is built on three core values that guide everything we do.</p>
         </div>
         
@@ -91,11 +91,11 @@ const About = () => {
               desc: "Our team doesn't just work in service; they work in hospitality, ensuring every need is met before it's asked."
             }
           ].map((val, i) => (
-            <div key={i} className="bg-white p-10 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 group">
+            <div key={i} className="bg-card p-10 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 group">
               <div className="w-16 h-16 rounded-2xl bg-spa-teal/10 flex items-center justify-center text-spa-teal mb-8 group-hover:scale-110 transition-transform">
                 <val.icon size={32} />
               </div>
-              <h3 className="text-2xl font-bold text-[#0F2F2F] mb-4">{val.title}</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-4">{val.title}</h3>
               <p className="text-muted-foreground leading-relaxed">{val.desc}</p>
             </div>
           ))}
@@ -104,13 +104,13 @@ const About = () => {
 
       {/* Banner */}
       <section className="py-24 px-6 text-center max-w-4xl mx-auto">
-        <h2 className="text-4xl font-bold text-[#0F2F2F] mb-8">Ready for a Better Stay?</h2>
+        <h2 className="text-4xl font-bold text-foreground mb-8">Ready for a Better Stay?</h2>
         <p className="text-xl text-muted-foreground mb-12">Join thousands of happy guests who have discovered the Comftay difference.</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button className="bg-[#0F2F2F] text-white px-10 py-5 rounded-2xl font-bold shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1">
+          <button className="bg-foreground text-background px-10 py-5 rounded-2xl font-bold shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1">
             Book Your Room
           </button>
-          <button className="bg-white border border-border text-[#0F2F2F] px-10 py-5 rounded-2xl font-bold hover:bg-slate-50 transition-all">
+          <button className="bg-background border border-border text-foreground px-10 py-5 rounded-2xl font-bold hover:bg-muted transition-all">
             Contact Reservations
           </button>
         </div>

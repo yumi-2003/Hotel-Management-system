@@ -51,14 +51,14 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border-none">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12">
+      <div className="max-w-md w-full bg-card rounded-3xl shadow-2xl p-8 border border-border">
         <div className="text-center mb-10">
           <div className="w-16 h-16 bg-spa-teal/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <ShieldCheck className="w-8 h-8 text-spa-teal" />
           </div>
-          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Create Account</h2>
-          <p className="text-slate-500 mt-2 font-medium">Join Comftay Resort today</p>
+          <h2 className="text-3xl font-extrabold text-foreground tracking-tight">Create Account</h2>
+          <p className="text-muted-foreground mt-2 font-medium">Join Comftay Resort today</p>
         </div>
 
         {(error || localError) && (
@@ -70,11 +70,11 @@ const RegisterForm = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
-            <label htmlFor="name" className="block text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">
+            <label htmlFor="name" className="block text-xs font-bold text-foreground uppercase tracking-wider ml-1">
               Full Name
             </label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-spa-teal transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-spa-teal transition-colors">
                 <User size={18} />
               </div>
               <input
@@ -83,18 +83,18 @@ const RegisterForm = () => {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
-                className="w-full pl-11 pr-4 py-3.5 border border-slate-200 bg-slate-50 text-slate-900 rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal focus:bg-white outline-none transition-all font-medium"
+                className="w-full pl-11 pr-4 py-3.5 border border-border bg-muted text-foreground rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal focus:bg-background outline-none transition-all font-medium"
                 placeholder="John Doe"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">
+            <label htmlFor="email" className="block text-xs font-bold text-foreground uppercase tracking-wider ml-1">
               Email Address
             </label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-spa-teal transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-spa-teal transition-colors">
                 <Mail size={18} />
               </div>
               <input
@@ -103,18 +103,18 @@ const RegisterForm = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full pl-11 pr-4 py-3.5 border border-slate-200 bg-slate-50 text-slate-900 rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal focus:bg-white outline-none transition-all font-medium"
+                className="w-full pl-11 pr-4 py-3.5 border border-border bg-muted text-foreground rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal focus:bg-background outline-none transition-all font-medium"
                 placeholder="you@example.com"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">
+            <label htmlFor="password" className="block text-xs font-bold text-foreground uppercase tracking-wider ml-1">
               Password
             </label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-spa-teal transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-spa-teal transition-colors">
                 <Lock size={18} />
               </div>
               <input
@@ -123,13 +123,13 @@ const RegisterForm = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full pl-11 pr-12 py-3.5 border border-slate-200 bg-slate-50 text-slate-900 rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal focus:bg-white outline-none transition-all font-medium"
+                className="w-full pl-11 pr-12 py-3.5 border border-border bg-muted text-foreground rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal focus:bg-background outline-none transition-all font-medium"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-spa-teal transition-colors"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted-foreground hover:text-spa-teal transition-colors"
                 tabIndex={-1}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -138,11 +138,11 @@ const RegisterForm = () => {
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="block text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">
+            <label htmlFor="confirmPassword" className="block text-xs font-bold text-foreground uppercase tracking-wider ml-1">
               Confirm Password
             </label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-spa-teal transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-spa-teal transition-colors">
                 <Lock size={18} />
               </div>
               <input
@@ -151,13 +151,13 @@ const RegisterForm = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full pl-11 pr-12 py-3.5 border border-slate-200 bg-slate-50 text-slate-900 rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal focus:bg-white outline-none transition-all font-medium"
+                className="w-full pl-11 pr-12 py-3.5 border border-border bg-muted text-foreground rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal focus:bg-background outline-none transition-all font-medium"
                 placeholder="••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-spa-teal transition-colors"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted-foreground hover:text-spa-teal transition-colors"
                 tabIndex={-1}
               >
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -174,8 +174,8 @@ const RegisterForm = () => {
           </button>
         </form>
 
-        <div className="mt-8 text-center">
-          <p className="text-slate-500 font-medium">
+        <div className="mt-8 text-center border-t border-border pt-8">
+          <p className="text-muted-foreground font-medium">
             Already have an account?{' '}
             <Link to="/login" className="text-spa-teal hover:text-spa-teal-dark font-bold underline underline-offset-4 decoration-2">
               Sign in

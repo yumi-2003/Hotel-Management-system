@@ -45,7 +45,7 @@ const Amenities = () => {
   };
 
   return (
-    <div className="bg-[#fcfdfd] min-h-screen">
+    <div className="bg-background min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -71,8 +71,8 @@ const Amenities = () => {
           <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
             <div className="max-w-2xl">
               <span className="text-spa-teal font-black uppercase tracking-[0.2em] mb-4 block">Real-time Information</span>
-              <h2 className="text-4xl font-black text-[#0F2F2F] leading-tight">Infinity Pool & Sun Terrace</h2>
-              <p className="text-[#0F2F2F]/60 mt-4 text-lg">
+              <h2 className="text-4xl font-black text-foreground leading-tight">Infinity Pool & Sun Terrace</h2>
+              <p className="text-muted-foreground mt-4 text-lg">
                 Our infinity pool offers breathtaking horizon views and climate-controlled water for year-round comfort.
               </p>
             </div>
@@ -122,8 +122,8 @@ const Amenities = () => {
             </div>
             
             <div className="space-y-6">
-              <div className="bg-white border border-spa-teal/10 p-8 rounded-3xl shadow-xl shadow-spa-teal/5 h-full flex flex-col justify-center">
-                <h3 className="text-2xl font-black text-[#0F2F2F] mb-6">Pool Policies</h3>
+              <div className="bg-card border border-border p-8 rounded-3xl shadow-xl shadow-spa-teal/5 h-full flex flex-col justify-center">
+                <h3 className="text-2xl font-black text-foreground mb-6">Pool Policies</h3>
                 <ul className="space-y-6">
                   {[
                     { icon: ShieldCheck, text: 'Certified lifeguard on duty during operating hours' },
@@ -135,7 +135,7 @@ const Amenities = () => {
                       <div className="w-10 h-10 rounded-full bg-spa-mint/10 flex items-center justify-center text-spa-teal flex-shrink-0">
                         <p.icon size={20} />
                       </div>
-                      <p className="text-[#0F2F2F]/70 font-bold leading-tight pt-2">{p.text}</p>
+                      <p className="text-muted-foreground font-bold leading-tight pt-2">{p.text}</p>
                     </li>
                   ))}
                 </ul>
@@ -146,15 +146,15 @@ const Amenities = () => {
 
         {/* General Amenities Grid */}
         <div>
-          <h2 className="text-4xl font-black text-[#0F2F2F] mb-12 text-center">Guest Experiences</h2>
+          <h2 className="text-4xl font-black text-foreground mb-12 text-center">Guest Experiences</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {generalAmenities.map((am, i) => (
-              <div key={i} className="bg-white border border-border p-8 rounded-3xl hover:shadow-2xl hover:shadow-spa-teal/10 hover:border-spa-teal/20 transition-all group">
+              <div key={i} className="bg-card border border-border p-8 rounded-3xl hover:shadow-2xl hover:shadow-spa-teal/10 hover:border-spa-teal/20 transition-all group">
                 <div className="w-16 h-16 rounded-2xl bg-spa-mint/10 flex items-center justify-center text-spa-teal mb-6 group-hover:scale-110 transition-transform">
                   <am.icon size={32} />
                 </div>
-                <h3 className="text-xl font-black text-[#0F2F2F] mb-3">{am.name}</h3>
-                <p className="text-[#0F2F2F]/60 font-bold leading-relaxed">{am.description}</p>
+                <h3 className="text-xl font-black text-foreground mb-3">{am.name}</h3>
+                <p className="text-muted-foreground font-bold leading-relaxed">{am.description}</p>
               </div>
             ))}
           </div>

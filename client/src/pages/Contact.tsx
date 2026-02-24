@@ -3,7 +3,7 @@ import { Button } from '../components/ui/button';
 
 const Contact = () => {
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <section className="bg-[#0F2F2F] py-24 px-6">
         <div className="max-w-7xl mx-auto text-center">
@@ -20,8 +20,8 @@ const Contact = () => {
           
           {/* Contact Info Sidebar */}
           <div className="lg:col-span-4 space-y-6">
-             <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-border">
-                <h3 className="text-2xl font-bold text-[#0F2F2F] mb-8">Contact Details</h3>
+             <div className="bg-card p-8 rounded-[2rem] shadow-sm border border-border">
+                <h3 className="text-2xl font-bold text-foreground mb-8">Contact Details</h3>
                 
                 <div className="space-y-8">
                   <div className="flex gap-4">
@@ -29,7 +29,7 @@ const Contact = () => {
                       <MapPin size={24} />
                     </div>
                     <div>
-                      <div className="font-bold text-[#0F2F2F]">Global Headquarters</div>
+                      <div className="font-bold text-foreground">Global Headquarters</div>
                       <div className="text-sm text-muted-foreground mt-1">123 Luxury Ave, Suite 500<br />New York, NY 10001</div>
                     </div>
                   </div>
@@ -39,7 +39,7 @@ const Contact = () => {
                       <Phone size={24} />
                     </div>
                     <div>
-                      <div className="font-bold text-[#0F2F2F]">Direct Line</div>
+                      <div className="font-bold text-foreground">Direct Line</div>
                       <div className="text-sm text-muted-foreground mt-1">+1 (212) 555-0199</div>
                       <div className="text-[10px] text-orange-500 uppercase font-black mt-1">Available 24/7</div>
                     </div>
@@ -50,7 +50,7 @@ const Contact = () => {
                       <Mail size={24} />
                     </div>
                     <div>
-                      <div className="font-bold text-[#0F2F2F]">Support Email</div>
+                      <div className="font-bold text-foreground">Support Email</div>
                       <div className="text-sm text-muted-foreground mt-1">stay@comftay.com</div>
                     </div>
                   </div>
@@ -60,14 +60,14 @@ const Contact = () => {
                       <Clock size={24} />
                     </div>
                     <div>
-                      <div className="font-bold text-[#0F2F2F]">Front Desk</div>
+                      <div className="font-bold text-foreground">Front Desk</div>
                       <div className="text-sm text-muted-foreground mt-1">Open 24 Hours / 7 Days</div>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-12 pt-8 border-t border-border">
-                   <div className="font-bold text-[#0F2F2F] mb-4">Follow Our Updates</div>
+                   <div className="font-bold text-foreground mb-4">Follow Our Updates</div>
                    <div className="flex gap-3">
                       {[Instagram, Facebook, Twitter, Globe].map((Icon, i) => (
                         <button key={i} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:bg-spa-teal hover:text-white hover:border-spa-teal transition-all">
@@ -92,33 +92,33 @@ const Contact = () => {
 
           {/* Contact Form */}
           <div className="lg:col-span-8">
-            <div className="bg-white p-10 rounded-[2.5rem] shadow-sm border border-border">
-               <h2 className="text-3xl font-bold text-[#0F2F2F] mb-2 text-center">Send Us a Message</h2>
+            <div className="bg-card p-10 rounded-[2.5rem] shadow-sm border border-border">
+               <h2 className="text-3xl font-bold text-foreground mb-2 text-center">Send Us a Message</h2>
                <p className="text-muted-foreground text-center mb-10 max-w-lg mx-auto">We typically respond to all enquiries within 6 hours of receipt during business days.</p>
                
                <form className="space-y-6">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                    <div className="space-y-2">
-                     <label className="text-xs font-black uppercase tracking-widest text-[#0F2F2F]/60 ml-1">Full Name</label>
+                     <label className="text-xs font-black uppercase tracking-widest text-foreground/80 ml-1">Full Name</label>
                      <input 
                        type="text" 
                        placeholder="Enter your name"
-                       className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-border focus:border-spa-teal focus:ring-0 outline-none transition"
+                       className="w-full px-6 py-4 rounded-2xl bg-background border border-border focus:border-spa-teal focus:ring-0 outline-none transition"
                      />
                    </div>
                    <div className="space-y-2">
-                     <label className="text-xs font-black uppercase tracking-widest text-[#0F2F2F]/60 ml-1">Email Address</label>
+                     <label className="text-xs font-black uppercase tracking-widest text-foreground/80 ml-1">Email Address</label>
                      <input 
                        type="email" 
                        placeholder="Your active email"
-                       className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-border focus:border-spa-teal focus:ring-0 outline-none transition"
+                       className="w-full px-6 py-4 rounded-2xl bg-background border border-border focus:border-spa-teal focus:ring-0 outline-none transition"
                      />
                    </div>
                  </div>
 
                  <div className="space-y-2">
-                   <label className="text-xs font-black uppercase tracking-widest text-[#0F2F2F]/60 ml-1">Subject</label>
-                   <select className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-border focus:border-spa-teal outline-none transition appearance-none cursor-pointer">
+                   <label className="text-xs font-black uppercase tracking-widest text-foreground/80 ml-1">Subject</label>
+                   <select className="w-full px-6 py-4 rounded-2xl bg-background border border-border focus:border-spa-teal outline-none transition appearance-none cursor-pointer">
                      <option>General Enquiry</option>
                      <option>Booking Modification</option>
                      <option>Special Packages</option>
@@ -128,11 +128,11 @@ const Contact = () => {
                  </div>
 
                  <div className="space-y-2">
-                   <label className="text-xs font-black uppercase tracking-widest text-[#0F2F2F]/60 ml-1">Your Message</label>
+                   <label className="text-xs font-black uppercase tracking-widest text-foreground/80 ml-1">Your Message</label>
                    <textarea 
                      rows={6} 
                      placeholder="How can we help you?"
-                     className="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-border focus:border-spa-teal outline-none transition resize-none"
+                     className="w-full px-6 py-4 rounded-2xl bg-background border border-border focus:border-spa-teal outline-none transition resize-none"
                    ></textarea>
                  </div>
 
@@ -143,19 +143,19 @@ const Contact = () => {
             </div>
             
             {/* Map Placeholder */}
-            <div className="mt-8 h-80 bg-slate-200 rounded-[2.5rem] relative overflow-hidden group">
+            <div className="mt-8 h-80 bg-muted rounded-[2.5rem] relative overflow-hidden group">
                <img 
                  src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1174&q=80" 
                  alt="Map Visualization" 
                  className="w-full h-full object-cover grayscale opacity-60 transition-all duration-700 group-hover:grayscale-0 group-hover:opacity-100"
                />
                <div className="absolute inset-0 flex items-center justify-center bg-black/10 backdrop-blur-[2px] group-hover:bg-transparent group-hover:backdrop-blur-0 transition-all">
-                  <div className="bg-white p-4 rounded-2xl shadow-2xl flex items-center gap-4">
+                  <div className="bg-card p-4 rounded-2xl shadow-2xl flex items-center gap-4">
                      <div className="w-12 h-12 bg-spa-teal rounded-xl flex items-center justify-center text-white">
                         <MapPin size={24} />
                      </div>
                      <div className="pr-4">
-                        <div className="font-bold text-[#0F2F2F]">Comftay Premium</div>
+                        <div className="font-bold text-foreground">Comftay Premium</div>
                         <div className="text-xs text-muted-foreground">Click to view on Google Maps</div>
                      </div>
                   </div>

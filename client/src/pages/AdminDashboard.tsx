@@ -70,8 +70,8 @@ const AdminDashboard = () => {
     <div className="container mx-auto px-4 py-8 space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-[#0F2F2F]">Admin Dashboard</h1>
-          <p className="text-slate-500">Financial overview and operational health</p>
+          <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
+          <p className="text-muted-foreground">Financial overview and operational health</p>
         </div>
       </div>
 
@@ -119,24 +119,24 @@ const AdminDashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
          <RoomTypeChart data={data?.charts.roomTypePerformance || []} />
-         <div className="bg-white border border-slate-200 rounded-[32px] p-8 shadow-sm">
-            <h2 className="text-xl font-bold text-[#0F2F2F] mb-6">Quick Management</h2>
+         <div className="bg-card border border-border rounded-[32px] p-8 shadow-sm">
+            <h2 className="text-xl font-bold text-foreground mb-6">Quick Management</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-               <Link to="/admin/users" className="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-spa-teal transition group">
-                 <h3 className="font-bold text-sm text-[#0F2F2F] group-hover:text-spa-teal transition-colors">Users</h3>
-                 <p className="text-[10px] text-slate-400">Staff & Roles</p>
+               <Link to="/admin/users" className="p-4 rounded-2xl bg-muted border border-border hover:border-spa-teal transition group">
+                 <h3 className="font-bold text-sm text-foreground group-hover:text-spa-teal transition-colors">Users</h3>
+                 <p className="text-[10px] text-muted-foreground">Staff & Roles</p>
                </Link>
-               <Link to="/admin/rooms" className="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-spa-teal transition group">
-                 <h3 className="font-bold text-sm text-[#0F2F2F] group-hover:text-spa-teal transition-colors">Rooms</h3>
-                 <p className="text-[10px] text-slate-400">Inventory & Types</p>
+               <Link to="/admin/rooms" className="p-4 rounded-2xl bg-muted border border-border hover:border-spa-teal transition group">
+                 <h3 className="font-bold text-sm text-foreground group-hover:text-spa-teal transition-colors">Rooms</h3>
+                 <p className="text-[10px] text-muted-foreground">Inventory & Types</p>
                </Link>
-               <Link to="/staff/bookings" className="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-spa-teal transition group">
-                 <h3 className="font-bold text-sm text-[#0F2F2F] group-hover:text-spa-teal transition-colors">Stays</h3>
-                 <p className="text-[10px] text-slate-400">Arrivals & Departures</p>
+               <Link to="/staff/bookings" className="p-4 rounded-2xl bg-muted border border-border hover:border-spa-teal transition group">
+                 <h3 className="font-bold text-sm text-foreground group-hover:text-spa-teal transition-colors">Stays</h3>
+                 <p className="text-[10px] text-muted-foreground">Arrivals & Departures</p>
                </Link>
-               <Link to="/staff/housekeeping" className="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-spa-teal transition group">
-                 <h3 className="font-bold text-sm text-[#0F2F2F] group-hover:text-spa-teal transition-colors">Cleaning</h3>
-                 <p className="text-[10px] text-slate-400">Daily Logs</p>
+               <Link to="/staff/housekeeping" className="p-4 rounded-2xl bg-muted border border-border hover:border-spa-teal transition group">
+                 <h3 className="font-bold text-sm text-foreground group-hover:text-spa-teal transition-colors">Cleaning</h3>
+                 <p className="text-[10px] text-muted-foreground">Daily Logs</p>
                </Link>
             </div>
          </div>

@@ -70,13 +70,13 @@ export default function AmenitiesSection() {
   }
 
   return (
-    <section className="bg-[#f7fbf9] py-12 sm:py-16">
+    <section className="bg-muted/30 dark:bg-background py-12 sm:py-16">
       <div className="max-w-6xl mx-auto px-5 sm:px-6 text-center">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#0F2F2F]">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
           Premium Amenities
         </h2>
 
-        <p className="mt-3 sm:mt-4 text-sm sm:text-base text-[#0F2F2F]/70 max-w-2xl mx-auto">
+        <p className="mt-3 sm:mt-4 text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
           Every room includes world-class amenities designed for your comfort
           and convenience
         </p>
@@ -90,11 +90,11 @@ export default function AmenitiesSection() {
                 key={item._id}
                 className="flex flex-col items-center gap-3 sm:gap-4"
               >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#dff4ee] flex items-center justify-center">
-                  <Icon size={26} className="text-[#0F2F2F]" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-spa-teal/10 flex items-center justify-center">
+                  <Icon size={26} className="text-spa-teal" />
                 </div>
 
-                <p className="text-xs sm:text-sm font-semibold text-[#0F2F2F] text-center leading-snug">
+                <p className="text-xs sm:text-sm font-semibold text-foreground text-center leading-snug">
                   {item.name}
                 </p>
               </div>

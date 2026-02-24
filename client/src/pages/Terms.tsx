@@ -5,13 +5,13 @@ const Terms = () => {
     <div className="min-h-screen bg-background py-20 px-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-12">
-          <h1 className="text-5xl font-black text-[#0F2F2F] mb-4">Terms & Conditions</h1>
+          <h1 className="text-5xl font-black text-foreground mb-4">Terms & Conditions</h1>
           <p className="text-muted-foreground">Please read these terms carefully before using our booking platform.</p>
         </div>
 
         <div className="prose prose-slate max-w-none text-muted-foreground leading-relaxed space-y-10">
           <section>
-            <div className="flex items-center gap-2 text-[#0F2F2F] mb-6">
+            <div className="flex items-center gap-2 text-foreground mb-6">
                <Gavel size={24} className="text-spa-teal" />
                <h2 className="text-2xl font-bold m-0 italic underline decoration-spa-teal/30">1. Agreement to Terms</h2>
             </div>
@@ -23,7 +23,7 @@ const Terms = () => {
           </section>
 
           <section>
-            <div className="flex items-center gap-2 text-[#0F2F2F] mb-6">
+            <div className="flex items-center gap-2 text-foreground mb-6">
                <Shield size={24} className="text-spa-teal" />
                <h2 className="text-2xl font-bold m-0 italic underline decoration-spa-teal/30">2. Privacy Policy</h2>
             </div>
@@ -38,7 +38,7 @@ const Terms = () => {
           </section>
 
           <section>
-            <div className="flex items-center gap-2 text-[#0F2F2F] mb-6">
+            <div className="flex items-center gap-2 text-foreground mb-6">
                <FileText size={24} className="text-spa-teal" />
                <h2 className="text-2xl font-bold m-0 italic underline decoration-spa-teal/30">3. User Responsibility</h2>
             </div>
@@ -55,8 +55,8 @@ const Terms = () => {
           </section>
 
           <section>
-             <div className="bg-slate-50 p-8 rounded-3xl border border-border">
-                <h3 className="text-lg font-bold text-[#0F2F2F] mb-4">4. Limitation of Liability</h3>
+             <div className="bg-muted p-8 rounded-3xl border border-border">
+                <h3 className="text-lg font-bold text-foreground mb-4">4. Limitation of Liability</h3>
                 <p className="text-sm">
                    Comftay Premium Hospitality Group shall not be liable for any indirect, incidental, or consequential 
                    damages resulting from the use or inability to use the platform. While we strive for 100% uptime, 
@@ -66,7 +66,7 @@ const Terms = () => {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-[#0F2F2F] mb-6 italic underline decoration-spa-teal/30">5. Governing Law</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-6 italic underline decoration-spa-teal/30">5. Governing Law</h2>
             <p>
                These terms shall be governed by and construed in accordance with the laws of the State of New York, 
                without regard to its conflict of law provisions. Any legal action or proceeding arising under these 
