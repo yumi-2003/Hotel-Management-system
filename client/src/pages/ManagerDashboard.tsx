@@ -291,7 +291,7 @@ const ManagerDashboard = () => {
             to="/admin/amenities"
             className="group p-6 rounded-2xl border border-border hover:border-spa-teal hover:bg-spa-teal/[0.02] transition-all"
           >
-            <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-500 mb-4 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-500 mb-4 group-hover:scale-110 transition-transform">
               <ClipboardList size={24} />
             </div>
             <h3 className="font-bold text-foreground">Amenities</h3>
@@ -304,7 +304,7 @@ const ManagerDashboard = () => {
             to="/staff/reservations"
             className="group p-6 rounded-2xl border border-border hover:border-spa-teal hover:bg-spa-teal/[0.02] transition-all"
           >
-            <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-500 mb-4 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 rounded-xl bg-orange-50 dark:bg-orange-900/30 flex items-center justify-center text-orange-500 mb-4 group-hover:scale-110 transition-transform">
               <Calendar size={24} />
             </div>
             <h3 className="font-bold text-foreground">Reservations</h3>
@@ -317,7 +317,7 @@ const ManagerDashboard = () => {
             to="/staff/bookings"
             className="group p-6 rounded-2xl border border-border hover:border-spa-teal hover:bg-spa-teal/[0.02] transition-all"
           >
-            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-500 mb-4 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 rounded-xl bg-green-50 dark:bg-green-900/30 flex items-center justify-center text-green-500 mb-4 group-hover:scale-110 transition-transform">
               <ClipboardList size={24} />
             </div>
             <h3 className="font-bold text-foreground">Guest Stays</h3>
@@ -330,25 +330,12 @@ const ManagerDashboard = () => {
             to="/admin/users"
             className="group p-6 rounded-2xl border border-border hover:border-spa-teal hover:bg-spa-teal/[0.02] transition-all"
           >
-            <div className="w-12 h-12 rounded-xl bg-teal-50 flex items-center justify-center text-spa-teal mb-4 group-hover:scale-110 transition-transform">
+            <div className="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center text-spa-teal mb-4 group-hover:scale-110 transition-transform">
               <UserPlus size={24} />
             </div>
             <h3 className="font-bold text-foreground">Staff Management</h3>
             <p className="text-xs text-muted-foreground mt-1">
               Create & manage staff accounts
-            </p>
-          </Link>
-
-          <Link
-            to="/manager/reports"
-            className="group p-6 rounded-2xl border border-border hover:border-spa-teal hover:bg-spa-teal/[0.02] transition-all"
-          >
-            <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-500 mb-4 group-hover:scale-110 transition-transform">
-              <BarChart3 size={24} />
-            </div>
-            <h3 className="font-bold text-foreground">Financial Reports</h3>
-            <p className="text-xs text-muted-foreground mt-1">
-              Analyze revenue & occupancy
             </p>
           </Link>
         </div>

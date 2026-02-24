@@ -48,6 +48,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateReservationStatus = exports.getReservations = exports.getMyReservations = exports.createReservation = void 0;
 const Reservation_1 = __importStar(require("../models/Reservation"));
 const RoomType_1 = __importDefault(require("../models/RoomType"));
+const Notification_1 = __importStar(require("../models/Notification"));
 const availability_1 = require("../utils/availability");
 const mongoose_1 = __importDefault(require("mongoose"));
 const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -133,6 +134,13 @@ const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, functi
             }], { session });
         yield session.commitTransaction();
         session.endSession();
+        // Create Notification for the guest
+        yield Notification_1.default.create({
+            recipient: guestId,
+            message: `Your reservation ${reservationCode} has been created and is pending confirmation.`,
+            type: Notification_1.NotificationType.SYSTEM,
+            link: '/my-reservations'
+        });
         res.status(201).json(reservation[0]);
     }
     catch (error) {
@@ -207,6 +215,13 @@ const updateReservationStatus = (req, res) => __awaiter(void 0, void 0, void 0, 
             res.status(404).json({ message: 'Reservation not found' });
             return;
         }
+        // Create Notification for the guest about status update
+        yield Notification_1.default.create({
+            recipient: reservation.guestId,
+            message: `Your reservation ${reservation.reservationCode} status has been updated to ${status}.`,
+            type: Notification_1.NotificationType.STATUS_UPDATE,
+            link: '/my-reservations'
+        });
         res.json(mapReservationToFrontend(reservation));
     }
     catch (error) {

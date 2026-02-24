@@ -3,6 +3,7 @@ import Reservation, { ReservationStatus } from '../models/Reservation';
 import Booking, { BookingStatus } from '../models/Booking';
 import Room, { RoomStatus } from '../models/Room';
 import RoomType from '../models/RoomType';
+import Notification, { NotificationType } from '../models/Notification';
 import { AuthRequest } from '../middleware/auth';
 import { getAvailableRooms } from '../utils/availability';
 import mongoose from 'mongoose';
@@ -105,6 +106,14 @@ export const createReservation = async (req: AuthRequest, res: Response): Promis
     await session.commitTransaction();
     session.endSession();
 
+    // Create Notification for the guest
+    await Notification.create({
+      recipient: guestId,
+      message: `Your reservation ${reservationCode} has been created and is pending confirmation.`,
+      type: NotificationType.SYSTEM,
+      link: '/my-reservations'
+    });
+
     res.status(201).json(reservation[0]);
   } catch (error) {
     await session.abortTransaction();
@@ -189,6 +198,14 @@ export const updateReservationStatus = async (req: Request, res: Response): Prom
       res.status(404).json({ message: 'Reservation not found' });
       return;
     }
+
+    // Create Notification for the guest about status update
+    await Notification.create({
+      recipient: reservation.guestId,
+      message: `Your reservation ${reservation.reservationCode} status has been updated to ${status}.`,
+      type: NotificationType.STATUS_UPDATE,
+      link: '/my-reservations'
+    });
 
     res.json(mapReservationToFrontend(reservation));
   } catch (error) {

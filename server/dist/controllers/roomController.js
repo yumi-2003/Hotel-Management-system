@@ -68,8 +68,25 @@ const createMultipleRooms = (req, res) => __awaiter(void 0, void 0, void 0, func
 exports.createMultipleRooms = createMultipleRooms;
 const getRooms = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const rooms = yield Room_1.default.find().populate("roomTypeId");
-        res.json(rooms);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+        const totalRooms = yield Room_1.default.countDocuments();
+        const rooms = yield Room_1.default.find()
+            .populate("roomTypeId")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+        res.json({
+            rooms,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(totalRooms / limit),
+                totalRooms,
+                hasNext: page * limit < totalRooms,
+                hasPrev: page > 1,
+            },
+        });
     }
     catch (error) {
         res.status(500).json({ message: "Error fetching rooms", error });

@@ -70,8 +70,8 @@ const ReservationManagement = () => {
         </div>
       </div>
 
-      <div className="bg-white border border-border rounded-2xl shadow-sm overflow-hidden">
-        <div className="p-6 border-b border-border bg-slate-50/50 flex flex-col sm:flex-row gap-4">
+      <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-6 border-b border-border bg-muted/50 flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
             <input 
@@ -85,7 +85,7 @@ const ReservationManagement = () => {
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl border border-border bg-white outline-none focus:border-spa-teal"
+            className="px-4 py-2 rounded-xl border border-border bg-background outline-none focus:border-spa-teal"
           >
             <option value="">All Statuses</option>
             <option value="PENDING">Pending</option>
@@ -97,7 +97,7 @@ const ReservationManagement = () => {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50 text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            <thead className="bg-muted text-xs font-bold text-muted-foreground uppercase tracking-wider">
               <tr>
                 <th className="px-6 py-4">Guest</th>
                 <th className="px-6 py-4">Room Type</th>
@@ -121,14 +121,14 @@ const ReservationManagement = () => {
                 </tr>
               ) : (
                 filtered.map((r) => (
-                  <tr key={r._id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={r._id} className="hover:bg-muted/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-spa-teal/10 flex items-center justify-center text-spa-teal font-bold">
                           <User size={18} />
                         </div>
                         <div>
-                          <div className="font-bold text-[#0F2F2F]">
+                          <div className="font-bold text-foreground">
                             {typeof r.user === 'object' ? r.user.fullName : 'Guest'}
                           </div>
                           <div className="text-xs text-muted-foreground">
@@ -140,14 +140,14 @@ const ReservationManagement = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Home size={14} className="text-spa-teal" />
-                        <span className="font-medium text-[#0F2F2F]">
+                        <span className="font-medium text-foreground">
                           {typeof r.roomType === 'object' ? r.roomType.typeName : 'Room Type'}
                         </span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-xs space-y-1">
-                        <div className="flex items-center gap-1.5 font-medium text-[#0F2F2F]">
+                        <div className="flex items-center gap-1.5 font-medium text-foreground">
                           <Calendar size={12} className="text-muted-foreground" /> 
                           {r.checkInDate ? new Date(r.checkInDate).toLocaleDateString() : 'N/A'} - {r.checkOutDate ? new Date(r.checkOutDate).toLocaleDateString() : 'N/A'}
                         </div>

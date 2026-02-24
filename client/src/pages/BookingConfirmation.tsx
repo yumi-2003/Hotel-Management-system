@@ -148,7 +148,7 @@ const BookingConfirmation: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[80vh] bg-slate-50 py-12 px-4">
+    <div className="min-h-[80vh] bg-background py-12 px-4 transition-colors duration-300">
       <div className="max-w-3xl mx-auto space-y-8">
         {/* Status Header */}
         <div className="text-center space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
@@ -163,10 +163,10 @@ const BookingConfirmation: React.FC = () => {
               </div>
             )}
           </div>
-          <h1 className="text-4xl font-black text-[#0F2F2F] tracking-tight">
+          <h1 className="text-4xl font-black text-foreground tracking-tight">
             {isSuccess ? 'Booking Confirmed!' : 'Payment Failed'}
           </h1>
-          <p className="text-slate-500 font-medium max-w-md mx-auto">
+          <p className="text-muted-foreground font-medium max-w-md mx-auto">
             {isSuccess 
               ? `Your stay at Comftay has been successfully scheduled. We've sent a confirmation email to your inbox.`
               : `We couldn't process your payment. ${error || 'Please check your details and try again.'}`}
@@ -180,15 +180,15 @@ const BookingConfirmation: React.FC = () => {
           >
             {/* Summary Card */}
             <div
-              className="bg-white rounded-[40px] shadow-2xl shadow-slate-200/50 border border-white overflow-hidden"
+              className="bg-card rounded-[40px] shadow-2xl shadow-slate-200/50 dark:shadow-none border border-border overflow-hidden"
             >
-              <div className="bg-[#0F2F2F] p-8 text-white flex justify-between items-center">
+              <div className="bg-[#0F2F2F] dark:bg-muted p-8 text-white dark:text-foreground flex justify-between items-center">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Confirmation Code</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-muted-foreground mb-1">Confirmation Code</p>
                   <p className="text-2xl font-mono font-bold tracking-wider">{booking.bookingCode}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Status</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-muted-foreground mb-1">Status</p>
                   <p className="text-sm font-bold bg-spa-teal/20 text-spa-teal px-3 py-1 rounded-full inline-block">
                     {booking.status === 'confirmed' ? 'PAID' : 'PAY AT HOTEL'}
                   </p>
@@ -199,22 +199,22 @@ const BookingConfirmation: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12">
                   <div className="space-y-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-spa-teal flex-shrink-0">
+                      <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center text-spa-teal flex-shrink-0">
                         <Home className="w-6 h-6" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Room Type</p>
-                        <p className="font-bold text-[#0F2F2F]">Premium Standard Room</p>
+                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Room Type</p>
+                        <p className="font-bold text-foreground">Premium Standard Room</p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-spa-teal flex-shrink-0">
+                      <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center text-spa-teal flex-shrink-0">
                         <Calendar className="w-6 h-6" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Stay Period</p>
-                        <p className="font-bold text-[#0F2F2F]">
+                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Stay Period</p>
+                        <p className="font-bold text-foreground">
                           {format(new Date(booking.checkInDate), 'MMM dd')} - {format(new Date(booking.checkOutDate), 'MMM dd, yyyy')}
                         </p>
                       </div>
@@ -223,31 +223,31 @@ const BookingConfirmation: React.FC = () => {
 
                   <div className="space-y-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-spa-teal flex-shrink-0">
+                      <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center text-spa-teal flex-shrink-0">
                         <Users className="w-6 h-6" />
                       </div>
                       <div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Guests & Duration</p>
-                        <p className="font-bold text-[#0F2F2F]">
+                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Guests & Duration</p>
+                        <p className="font-bold text-foreground">
                           {booking.adultsCount} Adults, {booking.childrenCount} Children • {booking.bookedRooms[0]?.nights || 0} Nights
                         </p>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-spa-mint/10 flex items-center justify-center text-spa-teal flex-shrink-0">
+                      <div className="w-12 h-12 rounded-2xl bg-spa-mint/10 dark:bg-spa-teal/10 flex items-center justify-center text-spa-teal flex-shrink-0">
                         <ShieldCheck className="w-6 h-6" />
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between items-end mb-1">
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pricing Breakdown</p>
+                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Pricing Breakdown</p>
                           <p className="text-xl font-black text-spa-teal">${booking.totalPrice.toLocaleString()}</p>
                         </div>
-                        <div className="flex justify-between text-[11px] font-bold text-slate-500">
+                        <div className="flex justify-between text-[11px] font-bold text-muted-foreground">
                           <span>Subtotal</span>
                           <span>${(booking.subtotalAmount || booking.totalPrice / 1.15).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                         </div>
-                        <div className="flex justify-between text-[11px] font-bold text-slate-400 mt-0.5">
+                        <div className="flex justify-between text-[11px] font-bold text-muted-foreground mt-0.5">
                           <span>Taxes & Fees (15%)</span>
                           <span>${(booking.taxAmount || booking.totalPrice - (booking.totalPrice / 1.15)).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
                         </div>
@@ -257,18 +257,18 @@ const BookingConfirmation: React.FC = () => {
                 </div>
 
                 {/* Info Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-slate-100 mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t border-border mt-4">
                   <div className="flex items-center gap-3">
-                    <Clock className="w-4 h-4 text-slate-400" />
-                    <p className="text-xs font-semibold text-slate-600">Check-in: 2:00 PM</p>
+                    <Clock className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-xs font-semibold text-foreground">Check-in: 2:00 PM</p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4 text-slate-400" />
+                    <MapPin className="w-4 h-4 text-muted-foreground" />
                     <Link to="/contact" className="text-xs font-semibold text-spa-teal hover:underline">Get Directions</Link>
                   </div>
                   <div className="flex items-center gap-3">
-                    <ShieldCheck className="w-4 h-4 text-slate-400" />
-                    <p className="text-xs font-semibold text-slate-600">Free Cancellation (24h)</p>
+                    <ShieldCheck className="w-4 h-4 text-muted-foreground" />
+                    <p className="text-xs font-semibold text-foreground">Free Cancellation (24h)</p>
                   </div>
                 </div>
               </div>
@@ -278,14 +278,14 @@ const BookingConfirmation: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
                 to="/my-reservations"
-                className="flex-1 h-14 bg-[#0F2F2F] hover:bg-black text-white rounded-2xl font-black flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95"
+                className="flex-1 h-14 bg-[#0F2F2F] dark:bg-muted dark:hover:bg-muted/80 hover:bg-black text-white rounded-2xl font-black flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95"
               >
                 <ClipboardList className="w-5 h-5" />
                 My Bookings
               </Link>
               <button
                 onClick={handleDownloadInvoice}
-                className="flex-1 h-14 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95"
+                className="flex-1 h-14 bg-card border border-border text-foreground hover:bg-muted/50 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95"
               >
                 <Download className="w-5 h-5" />
                 Download Invoice
@@ -301,8 +301,8 @@ const BookingConfirmation: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="bg-white p-12 rounded-[40px] shadow-xl border border-white text-center">
-              <p className="text-slate-500 mb-8 italic">"{error}"</p>
+            <div className="bg-card p-12 rounded-[40px] shadow-xl border border-border text-center">
+              <p className="text-muted-foreground mb-8 italic">"{error}"</p>
               <div className="flex flex-col gap-3">
                 <button
                   onClick={() => navigate(-1)}
@@ -312,13 +312,13 @@ const BookingConfirmation: React.FC = () => {
                 </button>
                 <button
                   onClick={() => navigate('/my-reservations')}
-                  className="h-14 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-2xl font-bold transition-all active:scale-95"
+                  className="h-14 bg-muted text-foreground hover:bg-muted/80 rounded-2xl font-bold transition-all active:scale-95"
                 >
                   Change Payment Method
                 </button>
                 <Link
                   to="/"
-                  className="text-slate-400 font-bold hover:text-slate-600 transition-all text-sm uppercase tracking-widest mt-4"
+                  className="text-muted-foreground font-bold hover:text-foreground transition-all text-sm uppercase tracking-widest mt-4"
                 >
                   Cancel Booking
                 </Link>

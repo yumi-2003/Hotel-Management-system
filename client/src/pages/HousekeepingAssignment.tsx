@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { getAllHousekeepingLogs, assignHousekeepingTask } from '../services/housekeepingService';
 import { getAllUsers } from '../services/api';
 import type { User, HousekeepingLog } from '../types';
+import { useAppDispatch } from '../hooks/redux';
+import { fetchNotifications } from '../store/slices/notificationSlice';
 import { toast } from 'react-hot-toast';
 import { 
   Users, 
@@ -17,6 +19,7 @@ const HousekeepingAssignment = () => {
   const [tasks, setTasks] = useState<HousekeepingLog[]>([]);
   const [housekeepers, setHousekeepers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
 
   const fetchData = async () => {
     try {
@@ -44,6 +47,7 @@ const HousekeepingAssignment = () => {
       await assignHousekeepingTask(taskId, staffId);
       toast.success('Task successfully assigned');
       fetchData();
+      dispatch(fetchNotifications());
     } catch (err) {
       console.error('Assignment failed', err);
       toast.error('Failed to assign task');

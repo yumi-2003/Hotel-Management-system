@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { useAppSelector, useAppDispatch } from '../hooks/redux';
 import { fetchMyReservations } from '../store/slices/reservationSlice';
 import { createBooking, fetchMyBookings } from '../store/slices/bookingSlice';
+import { fetchNotifications } from '../store/slices/notificationSlice';
 import { format, isSameDay } from 'date-fns';
 import type { Reservation, Booking } from '../types';
 import PaymentSection from '../components/booking/PaymentSection';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { AlertTriangle, Calendar, Home, CheckCircle } from 'lucide-react';
+import { AlertTriangle, Calendar, Home } from 'lucide-react';
 
 const MyReservations = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -53,6 +54,7 @@ const MyReservations = () => {
       setSelectedResForPayment(null);
       dispatch(fetchMyReservations());
       dispatch(fetchMyBookings());
+      dispatch(fetchNotifications());
       // Navigate to confirmation page
       navigate('/booking/confirmation', { 
         state: { 

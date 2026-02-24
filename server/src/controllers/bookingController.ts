@@ -3,6 +3,7 @@ import Booking, { BookingStatus } from "../models/Booking";
 import Reservation, { ReservationStatus } from "../models/Reservation";
 import Room, { RoomStatus } from "../models/Room";
 import Payment, { PaymentStatus } from "../models/Payment";
+import Notification, { NotificationType } from '../models/Notification';
 import { AuthRequest } from "../middleware/auth";
 import { isRoomAvailable } from "../utils/availability";
 import mongoose from "mongoose";
@@ -162,6 +163,14 @@ export const createBooking = async (
     await session.commitTransaction();
     session.endSession();
 
+    // Create Notification for the guest
+    await Notification.create({
+      recipient: guestId,
+      message: `Your booking ${booking.bookingCode} is confirmed. Thank you for choosing us!`,
+      type: NotificationType.SYSTEM,
+      link: '/my-reservations'
+    });
+
     res.status(201).json(booking);
   } catch (error) {
     await session.abortTransaction();
@@ -204,6 +213,15 @@ export const confirmPayment = async (
 
     await session.commitTransaction();
     session.endSession();
+
+    // Create Notification for the guest
+    await Notification.create({
+      recipient: booking.guestId,
+      message: `Payment for booking ${booking.bookingCode} was successfully confirmed.`,
+      type: NotificationType.STATUS_UPDATE,
+      link: '/my-reservations'
+    });
+
     res.json({ message: "Payment confirmed successfully", booking });
   } catch (error) {
     await session.abortTransaction();
@@ -362,6 +380,14 @@ export const updateBookingStatus = async (
       res.status(404).json({ message: "Booking not found after update" });
       return;
     }
+
+    // Create Notification for status change
+    await Notification.create({
+      recipient: updatedBooking.guestId._id,
+      message: `Your booking ${updatedBooking.bookingCode} status has been updated to ${status}.`,
+      type: NotificationType.STATUS_UPDATE,
+      link: '/my-reservations'
+    });
 
     const bookingObj = updatedBooking.toObject();
     const standardizedResponse = {

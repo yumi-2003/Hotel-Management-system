@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { fetchRoomTypes } from "@/store/slices/roomSlice";
 import { createReservation } from "@/store/slices/reservationSlice";
+import { fetchNotifications } from "@/store/slices/notificationSlice";
 
 interface BookingBarProps {
   initialRoomType?: string;
@@ -72,6 +73,7 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
       setSelectedRoomType("");
       setAdults(1);
       setChildren(0);
+      dispatch(fetchNotifications());
     } else {
       toast.error("Failed to create reservation. Please try again.");
     }
