@@ -30,3 +30,24 @@ export const markNotificationAsRead = async (req: AuthRequest, res: Response): P
     res.status(500).json({ message: 'Error updating notification', error });
   }
 };
+
+export const markAllNotificationsAsRead = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    await Notification.updateMany(
+      { recipient: req.user?.id, isRead: false },
+      { isRead: true }
+    );
+    res.json({ message: 'All notifications marked as read' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating notifications', error });
+  }
+};
+
+export const deleteAllNotifications = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    await Notification.deleteMany({ recipient: req.user?.id });
+    res.json({ message: 'All notifications deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting notifications', error });
+  }
+};

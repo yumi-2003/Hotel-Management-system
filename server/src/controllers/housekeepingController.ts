@@ -78,12 +78,18 @@ export const assignHousekeepingTask = async (req: AuthRequest, res: Response): P
     });
 
     // 2. Create Notification for the staff member
-    await Notification.create({
-      recipient: staffId,
-      message: `You have been assigned a new task: ${log.task} for Room ${(log as any).roomId?.roomNumber || '?'}.`,
-      type: NotificationType.ASSIGNMENT,
-      link: '/housekeeping/dashboard'
-    });
+    try {
+      const roomNumber = (log as any).roomId?.roomNumber || 'unknown';
+      const notif = await Notification.create({
+        recipient: staffId,
+        message: `You have been assigned a new task: ${log.task} for Room ${roomNumber}.`,
+        type: NotificationType.ASSIGNMENT,
+        link: '/housekeeping/dashboard'
+      });
+      console.log(`[NOTIFICATION_SUCCESS] Created housekeeping notification for staff ${staffId}: ${notif._id}`);
+    } catch (notifErr) {
+      console.error(`[NOTIFICATION_ERROR] Failed to create housekeeping notification for staff ${staffId}:`, notifErr);
+    }
 
     const populatedLog = await HousekeepingLog.findById(log._id)
       .populate('roomId', 'roomNumber floor status')

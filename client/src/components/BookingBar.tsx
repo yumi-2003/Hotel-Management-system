@@ -75,7 +75,8 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
       setChildren(0);
       dispatch(fetchNotifications());
     } else {
-      toast.error("Failed to create reservation. Please try again.");
+      const errorMsg = result.payload as string || "Failed to create reservation. Please try again.";
+      toast.error(errorMsg);
     }
   };
 

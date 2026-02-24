@@ -1,10 +1,12 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth';
-import { getMyNotifications, markNotificationAsRead } from '../controllers/notificationController';
+import { getMyNotifications, markNotificationAsRead, markAllNotificationsAsRead, deleteAllNotifications } from '../controllers/notificationController';
 
 const router = express.Router();
 
 router.get('/', authenticate, getMyNotifications);
+router.delete('/', authenticate, deleteAllNotifications);
+router.patch('/read-all', authenticate, markAllNotificationsAsRead);
 router.patch('/:id/read', authenticate, markNotificationAsRead);
 
 export default router;

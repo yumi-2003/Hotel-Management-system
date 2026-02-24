@@ -48,6 +48,38 @@ export const markAsRead = createAsyncThunk<
   }
 );
 
+export const markAllNotificationsAsRead = createAsyncThunk<
+void,
+void,
+{ rejectValue: string }
+>(
+'notifications/markAllAsRead',
+async (_, { rejectWithValue }) => {
+  try {
+    await api.patch('/notifications/read-all');
+  } catch (error: any) {
+    const message = error.response?.data?.message || 'Failed to mark all notifications as read';
+    return rejectWithValue(message);
+  }
+}
+);
+
+export const deleteAllNotifications = createAsyncThunk<
+  void,
+  void,
+  { rejectValue: string }
+>(
+  'notifications/deleteAll',
+  async (_, { rejectWithValue }) => {
+    try {
+      await api.delete('/notifications');
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to delete notifications';
+      return rejectWithValue(message);
+    }
+  }
+);
+
 const notificationSlice = createSlice({
   name: 'notifications',
   initialState,
@@ -74,6 +106,12 @@ const notificationSlice = createSlice({
         if (index !== -1) {
           state.notifications[index] = action.payload;
         }
+      })
+      .addCase(markAllNotificationsAsRead.fulfilled, (state) => {
+        state.notifications = state.notifications.map(n => ({ ...n, isRead: true }));
+      })
+      .addCase(deleteAllNotifications.fulfilled, (state) => {
+        state.notifications = [];
       });
   },
 });

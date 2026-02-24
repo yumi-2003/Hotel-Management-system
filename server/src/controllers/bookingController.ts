@@ -164,12 +164,17 @@ export const createBooking = async (
     session.endSession();
 
     // Create Notification for the guest
-    await Notification.create({
-      recipient: guestId,
-      message: `Your booking ${booking.bookingCode} is confirmed. Thank you for choosing us!`,
-      type: NotificationType.SYSTEM,
-      link: '/my-reservations'
-    });
+    try {
+      const notif = await Notification.create({
+        recipient: guestId,
+        message: `Your booking ${booking.bookingCode} is confirmed. Thank you for choosing us!`,
+        type: NotificationType.SYSTEM,
+        link: '/my-reservations'
+      });
+      console.log(`[NOTIFICATION_SUCCESS] Created booking confirmation notification for guest ${guestId}: ${notif._id}`);
+    } catch (notifErr) {
+      console.error(`[NOTIFICATION_ERROR] Failed to create booking confirmation notification for guest ${guestId}:`, notifErr);
+    }
 
     res.status(201).json(booking);
   } catch (error) {
@@ -215,12 +220,17 @@ export const confirmPayment = async (
     session.endSession();
 
     // Create Notification for the guest
-    await Notification.create({
-      recipient: booking.guestId,
-      message: `Payment for booking ${booking.bookingCode} was successfully confirmed.`,
-      type: NotificationType.STATUS_UPDATE,
-      link: '/my-reservations'
-    });
+    try {
+      const notif = await Notification.create({
+        recipient: booking.guestId,
+        message: `Payment for booking ${booking.bookingCode} was successfully confirmed.`,
+        type: NotificationType.STATUS_UPDATE,
+        link: '/my-reservations'
+      });
+      console.log(`[NOTIFICATION_SUCCESS] Created payment confirmation notification for guest ${booking.guestId}: ${notif._id}`);
+    } catch (notifErr) {
+      console.error(`[NOTIFICATION_ERROR] Failed to create payment confirmation notification for guest ${booking.guestId}:`, notifErr);
+    }
 
     res.json({ message: "Payment confirmed successfully", booking });
   } catch (error) {
@@ -382,12 +392,17 @@ export const updateBookingStatus = async (
     }
 
     // Create Notification for status change
-    await Notification.create({
-      recipient: updatedBooking.guestId._id,
-      message: `Your booking ${updatedBooking.bookingCode} status has been updated to ${status}.`,
-      type: NotificationType.STATUS_UPDATE,
-      link: '/my-reservations'
-    });
+    try {
+      const notif = await Notification.create({
+        recipient: updatedBooking.guestId._id,
+        message: `Your booking ${updatedBooking.bookingCode} status has been updated to ${status}.`,
+        type: NotificationType.STATUS_UPDATE,
+        link: '/my-reservations'
+      });
+      console.log(`[NOTIFICATION_SUCCESS] Created booking status update notification for guest ${updatedBooking.guestId._id}: ${notif._id}`);
+    } catch (notifErr) {
+      console.error(`[NOTIFICATION_ERROR] Failed to create booking status update notification for guest ${updatedBooking.guestId._id}:`, notifErr);
+    }
 
     const bookingObj = updatedBooking.toObject();
     const standardizedResponse = {

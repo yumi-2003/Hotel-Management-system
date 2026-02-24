@@ -72,17 +72,17 @@ const BookingManagement = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "checked_in":
-        return "bg-green-100 text-green-700 border-green-200";
+        return "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800";
       case "checked_out":
-        return "bg-slate-100 text-slate-700 border-slate-200";
+        return "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700";
       case "confirmed":
-        return "bg-blue-100 text-blue-700 border-blue-200";
+        return "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800";
       case "confirmed_unpaid":
-        return "bg-amber-100 text-amber-700 border-amber-200";
+        return "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800";
       case "cancelled":
-        return "bg-red-100 text-red-700 border-red-200";
+        return "bg-red-100 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800";
       default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
+        return "bg-gray-100 text-gray-700 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700";
     }
   };
 
@@ -111,7 +111,7 @@ const BookingManagement = () => {
               placeholder="Search by guest name or room number..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl border border-border focus:border-spa-teal outline-none"
+              className="w-full pl-10 pr-4 py-2 rounded-xl border border-border bg-background text-foreground focus:border-spa-teal outline-none transition-colors"
             />
           </div>
           <select
@@ -187,8 +187,8 @@ const BookingManagement = () => {
                     </td>
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
-                          <Key size={16} className="text-orange-500" />
+                        <div className="w-10 h-10 rounded-xl bg-orange-50 dark:bg-orange-950/30 flex items-center justify-center">
+                          <Key size={16} className="text-orange-500 dark:text-orange-400" />
                         </div>
                         <div>
                           <div className="text-xs font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">

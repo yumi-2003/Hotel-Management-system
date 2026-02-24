@@ -152,7 +152,7 @@ const MyReservations = () => {
         {/* Future Reservations */}
         <section>
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-spa-mint text-spa-teal rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-spa-mint dark:bg-spa-teal/20 text-spa-teal rounded-xl flex items-center justify-center">
               <Calendar size={20} />
             </div>
             <h2 className="text-2xl font-black text-foreground tracking-tight">Reservations</h2>
@@ -176,9 +176,9 @@ const MyReservations = () => {
                       <div className="flex justify-between items-start mb-6">
                          <div>
                             <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                              reservation.status.toLowerCase() === 'confirmed' ? 'bg-green-100 text-green-700' :
-                              reservation.status.toLowerCase() === 'confirmed_unpaid' ? 'bg-amber-100 text-amber-700' :
-                              reservation.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                              reservation.status.toLowerCase() === 'confirmed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                              reservation.status.toLowerCase() === 'confirmed_unpaid' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
+                              reservation.status.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
                               'bg-muted text-muted-foreground'
                             }`}>
                               {reservation.status.replace('_', ' ')}
@@ -235,7 +235,7 @@ const BookingCard = ({ booking, status }: { booking: Booking, status: 'active' |
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-4">
                <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                 status === 'active' ? 'bg-spa-teal text-white' : 'bg-muted text-muted-foreground'
+                 status === 'active' ? 'bg-spa-teal text-white shadow-lg shadow-spa-teal/20' : 'bg-muted text-muted-foreground'
                }`}>
                  {status === 'active' ? 'Currently Stay' : 'Completed'}
                </span>
