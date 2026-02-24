@@ -1,263 +1,123 @@
-# Hotel Management System
+# Comftay - Modern Hotel Management System
 
-A full-stack web application for managing hotel operations, built with React, TypeScript, Node.js, Express, and MongoDB.
+Comftay is a premium, full-stack hotel management solution designed to streamline operations, enhance guest experiences, and provide detailed operational insights. Built with a modern tech stack (React, TypeScript, Node.js, MongoDB), it features a high-end UI with full dark mode support and a robust role-based access system.
 
-## Overview
+## 🌟 Key Features
 
-This system provides comprehensive hotel management capabilities including:
+### 🏨 Core Management
+- **Intelligent Booking Engine**: A responsive, real-time booking bar with precise availability feedback and automated reservation expiry (15-minute hold).
+- **Dynamic Room Management**: Support for customized Room Types, individual Room status tracking (Occupied, Cleaning, Out of Service), and Amenity management.
+- **Housekeeping Automation**: Automated task assignment upon guest check-out, real-time status updates from housekeeping staff, and maintenance logging.
 
-- **User Management**: Authentication and role-based access control
-- **Room Management**: Room types, individual rooms, and availability tracking
-- **Reservations & Bookings**: Online booking system with payment processing
-- **Housekeeping**: Task assignment and tracking
-- **Dashboard Analytics**: Revenue charts, room status, and operational insights
-- **Pool Management**: Pool maintenance scheduling
-- **Notifications**: In-app notifications for users and staff
+### 👤 User Roles & Dashboards
+- **Admin**: Full system control, user management, and core configuration.
+- **Manager**: Operational analytics, staff performance, and revenue reporting.
+- **Receptionist**: Efficient front-desk operations including Check-in/Check-out flows and reservation oversight.
+- **Housekeeping**: Mobile-optimized task list for cleaning assignments and room status reporting.
+- **Guest**: Seamless booking experience, profile management, and reservation history tracking.
 
-## Architecture
+### 🔔 Advanced Notification System
+- **Real-time Alerts**: Staff receives instant notifications for new task assignments (e.g., room cleaning).
+- **Management Features**: Optimistic "Clear All" functionality (instant list clearing) and "Mark all as read" for efficient inbox management.
+- **Clean UI**: Visual loading states and automated "All Caught Up" empty state views.
 
-### Frontend (Client)
+### 🎨 Design & Experience
+- **Premium Aesthetics**: Glassmorphism elements, vibrant color palettes, and smooth micro-animations.
+- **Full Dark Mode**: A unified design system that adapts perfectly to dark and light modes across all modules.
+- **Responsive Design**: Fully optimized for Desktop, Tablet, and Mobile devices.
 
-- **Framework**: React 19 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS with Radix UI components
-- **State Management**: Redux Toolkit
-- **Routing**: React Router DOM
-- **Charts**: Recharts for data visualization
-- **PDF Generation**: jsPDF and html2canvas for invoices
+## 🛠️ Technology Stack
 
-### Backend (Server)
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React 19, TypeScript, Tailwind CSS, Redux Toolkit, Lucide React, date-fns |
+| **Backend** | Node.js, Express (Express 5/path-to-regexp), TypeScript |
+| **Database** | MongoDB with Mongoose ODM |
+| **Auth** | JWT (JSON Web Tokens) with Bcrypt password hashing |
+| **Media** | Cloudinary (Image storage & transformation) |
+| **Comms** | Nodemailer (Email notifications) |
 
-- **Runtime**: Node.js with TypeScript
-- **Framework**: Express.js
-- **Database**: MongoDB with Mongoose ODM
-- **Authentication**: JWT tokens with bcrypt password hashing
-- **File Upload**: Cloudinary integration for image storage
-- **Email**: Nodemailer for notifications
-
-## User Roles
-
-1. **Admin**: Full system access, user management, system configuration
-2. **Manager**: Operational oversight, reports, staff management
-3. **Receptionist**: Front desk operations, bookings, check-ins/check-outs
-4. **Housekeeping**: Room cleaning assignments and status updates
-5. **Guest**: Online booking, reservation management, profile settings
-
-## Features
-
-### Core Functionality
-
-- User registration and authentication
-- Role-based dashboard access
-- Room browsing and booking
-- Reservation management
-- Payment processing simulation
-- Invoice generation and download
-- Real-time notifications
-
-### Management Modules
-
-- User Management (Admin)
-- Room Type & Room Management
-- Amenity Management
-- Booking & Reservation Oversight
-- Housekeeping Task Assignment
-- Pool Maintenance Scheduling
-- Dashboard Analytics & Reporting
-
-### Guest Features
-
-- Room search and filtering
-- Date range selection
-- Booking confirmation
-- Reservation history
-- Profile management
-- Password reset functionality
-
-## Project Structure
+## 📂 Project Structure
 
 ```
 HotelManagementSystem/
-├── client/                 # React frontend
+├── client/                 # React frontend (Vite)
 │   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   ├── pages/          # Page components
-│   │   ├── services/       # API service functions
-│   │   ├── store/          # Redux store and slices
-│   │   ├── types/          # TypeScript type definitions
-│   │   └── utils/          # Utility functions
-│   └── public/             # Static assets
-├── server/                 # Node.js backend
+│   │   ├── components/     # Reusable UI & Layout components
+│   │   ├── pages/          # Feature-specific pages (Admin, Booking, etc.)
+│   │   ├── store/          # Redux State Management (Slices)
+│   │   ├── services/       # API integration layers
+│   │   └── types/          # Shared TypeScript interfaces
+├── server/                 # Node.js backend (Express)
 │   ├── src/
-│   │   ├── controllers/    # Route handlers
-│   │   ├── models/         # MongoDB schemas
-│   │   ├── routes/         # API route definitions
-│   │   ├── middleware/     # Express middleware
-│   │   ├── config/         # Configuration files
-│   │   └── utils/          # Server utilities
-│   └── uploads/            # File upload directory
-└── package.json            # Root package scripts
+│   │   ├── controllers/    # API Route handlers
+│   │   ├── models/         # Mongoose Schemas (User, Room, Booking, etc.)
+│   │   ├── routes/         # API Endpoint definitions
+│   │   └── middleware/     # Auth & validation logic
 ```
 
-## Installation & Setup
+## 🚀 Getting Started
 
 ### Prerequisites
+- **Node.js**: v18+ 
+- **MongoDB**: Local instance or Atlas Cloud URI
+- **Cloudinary Account**: For room/profile image uploads
 
-- Node.js (v18 or higher)
-- MongoDB (local or cloud instance)
-- npm or yarn package manager
+### Installation
 
-### Environment Variables
-
-Create `.env` files in both `client/` and `server/` directories.
-
-#### Server (.env)
-
-```
-MONGODB_URI=mongodb://127.0.0.1:27017/hotel_management
-JWT_SECRET=your_jwt_secret_key
-PORT=5000
-CLOUDINARY_CLOUD_NAME=your_cloudinary_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASS=your_email_password
-```
-
-#### Client (.env)
-
-```
-VITE_API_URL=http://localhost:4000/api
-```
-
-### Installation Steps
-
-1. **Clone the repository**
-
+1. **Clone & Navigate**
    ```bash
    git clone <repository-url>
    cd HotelManagementSystem
    ```
 
-2. **Install server dependencies**
-
+2. **Backend Setup**
    ```bash
    cd server
    npm install
+   # Create .env based on the variables below
+   npm run dev
    ```
 
-3. **Install client dependencies**
-
+3. **Frontend Setup**
    ```bash
    cd ../client
    npm install
+   # Create .env based on the variables below
+   npm run dev
    ```
 
-4. **Start MongoDB**
-   Ensure MongoDB is running on your system.
+### Environment Variables
 
-5. **Seed initial data** (optional)
+**Server (`server/.env`)**
+```env
+PORT=4000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_secret
+CLOUDINARY_CLOUD_NAME=name
+CLOUDINARY_API_KEY=key
+CLOUDINARY_API_SECRET=secret
+EMAIL_USER=your_email
+EMAIL_PASS=your_email_app_password
+```
 
-   ```bash
-   cd ../server
-   npm run seed
-   ```
+**Client (`client/.env`)**
+```env
+VITE_API_BASE_URL=http://localhost:4000/api
+```
 
-6. **Start the application**
+## 📡 API Reference
 
-   ```bash
-   cd ..
-   npm start
-   ```
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/auth/login` | Authenticate user & return JWT |
+| `GET` | `/api/rooms` | Fetch all available rooms with filters |
+| `POST` | `/api/reservations` | Create a new room reservation |
+| `DELETE`| `/api/notifications/clear-all` | Permanently clear user notifications |
+| `GET` | `/api/dashboard/stats` | Operational statistics for staff/admin |
 
-   This will start both client (http://localhost:3000) and server (http://localhost:4000) concurrently.
+## 📜 License
+This project is licensed under the **ISC License**.
 
-## API Endpoints
-
-### Authentication
-
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/forgot-password` - Password reset request
-- `POST /api/auth/reset-password` - Password reset confirmation
-
-### Rooms
-
-- `GET /api/rooms` - Get all rooms with filters
-- `GET /api/rooms/:id` - Get room details
-- `POST /api/rooms` - Create room (Admin/Manager)
-- `PUT /api/rooms/:id` - Update room (Admin/Manager)
-- `DELETE /api/rooms/:id` - Delete room (Admin/Manager)
-
-### Bookings & Reservations
-
-- `POST /api/bookings` - Create booking
-- `GET /api/bookings/user` - Get user bookings
-- `GET /api/reservations` - Get all reservations (Staff)
-- `PUT /api/reservations/:id/status` - Update reservation status
-
-### Dashboard
-
-- `GET /api/dashboard/stats` - Dashboard statistics
-- `GET /api/dashboard/revenue` - Revenue data
-- `GET /api/dashboard/room-status` - Room status overview
-
-## Development
-
-### Available Scripts
-
-#### Client
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build
-
-#### Server
-
-- `npm run dev` - Start development server with nodemon
-- `npm run build` - Compile TypeScript
-- `npm start` - Start production server
-
-### Code Quality
-
-- ESLint for JavaScript/TypeScript linting
-- TypeScript for type checking
-- Prettier for code formatting (recommended)
-
-## Deployment
-
-### Production Build
-
-1. Build the client:
-
-   ```bash
-   cd client
-   npm run build
-   ```
-
-2. The `dist` folder will contain the production-ready client files.
-
-3. For the server, ensure environment variables are set for production.
-
-### Recommended Deployment
-
-- **Frontend**: Vercel, Netlify, or any static hosting
-- **Backend**: Heroku, Railway, or VPS with PM2
-- **Database**: MongoDB Atlas for cloud database
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests and linting
-5. Submit a pull request
-
-## License
-
-This project is licensed under the ISC License.
-
-## Support
-
-For support or questions, please open an issue in the repository.
+---
+*Built with ❤️ by the Comftay Team.*
