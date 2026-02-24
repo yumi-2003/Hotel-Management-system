@@ -27,6 +27,8 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Routes
+console.log('[SERVER] Initializing Notification Routes (v3)...');
+app.use('/api/notifications', notificationRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/rooms', roomRoutes);
 app.use('/api/reservations', reservationRoutes);
@@ -36,7 +38,6 @@ app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/pool', poolRoutes);
-app.use('/api/notifications', notificationRoutes);
 
 // Database connection
 const MONGODB_URI = process.env.MONGODB_URI;

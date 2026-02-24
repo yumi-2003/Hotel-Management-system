@@ -44,10 +44,13 @@ export const markAllNotificationsAsRead = async (req: AuthRequest, res: Response
 };
 
 export const deleteAllNotifications = async (req: AuthRequest, res: Response): Promise<void> => {
+  console.log(`[DELETE_ALL] Attempting to delete all notifications for user: ${req.user?.id}`);
   try {
-    await Notification.deleteMany({ recipient: req.user?.id });
+    const result = await Notification.deleteMany({ recipient: req.user?.id });
+    console.log(`[DELETE_ALL] Successfully deleted ${result.deletedCount} notifications`);
     res.json({ message: 'All notifications deleted' });
   } catch (error) {
+    console.error('[DELETE_ALL] Error:', error);
     res.status(500).json({ message: 'Error deleting notifications', error });
   }
 };

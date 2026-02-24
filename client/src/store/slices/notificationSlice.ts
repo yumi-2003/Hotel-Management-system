@@ -72,7 +72,7 @@ export const deleteAllNotifications = createAsyncThunk<
   'notifications/deleteAll',
   async (_, { rejectWithValue }) => {
     try {
-      await api.delete('/notifications');
+      await api.delete('/notifications/clear-all');
     } catch (error: any) {
       const message = error.response?.data?.message || 'Failed to delete notifications';
       return rejectWithValue(message);
@@ -92,6 +92,7 @@ const notificationSlice = createSlice({
     builder
       .addCase(fetchNotifications.pending, (state) => {
         state.loading = true;
+        state.notifications = []; // Clear current list while fetching for a "clean" look as requested
       })
       .addCase(fetchNotifications.fulfilled, (state, action) => {
         state.loading = false;
@@ -110,8 +111,11 @@ const notificationSlice = createSlice({
       .addCase(markAllNotificationsAsRead.fulfilled, (state) => {
         state.notifications = state.notifications.map(n => ({ ...n, isRead: true }));
       })
-      .addCase(deleteAllNotifications.fulfilled, (state) => {
-        state.notifications = [];
+      .addCase(deleteAllNotifications.pending, (state) => {
+        state.notifications = []; // Optimistically clear
+      })
+      .addCase(deleteAllNotifications.fulfilled, () => {
+        // Already cleared in pending
       });
   },
 });

@@ -41,9 +41,37 @@ const NotificationBell = () => {
   };
 
   const handleClearAll = () => {
-    if (window.confirm('Are you sure you want to clear all notifications?')) {
-      dispatch(deleteAllNotifications());
-    }
+    toast((t) => (
+      <div className="flex flex-col gap-3 p-1">
+        <p className="text-sm font-bold text-foreground">Clear all notifications?</p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => {
+              dispatch(deleteAllNotifications());
+              toast.dismiss(t.id);
+            }}
+            className="px-3 py-1 bg-red-500 text-white text-[10px] font-bold uppercase rounded hover:bg-red-600 transition-colors"
+          >
+            Confirm
+          </button>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-3 py-1 bg-slate-100 dark:bg-slate-800 text-foreground text-[10px] font-bold uppercase rounded hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ), {
+      duration: 5000,
+      position: 'top-center',
+      style: {
+        background: 'var(--card)',
+        color: 'var(--foreground)',
+        border: '1px solid var(--border)',
+        boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
+      },
+    });
   };
 
   const handleRefresh = async () => {
@@ -96,13 +124,14 @@ const NotificationBell = () => {
             </div>
           </div>
 
-          <div className="max-h-96 overflow-y-auto bg-card relative min-h-[100px]">
-            {loading && notifications.length === 0 ? (
-              <div className="flex items-center justify-center p-8">
-                <Loader2 size={24} className="text-spa-teal animate-spin" />
+          <div className="max-h-96 overflow-y-auto bg-card relative min-h-[200px] transition-all duration-300">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-12 px-8 text-center animate-pulse">
+                <Loader2 size={32} className="text-spa-teal animate-spin mb-4 opacity-50" />
+                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Checking for updates...</p>
               </div>
             ) : notifications.length === 0 ? (
-              <div className="py-12 px-8 text-center animate-in fade-in duration-500">
+              <div className="py-12 px-8 text-center animate-in fade-in zoom-in-95 duration-500">
                 <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-4 scale-110 shadow-inner">
                   <CheckCircle2 size={28} className="text-emerald-500" />
                 </div>
@@ -112,7 +141,7 @@ const NotificationBell = () => {
                 </p>
               </div>
             ) : (
-              <div className={loading ? 'opacity-50 pointer-events-none' : ''}>
+              <div className="animate-in fade-in slide-in-from-top-2 duration-300">
                 {notifications.map((notif) => (
                   <div
                     key={notif._id}
