@@ -1,27 +1,38 @@
 import { useNavigate } from 'react-router-dom';
-import { Wifi, Tv, Coffee, Wind, Monitor, Users, Bath } from 'lucide-react';
+import { Users } from 'lucide-react';
 import type { RoomType } from '../../types';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
+import DynamicIcon from '../common/DynamicIcon';
 
 interface RoomListCardProps {
   room: RoomType;
 }
 
+const getAmenityIconName = (name: string) => {
+  const lowerName = name.toLowerCase();
+  
+  const iconMap: Record<string, string> = {
+    'wifi': 'Wifi',
+    'tv': 'Tv',
+    'coffee': 'Coffee',
+    'breakfast': 'Coffee',
+    'ac': 'Wind',
+    'air': 'Wind',
+    'desk': 'Monitor',
+    'work': 'Monitor',
+    'bath': 'Bath',
+    'jacuzzi': 'Bath'
+  };
+
+  for (const key in iconMap) {
+    if (lowerName.includes(key)) return iconMap[key];
+  }
+  return 'Check';
+};
+
 const RoomListCard = ({ room }: RoomListCardProps) => {
   const navigate = useNavigate();
-
-  // Helper to get icon for amenity
-  const getAmenityIcon = (name: string) => {
-    const lowerName = name.toLowerCase();
-    if (lowerName.includes('wifi')) return <Wifi size={14} />;
-    if (lowerName.includes('tv')) return <Tv size={14} />;
-    if (lowerName.includes('coffee') || lowerName.includes('breakfast')) return <Coffee size={14} />;
-    if (lowerName.includes('ac') || lowerName.includes('air')) return <Wind size={14} />;
-    if (lowerName.includes('desk') || lowerName.includes('work')) return <Monitor size={14} />;
-    if (lowerName.includes('bath') || lowerName.includes('jacuzzi')) return <Bath size={14} />;
-    return <Users size={14} />;
-  };
 
   return (
     <div className="flex flex-col md:flex-row bg-card border border-border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group">
@@ -72,9 +83,8 @@ const RoomListCard = ({ room }: RoomListCardProps) => {
               <span>Max: {room.maxAdults} adults, {room.maxChildren} children</span>
             </div>
 
-            {/* Amenities */}
             <div className="flex flex-wrap gap-2">
-              {room.amenities.slice(0, 5).map((amenity, index) => {
+              {room.amenities.slice(0, 5).map((amenity: any, index: number) => {
                 // Handle both populated (object) and unpopulated (string ID) amenities
                 const amenityName = typeof amenity === 'string' ? 'Amenity' : amenity.name;
                 return (
@@ -82,7 +92,7 @@ const RoomListCard = ({ room }: RoomListCardProps) => {
                     key={typeof amenity === 'string' ? `${amenity}-${index}` : amenity._id}
                     className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-secondary/50 text-xs font-medium text-secondary-foreground border border-border/50"
                   >
-                    {getAmenityIcon(amenityName)}
+                    <DynamicIcon name={typeof amenity === 'string' ? 'Check' : (amenity.icon || getAmenityIconName(amenity.name))} size={14} />
                     {amenityName}
                   </span>
                 );

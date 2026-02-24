@@ -3,9 +3,10 @@ import { getAllAmenities, createAmenity, updateAmenity, deleteAmenity } from '..
 import type { Amenity } from '../../types';
 import { 
   Sparkles, Plus, Edit2, Trash2, 
-  Loader2, Check, X, Info 
+  Loader2, X, Info 
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
+import DynamicIcon from '../../components/common/DynamicIcon';
 
 const AmenityManagement = () => {
   const [amenities, setAmenities] = useState<Amenity[]>([]);
@@ -100,21 +101,21 @@ const AmenityManagement = () => {
           </div>
         ) : (
           amenities.map((a) => (
-            <div key={a._id} className="bg-white border border-border rounded-2xl p-6 shadow-sm hover:shadow-md transition group">
+            <div key={a._id} className="bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md transition group">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-spa-teal/10 flex items-center justify-center text-spa-teal font-black">
-                   <Check size={24} />
+                <div className="w-12 h-12 rounded-xl bg-spa-teal/10 flex items-center justify-center text-spa-teal">
+                   <DynamicIcon name={a.icon || 'Check'} size={24} />
                 </div>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button onClick={() => handleOpenModal(a)} className="p-2 text-spa-teal hover:bg-spa-teal/5 rounded-lg">
                     <Edit2 size={16} />
                   </button>
-                  <button onClick={() => handleDelete(a._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg">
+                  <button onClick={() => handleDelete(a._id)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-lg">
                     <Trash2 size={16} />
                   </button>
                 </div>
               </div>
-              <h3 className="font-bold text-[#0F2F2F]">{a.name}</h3>
+              <h3 className="font-bold text-foreground">{a.name}</h3>
               <p className="text-xs text-muted-foreground mt-1 uppercase tracking-widest font-bold">Icon: {a.icon || 'Default'}</p>
             </div>
           ))
@@ -124,37 +125,37 @@ const AmenityManagement = () => {
       {/* Basic Modal Implementation */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl w-full max-w-md p-8 shadow-2xl animate-in slide-in-from-bottom-4 duration-300">
+          <div className="bg-card rounded-3xl w-full max-w-md p-8 shadow-2xl animate-in slide-in-from-bottom-4 duration-300">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-[#0F2F2F]">{editingAmenity ? 'Edit Amenity' : 'New Amenity'}</h2>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-[#0F2F2F]">
+              <h2 className="text-2xl font-bold text-foreground">{editingAmenity ? 'Edit Amenity' : 'New Amenity'}</h2>
+              <button onClick={() => setIsModalOpen(false)} className="text-muted-foreground hover:text-foreground">
                 <X size={24} />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-[#0F2F2F]/60 mb-2">Amenity Name</label>
+                <label className="block text-sm font-bold text-muted-foreground mb-2">Amenity Name</label>
                 <input 
                   type="text" 
                   value={formData.name}
                   onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-xl border border-border focus:border-spa-teal outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:border-spa-teal outline-none"
                   placeholder="e.g. Free Wi-Fi, Ocean View"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-[#0F2F2F]/60 mb-2">Icon Name (Lucide)</label>
+                <label className="block text-sm font-bold text-muted-foreground mb-2">Icon Name (Lucide)</label>
                 <input 
                   type="text" 
                   value={formData.icon}
                   onChange={(e) => setFormData(p => ({ ...p, icon: e.target.value }))}
-                  className="w-full px-4 py-3 rounded-xl border border-border focus:border-spa-teal outline-none"
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground focus:border-spa-teal outline-none"
                   placeholder="Wifi, Tv, Coffee, etc."
                 />
-                <div className="mt-2 p-3 bg-slate-50 rounded-xl flex items-center gap-2 text-[10px] text-muted-foreground">
+                <div className="mt-2 p-3 bg-muted/50 rounded-xl flex items-center gap-2 text-[10px] text-muted-foreground">
                    <Info size={14} className="text-spa-teal" />
                    <span>Enter any valid Lucide icon name. Common: Wifi, Tv, Coffee, Wind (AC), Bath.</span>
                 </div>

@@ -1,45 +1,43 @@
 import { useState, useEffect } from "react";
 import * as roomService from "../services/roomService";
-import { 
-  Loader2, Wifi, Tv, Coffee, Wind, Monitor, Bath, Shield, 
-  MapPin, Check, Waves, Car, Utensils, Dumbbell, 
-  Snowflake, Cigarette, CigaretteOff 
-} from "lucide-react";
+import { Loader2 } from "lucide-react";
+import DynamicIcon from "./common/DynamicIcon";
 
-// Mapping of strings/slugs to Lucide icons
-const iconMap: Record<string, any> = {
-  'wifi': Wifi,
-  'tv': Tv,
-  'coffee': Coffee,
-  'tea': Coffee,
-  'ac': Wind,
-  'air': Wind,
-  'conditioning': Wind,
-  'work desk': Monitor,
-  'desk': Monitor,
-  'bathroom': Bath,
-  'jacuzzi': Bath,
-  'security': Shield,
-  'parking': MapPin,
-  'car': Car,
-  'spa': Bath,
-  'pool': Waves,
-  'swimming': Waves,
-  'gym': Dumbbell,
-  'fitness': Dumbbell,
-  'breakfast': Utensils,
-  'food': Utensils,
-  'fridge': Snowflake,
-  'smoking': Cigarette,
-  'non-smoking': CigaretteOff,
-};
+const getIconName = (name: string, iconFromDb?: string) => {
+  if (iconFromDb) return iconFromDb;
 
-const getIcon = (name: string) => {
   const lowerName = name.toLowerCase();
+  const iconMap: Record<string, string> = {
+    'wifi': 'Wifi',
+    'tv': 'Tv',
+    'coffee': 'Coffee',
+    'tea': 'Coffee',
+    'ac': 'Wind',
+    'air': 'Wind',
+    'conditioning': 'Wind',
+    'work desk': 'Monitor',
+    'desk': 'Monitor',
+    'bathroom': 'Bath',
+    'jacuzzi': 'Bath',
+    'security': 'Shield',
+    'parking': 'MapPin',
+    'car': 'Car',
+    'spa': 'Bath',
+    'pool': 'Waves',
+    'swimming': 'Waves',
+    'gym': 'Dumbbell',
+    'fitness': 'Dumbbell',
+    'breakfast': 'Utensils',
+    'food': 'Utensils',
+    'fridge': 'Snowflake',
+    'smoking': 'Cigarette',
+    'non-smoking': 'CigaretteOff',
+  };
+
   for (const key in iconMap) {
     if (lowerName.includes(key)) return iconMap[key];
   }
-  return Check;
+  return 'Check';
 };
 
 export default function AmenitiesSection() {
@@ -83,7 +81,7 @@ export default function AmenitiesSection() {
 
         <div className="mt-10 sm:mt-12 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6 sm:gap-10">
           {amenities.map((item) => {
-            const Icon = getIcon(item.name);
+            const iconName = getIconName(item.name, item.icon);
 
             return (
               <div
@@ -91,7 +89,7 @@ export default function AmenitiesSection() {
                 className="flex flex-col items-center gap-3 sm:gap-4"
               >
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-spa-teal/10 flex items-center justify-center">
-                  <Icon size={26} className="text-spa-teal" />
+                  <DynamicIcon name={iconName} size={26} className="text-spa-teal" />
                 </div>
 
                 <p className="text-xs sm:text-sm font-semibold text-foreground text-center leading-snug">

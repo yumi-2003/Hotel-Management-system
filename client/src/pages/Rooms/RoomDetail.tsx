@@ -3,50 +3,51 @@ import { useParams, useNavigate } from 'react-router-dom';
 import type { RoomType } from '../../types';
 import * as roomService from '../../services/roomService';
 import { Button } from '../../components/ui/button';
+import DynamicIcon from '../../components/common/DynamicIcon';
 import { 
-  Loader2, ArrowLeft, Wifi, Tv, Coffee, Wind, Monitor, 
-  Users, Bath, Check, Star, MessageSquare, ShieldCheck, 
-  Clock, Trash2, X, Waves, Car, Utensils, Cigarette, 
-  CigaretteOff, MapPin, Dumbbell, Snowflake
+  Loader2, ArrowLeft, Users, Star, MessageSquare, ShieldCheck, 
+  Clock, Trash2, X, Check
 } from 'lucide-react';
 import { useAppSelector } from '../../hooks/redux';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
 
-const iconMap: Record<string, any> = {
-  'wifi': Wifi,
-  'tv': Tv,
-  'coffee': Coffee,
-  'tea': Coffee,
-  'ac': Wind,
-  'air': Wind,
-  'conditioning': Wind,
-  'desk': Monitor,
-  'work': Monitor,
-  'bath': Bath,
-  'jacuzzi': Bath,
-  'security': ShieldCheck,
-  'pool': Waves,
-  'swimming': Waves,
-  'parking': Car,
-  'breakfast': Utensils,
-  'dining': Utensils,
-  'food': Utensils,
-  'smoking': Cigarette,
-  'non-smoking': CigaretteOff,
-  'gym': Dumbbell,
-  'fitness': Dumbbell,
-  'location': MapPin,
-  'snowflake': Snowflake,
-  'fridge': Snowflake,
-};
+const getAmenityIconName = (name: string, iconFromDb?: string) => {
+  if (iconFromDb) return iconFromDb;
+  
+  const iconMap: Record<string, string> = {
+    'wifi': 'Wifi',
+    'tv': 'Tv',
+    'coffee': 'Coffee',
+    'tea': 'Coffee',
+    'ac': 'Wind',
+    'air': 'Wind',
+    'conditioning': 'Wind',
+    'desk': 'Monitor',
+    'work': 'Monitor',
+    'bath': 'Bath',
+    'jacuzzi': 'Bath',
+    'security': 'ShieldCheck',
+    'pool': 'Waves',
+    'swimming': 'Waves',
+    'parking': 'Car',
+    'breakfast': 'Utensils',
+    'dining': 'Utensils',
+    'food': 'Utensils',
+    'smoking': 'Cigarette',
+    'non-smoking': 'CigaretteOff',
+    'gym': 'Dumbbell',
+    'fitness': 'Dumbbell',
+    'location': 'MapPin',
+    'snowflake': 'Snowflake',
+    'fridge': 'Snowflake',
+  };
 
-const getAmenityIcon = (name: string) => {
   const lowerName = name.toLowerCase();
   for (const key in iconMap) {
     if (lowerName.includes(key)) return iconMap[key];
   }
-  return Check;
+  return 'Check';
 };
 
 const RoomDetail = () => {
@@ -270,11 +271,11 @@ const RoomDetail = () => {
                 {activeTab === 'amenities' && (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {room.amenities.map((amenity: any, index) => {
-                      const Icon = getAmenityIcon(amenity.name || '');
+                      const iconName = getAmenityIconName(amenity.name || '', amenity.icon);
                       return (
                         <div key={amenity._id || index} className="flex items-center gap-3 p-4 bg-card border border-border rounded-2xl hover:border-spa-teal/20 transition shadow-sm">
                           <div className="w-10 h-10 rounded-full bg-spa-teal/10 flex items-center justify-center text-spa-teal">
-                            <Icon size={20} />
+                            <DynamicIcon name={iconName} size={20} />
                           </div>
                           <span className="text-sm font-bold text-foreground">{amenity.name}</span>
                         </div>
