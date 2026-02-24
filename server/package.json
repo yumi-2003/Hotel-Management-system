@@ -5,8 +5,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "dev": "nodemon --ignore dist --ignore uploads src/index.ts",
-    "build": "tsc",
-    "seed": "ts-node src/scripts/seed.ts"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

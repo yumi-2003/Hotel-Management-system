@@ -1,12 +1,27 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Twitter, ChevronDown } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export default function Footer() {
   const [open, setOpen] = useState({
     quick: false,
     support: false,
   });
+
+  const [email, setEmail] = useState("");
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    
+    // Simulate API call
+    toast.success("Thank you for subscribing to our newsletter!");
+    setEmail("");
+  };
 
   return (
     <footer className="bg-spa-deep dark:bg-[#0a1f1f] text-white">
@@ -21,26 +36,32 @@ export default function Footer() {
             </p>
 
             <div className="mt-6 flex gap-4">
-              <Link
-                to="/instagram"
+              <a
+                href="https://www.instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
               >
                 <Instagram size={18} />
-              </Link>
+              </a>
 
-              <Link
-                to="/facebook"
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
               >
                 <Facebook size={18} />
-              </Link>
+              </a>
 
-              <Link
-                to="/twitter"
+              <a
+                href="https://www.twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition"
               >
                 <Twitter size={18} />
-              </Link>
+              </a>
             </div>
           </div>
 
@@ -139,9 +160,12 @@ export default function Footer() {
               Get offers and updates directly to your inbox.
             </p>
 
-            <form className="mt-5 flex gap-2">
+            <form onSubmit={handleNewsletterSubmit} className="mt-5 flex gap-2">
               <input
                 type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email address"
                 className="w-full px-4 py-2 rounded-xl bg-white/10 text-sm placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30"
               />
