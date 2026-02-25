@@ -39,7 +39,7 @@ function Calendar({
         ...formatters,
       }}
       classNames={{
-        root: cn("w-fit p-4 bg-white rounded-2xl shadow-xl", defaultClassNames.root),
+        root: cn("w-fit p-4 bg-card rounded-2xl shadow-xl", defaultClassNames.root),
         months: cn(
           "relative flex flex-col gap-8 sm:flex-row sm:gap-x-12",
           defaultClassNames.months
@@ -60,11 +60,11 @@ function Calendar({
           defaultClassNames.button_next
         ),
         month_caption: cn(
-          "flex h-8 w-full items-center justify-center font-bold text-slate-800 text-base",
+          "flex h-8 w-full items-center justify-center font-bold text-foreground text-base",
           defaultClassNames.month_caption
         ),
         weekday: cn(
-          "text-slate-400 flex-1 select-none text-[0.75rem] font-bold uppercase tracking-wider",
+          "text-muted-foreground flex-1 select-none text-[0.75rem] font-bold uppercase tracking-wider",
           defaultClassNames.weekday
         ),
         day: cn(
@@ -77,11 +77,11 @@ function Calendar({
         ),
         range_start: "day-range-start bg-spa-teal text-white rounded-full",
         range_end: "day-range-end bg-spa-teal text-white rounded-full",
-        range_middle: "aria-selected:bg-spa-mint/20 aria-selected:text-spa-teal-dark",
+        range_middle: "aria-selected:bg-spa-mint/20 aria-selected:text-spa-teal",
         selected: "bg-spa-teal text-white hover:bg-spa-teal-dark hover:text-white focus:bg-spa-teal focus:text-white",
         today: "text-spa-teal font-bold underline underline-offset-4",
-        outside: "day-outside text-slate-300 aria-selected:bg-spa-mint/10 aria-selected:text-slate-300 opacity-50",
-        disabled: "text-slate-200 opacity-50",
+        outside: "day-outside text-muted-foreground aria-selected:bg-spa-mint/10 aria-selected:text-muted-foreground opacity-50",
+        disabled: "text-muted-foreground opacity-20",
         hidden: "invisible",
         ...classNames,
       }}
@@ -99,24 +99,23 @@ function Calendar({
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
             return (
-              <ChevronLeftIcon className={cn("size-4 text-spa-teal-dark", className)} {...props} />
+              <ChevronLeftIcon className={cn("size-4 text-foreground", className)} {...props} />
             )
           }
 
           if (orientation === "right") {
             return (
               <ChevronRightIcon
-                className={cn("size-4 text-spa-teal-dark", className)}
+                className={cn("size-4 text-foreground", className)}
                 {...props}
               />
             )
           }
 
           return (
-            <ChevronDownIcon className={cn("size-4 text-spa-teal-dark", className)} {...props} />
+            <ChevronDownIcon className={cn("size-4 text-foreground", className)} {...props} />
           )
         },
-        // Remove the custom DayButton override to rely on the simplified classNames mapping
         ...components,
       }}
       {...props}

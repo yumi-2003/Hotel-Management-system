@@ -1,5 +1,7 @@
 # Comftay - Modern Hotel Management System
 
+![Comftay Dark Mode Hero](/dark_mode_hero_booking_bar_1772001368178.png)
+
 Comftay is a premium, full-stack hotel management solution designed to streamline operations, enhance guest experiences, and provide detailed operational insights. Built with a modern tech stack (React, TypeScript, Node.js, MongoDB), it features a high-end UI with full dark mode support and a robust role-based access system.
 
 ## 🌟 Key Features
@@ -31,6 +33,9 @@ Comftay is a premium, full-stack hotel management solution designed to streamlin
 - **Premium Aesthetics**: Glassmorphism elements, vibrant color palettes, and smooth micro-animations.
 - **Full Dark Mode**: A unified design system that adapts perfectly to dark and light modes across all modules, including the Pool Facility Control Center.
 - **Responsive Design**: Fully optimized for Desktop, Tablet, and Mobile devices.
+
+### 📅 Visual Verification: Dark Mode Calendar
+![Dark Mode Calendar Fix](/calendar_dark_mode_verification_1772001118316.png)
 
 ## 🛠️ Technology Stack
 
@@ -112,6 +117,24 @@ EMAIL_PASS=your_email_app_password
 ```env
 VITE_API_BASE_URL=http://localhost:4000/api
 ```
+
+## 🌐 Deployment (Render Blueprints)
+
+Comftay is optimized for one-click deployment using **Render Blueprints**. The root `render.yaml` file defines a multi-service architecture:
+
+### 1. Backend Service (Web Service)
+- **Runtime**: Node.js
+- **Environment**: Connection strings in `render.yaml` (link your own MongoDB Atlas cluster).
+- **CORS**: Automatically configured via the `FRONTEND_URL` environment variable.
+
+### 2. Frontend Site (Static Site)
+- **Runtime**: Static
+- **Internal Linking**: The frontend automatically resolves the backend API via the `VITE_API_BASE_URL` environment variable.
+
+### Quick Start Deployment
+1. Connect your GitHub repository to **Render**.
+2. Select **Blueprint** when prompted.
+3. Render will automatically detect `render.yaml` and provision all services.
 
 ## 📡 API Reference
 
