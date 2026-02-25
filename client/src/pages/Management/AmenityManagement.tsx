@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import DynamicIcon from '../../components/common/DynamicIcon';
+import { GridCardSkeleton } from '../../components/dashboard/DashboardSkeleton';
 
 const AmenityManagement = () => {
   const [amenities, setAmenities] = useState<Amenity[]>([]);
@@ -92,9 +93,7 @@ const AmenityManagement = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading ? (
-          <div className="col-span-full py-12 text-center text-spa-teal">
-            <Loader2 className="animate-spin mx-auto" size={32} />
-          </div>
+          <GridCardSkeleton count={8} />
         ) : amenities.length === 0 ? (
           <div className="col-span-full py-12 text-center text-muted-foreground border-2 border-dashed border-border rounded-txl">
             No amenities found. Add one to get started.

@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import toast from "react-hot-toast";
+import { GridCardSkeleton } from "../../components/dashboard/DashboardSkeleton";
 
 const RoomTypeManagement = () => {
   const navigate = useNavigate();
@@ -169,12 +170,7 @@ const RoomTypeManagement = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
           {loading ? (
-            <div className="col-span-full py-12 text-center">
-              <Loader2
-                className="animate-spin mx-auto text-spa-teal"
-                size={32}
-              />
-            </div>
+            <GridCardSkeleton count={6} />
           ) : filtered.length === 0 ? (
             <div className="col-span-full py-12 text-center text-muted-foreground">
               No room types found.

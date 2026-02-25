@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import type { RoomType } from '../types';
 import * as roomService from '../services/roomService';
 import { Button } from './ui/button';
-import { Loader2, ArrowRight, Users, BedDouble, Maximize } from 'lucide-react';
+import { ArrowRight, Users, BedDouble, Maximize } from 'lucide-react';
+import { RoomCardSkeleton } from './Rooms/RoomCardSkeleton';
 
 const FeaturedRooms = () => {
   const [featuredRooms, setFeaturedRooms] = useState<RoomType[]>([]);
@@ -30,9 +31,23 @@ const FeaturedRooms = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center p-12">
-        <Loader2 className="animate-spin text-primary" />
-      </div>
+      <section className="py-16 bg-secondary/30">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-end mb-8">
+            <div>
+              <div className="h-9 w-48 bg-muted rounded-md animate-pulse mb-2" />
+              <div className="h-5 w-64 bg-muted rounded-md animate-pulse" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i}>
+                <RoomCardSkeleton />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     );
   }
 

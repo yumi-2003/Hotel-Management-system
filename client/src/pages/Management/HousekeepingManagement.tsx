@@ -229,12 +229,16 @@ const HousekeepingManagement = () => {
               <tbody className="divide-y divide-border">
                 {loading && logs.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="py-24 text-center">
-                      <div className="flex flex-col items-center gap-4">
-                        <div className="w-16 h-16 border-4 border-spa-teal/20 border-t-spa-teal rounded-full animate-spin"></div>
-                        <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">
-                          Loading logs...
-                        </p>
+                    <td colSpan={5} className="px-8 py-6">
+                      <div className="space-y-4">
+                        {[...Array(5)].map((_, i) => (
+                          <div key={i} className="flex gap-6 items-center">
+                            <div className="h-12 flex-1 bg-slate-100 animate-pulse rounded-2xl" />
+                            <div className="h-12 flex-1 bg-slate-100 animate-pulse rounded-2xl" />
+                            <div className="h-12 flex-1 bg-slate-100 animate-pulse rounded-2xl" />
+                            <div className="h-12 w-24 bg-slate-100 animate-pulse rounded-2xl" />
+                          </div>
+                        ))}
                       </div>
                     </td>
                   </tr>

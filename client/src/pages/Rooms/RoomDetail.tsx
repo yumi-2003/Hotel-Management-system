@@ -9,6 +9,7 @@ import {
   Clock, Trash2, X, Check
 } from 'lucide-react';
 import { useAppSelector } from '../../hooks/redux';
+import { Skeleton } from '../../components/ui/skeleton';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL as string)?.replace('/api', '') || '';
 
@@ -96,8 +97,6 @@ const RoomDetail = () => {
 
     setSubmittingReview(true);
     try {
-      // For simplicity, we'll just handle "Create" here. 
-      // Backend update logic would be similar via roomService.updateReview if we add it.
       await roomService.createReview({
         roomTypeId: id,
         rating: reviewRating,
@@ -140,8 +139,43 @@ const RoomDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="animate-spin h-12 w-12 text-spa-teal" />
+      <div className="bg-background min-h-screen pb-12">
+        <div className="bg-background border-b border-border sticky top-0 z-40">
+          <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+            <Skeleton className="h-6 w-32" />
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex flex-col lg:flex-row gap-8">
+            <div className="lg:w-2/3 space-y-8">
+              <Skeleton className="aspect-[16/10] w-full rounded-2xl" />
+              <div className="flex gap-3">
+                {[...Array(4)].map((_, i) => (
+                  <Skeleton key={i} className="min-w-[100px] h-[75px] rounded-xl" />
+                ))}
+              </div>
+              <Skeleton className="h-12 w-full rounded-xl" />
+              <div className="space-y-4">
+                <Skeleton className="h-8 w-1/3" />
+                <Skeleton className="h-24 w-full" />
+              </div>
+            </div>
+            <div className="lg:w-1/3">
+              <div className="bg-card border border-border rounded-3xl p-8 space-y-6">
+                <Skeleton className="h-12 w-1/2" />
+                <Skeleton className="h-24 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+                <Skeleton className="h-16 w-full rounded-2xl" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

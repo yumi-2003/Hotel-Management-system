@@ -13,6 +13,7 @@ import { toast } from 'react-hot-toast';
 import type { HousekeepingLog } from '../types';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
+import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 
 interface DashboardData {
   kpi: {
@@ -106,11 +107,7 @@ const HousekeepingDashboard = () => {
   const availableRooms = data?.charts.roomStatusDistribution.find(d => d._id === 'available')?.count || 0;
 
   if (loading && !data) {
-    return (
-      <div className="container mx-auto px-4 py-8 flex justify-center items-center h-[60vh]">
-        <div className="animate-spin h-8 w-8 border-4 border-spa-teal border-t-transparent rounded-full"></div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (

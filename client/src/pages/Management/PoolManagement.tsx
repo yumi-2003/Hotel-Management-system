@@ -6,6 +6,7 @@ import {
 import { getPoolStatus, updatePoolStatus } from '../../services/poolService';
 import type { Pool } from '../../types';
 import { Button } from '../../components/ui/button';
+import { FormSkeleton } from '../../components/dashboard/DashboardSkeleton';
 
 const PoolManagement = () => {
   const [pool, setPool] = useState<Pool | null>(null);
@@ -75,11 +76,7 @@ const PoolManagement = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[60vh]">
-        <Loader2 className="animate-spin text-spa-teal h-12 w-12" />
-      </div>
-    );
+    return <FormSkeleton />;
   }
 
   return (

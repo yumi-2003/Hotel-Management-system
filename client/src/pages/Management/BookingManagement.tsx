@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   XCircle,
   Search,
-  Loader2,
   User,
   Key,
   Mail,
@@ -142,11 +141,17 @@ const BookingManagement = () => {
             <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
-                    <Loader2
-                      className="animate-spin mx-auto text-spa-teal"
-                      size={32}
-                    />
+                  <td colSpan={5} className="px-6 py-4">
+                    <div className="space-y-4">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className="flex gap-4 items-center">
+                          <div className="h-10 flex-1 bg-slate-100 animate-pulse rounded-lg" />
+                          <div className="h-10 flex-1 bg-slate-100 animate-pulse rounded-lg" />
+                          <div className="h-10 flex-1 bg-slate-100 animate-pulse rounded-lg" />
+                          <div className="h-10 w-24 bg-slate-100 animate-pulse rounded-lg" />
+                        </div>
+                      ))}
+                    </div>
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (

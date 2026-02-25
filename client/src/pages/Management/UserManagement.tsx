@@ -498,14 +498,17 @@ const UserManagement = () => {
             <tbody className="divide-y divide-border">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-16 text-center">
-                    <Loader2
-                      className="animate-spin mx-auto text-spa-teal"
-                      size={32}
-                    />
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      Loading users...
-                    </p>
+                  <td colSpan={6} className="px-6 py-4">
+                    <div className="space-y-4">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className="flex gap-4 items-center">
+                          <div className="h-10 flex-1 bg-slate-100 animate-pulse rounded-lg" />
+                          <div className="h-10 flex-1 bg-slate-100 animate-pulse rounded-lg" />
+                          <div className="h-10 flex-1 bg-slate-100 animate-pulse rounded-lg" />
+                          <div className="h-10 w-24 bg-slate-100 animate-pulse rounded-lg" />
+                        </div>
+                      ))}
+                    </div>
                   </td>
                 </tr>
               ) : filteredUsers.length === 0 ? (

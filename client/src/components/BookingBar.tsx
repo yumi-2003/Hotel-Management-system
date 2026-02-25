@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { fetchRoomTypes } from "@/store/slices/roomSlice";
 import { createReservation } from "@/store/slices/reservationSlice";
 import { fetchNotifications } from "@/store/slices/notificationSlice";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface BookingBarProps {
   initialRoomType?: string;
@@ -161,21 +162,22 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
           <div className="flex flex-col gap-2">
             <label className="text-sm font-bold text-foreground ml-1">Category</label>
             <div className="relative group">
-              <select
-                value={selectedRoomType}
-                onChange={(e) => setSelectedRoomType(e.target.value)}
-                disabled={roomsLoading}
-                className="w-full bg-background border border-border rounded-xl px-4 py-3 h-[52px] text-sm font-bold text-foreground outline-none appearance-none cursor-pointer disabled:opacity-50"
-              >
-                <option value="" disabled>
-                  {roomsLoading ? "Loading..." : "Select type"}
-                </option>
-                {roomTypes.map((type) => (
-                  <option key={type._id} value={type._id}>
-                    {type.typeName}
-                  </option>
-                ))}
-              </select>
+              {roomsLoading ? (
+                <Skeleton className="w-full h-[52px] rounded-xl" />
+              ) : (
+                <select
+                  value={selectedRoomType}
+                  onChange={(e) => setSelectedRoomType(e.target.value)}
+                  className="w-full bg-background border border-border rounded-xl px-4 py-3 h-[52px] text-sm font-bold text-foreground outline-none appearance-none cursor-pointer"
+                >
+                  <option value="" disabled>Select type</option>
+                  {roomTypes.map((type) => (
+                    <option key={type._id} value={type._id}>
+                      {type.typeName}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
           </div>
         </div>

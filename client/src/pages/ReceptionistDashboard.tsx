@@ -9,6 +9,7 @@ import {
   Key, Search, Loader2, Waves
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 
 
 const ReceptionistDashboard = () => {
@@ -47,11 +48,7 @@ const ReceptionistDashboard = () => {
   };
 
   if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8 flex justify-center items-center h-[60vh]">
-        <div className="animate-spin h-8 w-8 border-4 border-spa-teal border-t-transparent rounded-full"></div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   const todaysArrivals = data?.operational?.todaysArrivals || [];

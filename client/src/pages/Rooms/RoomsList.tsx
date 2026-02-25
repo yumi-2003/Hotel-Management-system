@@ -3,7 +3,8 @@ import type { RoomType, Amenity } from '../../types';
 import * as roomService from '../../services/roomService';
 import RoomListCard from '../../components/Rooms/RoomListCard';
 import RoomFilterSidebar from '../../components/Rooms/RoomFilterSidebar';
-import { Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { RoomListCardSkeleton } from '../../components/Rooms/RoomCardSkeleton';
 
 const RoomsList = () => {
   const [rooms, setRooms] = useState<RoomType[]>([]);
@@ -116,8 +117,28 @@ const RoomsList = () => {
 
   if (loading && rooms.length === 0) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      <div className="bg-background min-h-screen pb-12">
+        <div className="bg-primary/5 border-b border-border mb-8">
+          <div className="container mx-auto px-4 py-8">
+            <h1 className="text-3xl font-bold text-foreground">Find Your Perfect Room</h1>
+            <p className="text-muted-foreground mt-2">Discover comfort and luxury tailored to your needs</p>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row gap-8">
+            <aside className="w-full lg:w-1/4">
+              <div className="bg-card border border-border rounded-xl p-6 h-[600px] animate-pulse" />
+            </aside>
+            <main className="w-full lg:w-3/4">
+              <div className="space-y-6">
+                {[...Array(3)].map((_, i) => (
+                  <RoomListCardSkeleton key={i} />
+                ))}
+              </div>
+            </main>
+          </div>
+        </div>
       </div>
     );
   }
