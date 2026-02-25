@@ -9,24 +9,23 @@ services:
     startCommand: cd server && node dist/index.js
     envVars:
       - key: MONGODB_URI
-        sync: false
+        value: mongodb+srv://2026comftay:HMS2026@hms.gd4hhvq.mongodb.net/?appName=HMS
       - key: JWT_SECRET
-        generateValue: true
+        value: comftay2026
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 10000
-
       - key: CLOUDINARY_CLOUD_NAME
-        sync: false
+        value: 2026comftay
       - key: CLOUDINARY_API_KEY
-        sync: false
+        value: 296621169615335
       - key: CLOUDINARY_API_SECRET
-        sync: false
+        value: ri7KCFiANzLmLtbzMRTFQ9Gzu-U
     healthCheckPath: /
 
   # Frontend Static Site
-  - type: static
+  - type: web
     name: comftay-frontend
     env: static
     plan: free
@@ -39,7 +38,6 @@ services:
           name: comftay-backend
           type: web
           property: host
-        # Note: You may need to append /api to the VITE_API_BASE_URL depending on your setup
     routes:
       - type: rewrite
         source: /*
