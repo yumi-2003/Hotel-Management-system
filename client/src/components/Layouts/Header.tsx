@@ -80,7 +80,7 @@ const Header = () => {
   );
 
   return (
-    <header className="bg-card/60 backdrop-blur-lg shadow-md sticky top-0 z-50 border-b border-border">
+    <header className="bg-card shadow-md sticky top-0 z-50 border-b border-border">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link
           to="/"
@@ -217,7 +217,7 @@ const Header = () => {
 
       {/* Mobile drawer — use bg-card so it respects the theme */}
       <div
-        className={`fixed top-0 right-0 h-full w-[280px] bg-card z-50 md:hidden shadow-2xl transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-[280px] bg-background z-50 md:hidden shadow-2xl transform transition-transform duration-300 ease-in-out ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
