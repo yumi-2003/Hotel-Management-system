@@ -12,7 +12,6 @@ import {
   Settings,
   Key,
   ClipboardList,
-  BarChart3,
   UserPlus,
   Loader2,
   Waves,

@@ -75,11 +75,6 @@ const RoomTypeManagement = () => {
     fetchRoomTypes();
   }, [currentPage, searchTerm]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setCurrentPage(1); // Reset to first page when searching
-    fetchRoomTypes();
-  };
 
   const handleDelete = async (id: string) => {
     if (

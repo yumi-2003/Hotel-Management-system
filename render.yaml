@@ -27,8 +27,6 @@ services:
   # Frontend Static Site
   - type: static
     name: comftay-frontend
-    plan: free
-    region: oregon
     buildCommand: cd client && npm install && npm run build
     publishDir: client/dist
     envVars:

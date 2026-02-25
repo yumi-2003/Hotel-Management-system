@@ -28,7 +28,6 @@ interface RoomFilterSidebarProps {
 
   // Actions
   onReset: () => void;
-  totalRooms: number;
 }
 
 const RoomFilterSidebar = ({
@@ -45,7 +44,6 @@ const RoomFilterSidebar = ({
   capacity,
   setCapacity,
   onReset,
-  totalRooms,
 }: RoomFilterSidebarProps) => {
   
   const handleTypeChange = (type: string, checked: boolean) => {

@@ -150,7 +150,6 @@ const RoomsList = () => {
               capacity={capacity}
               setCapacity={(val) => { setCapacity(val); setCurrentPage(1); }}
               onReset={handleReset}
-              totalRooms={totalRooms}
             />
           </aside>
 
