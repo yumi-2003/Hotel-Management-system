@@ -25,10 +25,11 @@ services:
     healthCheckPath: /
 
   # Frontend Static Site
-  - type: static
+  - type: web
     name: comftay-frontend
+    runtime: static
     buildCommand: cd client && npm install && npm run build
-    publishDir: client/dist
+    staticPublishPath: client/dist
     envVars:
       - key: VITE_API_BASE_URL
         fromService:
