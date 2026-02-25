@@ -135,12 +135,18 @@ const createReservation = (req, res) => __awaiter(void 0, void 0, void 0, functi
         yield session.commitTransaction();
         session.endSession();
         // Create Notification for the guest
-        yield Notification_1.default.create({
-            recipient: guestId,
-            message: `Your reservation ${reservationCode} has been created and is pending confirmation.`,
-            type: Notification_1.NotificationType.SYSTEM,
-            link: '/my-reservations'
-        });
+        try {
+            const notif = yield Notification_1.default.create({
+                recipient: guestId,
+                message: `Your reservation ${reservationCode} has been created and is pending confirmation.`,
+                type: Notification_1.NotificationType.SYSTEM,
+                link: '/my-reservations'
+            });
+            console.log(`[NOTIFICATION_SUCCESS] Created notification for guest ${guestId}: ${notif._id}`);
+        }
+        catch (notifErr) {
+            console.error(`[NOTIFICATION_ERROR] Failed to create notification for guest ${guestId}:`, notifErr);
+        }
         res.status(201).json(reservation[0]);
     }
     catch (error) {
@@ -216,12 +222,18 @@ const updateReservationStatus = (req, res) => __awaiter(void 0, void 0, void 0, 
             return;
         }
         // Create Notification for the guest about status update
-        yield Notification_1.default.create({
-            recipient: reservation.guestId,
-            message: `Your reservation ${reservation.reservationCode} status has been updated to ${status}.`,
-            type: Notification_1.NotificationType.STATUS_UPDATE,
-            link: '/my-reservations'
-        });
+        try {
+            const notif = yield Notification_1.default.create({
+                recipient: reservation.guestId._id || reservation.guestId,
+                message: `Your reservation ${reservation.reservationCode} status has been updated to ${status}.`,
+                type: Notification_1.NotificationType.STATUS_UPDATE,
+                link: '/my-reservations'
+            });
+            console.log(`[NOTIFICATION_SUCCESS] Created status update notification for guest ${reservation.guestId}: ${notif._id}`);
+        }
+        catch (notifErr) {
+            console.error(`[NOTIFICATION_ERROR] Failed to create status update notification for guest ${reservation.guestId}:`, notifErr);
+        }
         res.json(mapReservationToFrontend(reservation));
     }
     catch (error) {

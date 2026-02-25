@@ -158,12 +158,18 @@ const createBooking = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         yield session.commitTransaction();
         session.endSession();
         // Create Notification for the guest
-        yield Notification_1.default.create({
-            recipient: guestId,
-            message: `Your booking ${booking.bookingCode} is confirmed. Thank you for choosing us!`,
-            type: Notification_1.NotificationType.SYSTEM,
-            link: '/my-reservations'
-        });
+        try {
+            const notif = yield Notification_1.default.create({
+                recipient: guestId,
+                message: `Your booking ${booking.bookingCode} is confirmed. Thank you for choosing us!`,
+                type: Notification_1.NotificationType.SYSTEM,
+                link: '/my-reservations'
+            });
+            console.log(`[NOTIFICATION_SUCCESS] Created booking confirmation notification for guest ${guestId}: ${notif._id}`);
+        }
+        catch (notifErr) {
+            console.error(`[NOTIFICATION_ERROR] Failed to create booking confirmation notification for guest ${guestId}:`, notifErr);
+        }
         res.status(201).json(booking);
     }
     catch (error) {
@@ -201,12 +207,18 @@ const confirmPayment = (req, res) => __awaiter(void 0, void 0, void 0, function*
         yield session.commitTransaction();
         session.endSession();
         // Create Notification for the guest
-        yield Notification_1.default.create({
-            recipient: booking.guestId,
-            message: `Payment for booking ${booking.bookingCode} was successfully confirmed.`,
-            type: Notification_1.NotificationType.STATUS_UPDATE,
-            link: '/my-reservations'
-        });
+        try {
+            const notif = yield Notification_1.default.create({
+                recipient: booking.guestId,
+                message: `Payment for booking ${booking.bookingCode} was successfully confirmed.`,
+                type: Notification_1.NotificationType.STATUS_UPDATE,
+                link: '/my-reservations'
+            });
+            console.log(`[NOTIFICATION_SUCCESS] Created payment confirmation notification for guest ${booking.guestId}: ${notif._id}`);
+        }
+        catch (notifErr) {
+            console.error(`[NOTIFICATION_ERROR] Failed to create payment confirmation notification for guest ${booking.guestId}:`, notifErr);
+        }
         res.json({ message: "Payment confirmed successfully", booking });
     }
     catch (error) {
@@ -333,12 +345,18 @@ const updateBookingStatus = (req, res) => __awaiter(void 0, void 0, void 0, func
             return;
         }
         // Create Notification for status change
-        yield Notification_1.default.create({
-            recipient: updatedBooking.guestId._id,
-            message: `Your booking ${updatedBooking.bookingCode} status has been updated to ${status}.`,
-            type: Notification_1.NotificationType.STATUS_UPDATE,
-            link: '/my-reservations'
-        });
+        try {
+            const notif = yield Notification_1.default.create({
+                recipient: updatedBooking.guestId._id,
+                message: `Your booking ${updatedBooking.bookingCode} status has been updated to ${status}.`,
+                type: Notification_1.NotificationType.STATUS_UPDATE,
+                link: '/my-reservations'
+            });
+            console.log(`[NOTIFICATION_SUCCESS] Created booking status update notification for guest ${updatedBooking.guestId._id}: ${notif._id}`);
+        }
+        catch (notifErr) {
+            console.error(`[NOTIFICATION_ERROR] Failed to create booking status update notification for guest ${updatedBooking.guestId._id}:`, notifErr);
+        }
         const bookingObj = updatedBooking.toObject();
         const standardizedResponse = Object.assign(Object.assign({}, bookingObj), { user: bookingObj.guestId, room: (_b = (_a = bookingObj.bookedRooms) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.roomId, guests: (bookingObj.adultsCount || 0) + (bookingObj.childrenCount || 0) });
         res.json(standardizedResponse);

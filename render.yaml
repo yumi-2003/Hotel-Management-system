@@ -1,0 +1,46 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: comftay-backend
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && node dist/index.js
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+    healthCheckPath: /
+
+  # Frontend Static Site
+  - type: static
+    name: comftay-frontend
+    env: static
+    plan: free
+    region: oregon
+    buildCommand: cd client && npm install && npm run build
+    publishDir: client/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          name: comftay-backend
+          type: web
+          property: host
+        # Note: You may need to append /api to the VITE_API_BASE_URL depending on your setup
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

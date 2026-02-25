@@ -3,7 +3,7 @@ import { Camera, Save, User, Mail, Phone, Shield, CheckCircle, Loader2 } from 'l
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { updateProfile, uploadProfileImage } from '../store/slices/authSlice';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string)?.replace('/api', '') || '';
 
 const ProfileSettings = () => {
   const { user, loading } = useAppSelector((state) => state.auth);

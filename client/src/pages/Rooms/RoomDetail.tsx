@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { useAppSelector } from '../../hooks/redux';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:5000';
+const API_BASE = (import.meta.env.VITE_API_BASE_URL as string)?.replace('/api', '') || '';
 
 const getAmenityIconName = (name: string, iconFromDb?: string) => {
   if (iconFromDb) return iconFromDb;

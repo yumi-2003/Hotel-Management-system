@@ -60,15 +60,26 @@ const profileRoutes_1 = __importDefault(require("./routes/profileRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const poolRoutes_1 = __importDefault(require("./routes/poolRoutes"));
 const notificationRoutes_1 = __importDefault(require("./routes/notificationRoutes"));
+const report_routes_1 = __importDefault(require("./routes/report.routes"));
 const Reservation_1 = __importStar(require("./models/Reservation"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 5000;
-app.use((0, cors_1.default)());
+// CORS configuration - Allow all in dev, but could be restricted in prod if desired
+// For Render deployment, we can allow the frontend domain
+const corsOptions = {
+    origin: process.env.NODE_ENV === 'production'
+        ? [process.env.FRONTEND_URL || '*'] // We'll add FRONTEND_URL to render.yaml or just allow * for now
+        : true,
+    credentials: true
+};
+app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 // Serve uploaded files
 app.use('/uploads', express_1.default.static(path_1.default.join(process.cwd(), 'uploads')));
 // Routes
+console.log('[SERVER] Initializing Notification Routes (v3)...');
+app.use('/api/notifications', notificationRoutes_1.default);
 app.use('/api/auth', authRoutes_1.default);
 app.use('/api/rooms', roomRoutes_1.default);
 app.use('/api/reservations', reservationRoutes_1.default);
@@ -78,7 +89,7 @@ app.use('/api/dashboard', dashboard_routes_1.default);
 app.use('/api/profile', profileRoutes_1.default);
 app.use('/api/users', userRoutes_1.default);
 app.use('/api/pool', poolRoutes_1.default);
-app.use('/api/notifications', notificationRoutes_1.default);
+app.use('/api/reports', report_routes_1.default);
 // Database connection
 const MONGODB_URI = process.env.MONGODB_URI;
 if (!MONGODB_URI) {

@@ -108,12 +108,19 @@ const assignHousekeepingTask = (req, res) => __awaiter(void 0, void 0, void 0, f
             $addToSet: { tasksAssigned: log._id }
         });
         // 2. Create Notification for the staff member
-        yield Notification_1.default.create({
-            recipient: staffId,
-            message: `You have been assigned a new task: ${log.task} for Room ${((_a = log.roomId) === null || _a === void 0 ? void 0 : _a.roomNumber) || '?'}.`,
-            type: Notification_1.NotificationType.ASSIGNMENT,
-            link: '/housekeeping/dashboard'
-        });
+        try {
+            const roomNumber = ((_a = log.roomId) === null || _a === void 0 ? void 0 : _a.roomNumber) || 'unknown';
+            const notif = yield Notification_1.default.create({
+                recipient: staffId,
+                message: `You have been assigned a new task: ${log.task} for Room ${roomNumber}.`,
+                type: Notification_1.NotificationType.ASSIGNMENT,
+                link: '/housekeeping/dashboard'
+            });
+            console.log(`[NOTIFICATION_SUCCESS] Created housekeeping notification for staff ${staffId}: ${notif._id}`);
+        }
+        catch (notifErr) {
+            console.error(`[NOTIFICATION_ERROR] Failed to create housekeeping notification for staff ${staffId}:`, notifErr);
+        }
         const populatedLog = yield HousekeepingLog_1.default.findById(log._id)
             .populate('roomId', 'roomNumber floor status')
             .populate('staffId', 'fullName email');

@@ -21,7 +21,16 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// CORS configuration - Allow all in dev, but could be restricted in prod if desired
+// For Render deployment, we can allow the frontend domain
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? [process.env.FRONTEND_URL || '*'] // We'll add FRONTEND_URL to render.yaml or just allow * for now
+    : true,
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Serve uploaded files
