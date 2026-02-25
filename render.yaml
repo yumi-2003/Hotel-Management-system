@@ -25,9 +25,8 @@ services:
     healthCheckPath: /
 
   # Frontend Static Site
-  - type: web
+  - type: static
     name: comftay-frontend
-    env: static
     plan: free
     region: oregon
     buildCommand: cd client && npm install && npm run build
