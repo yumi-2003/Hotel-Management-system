@@ -9,8 +9,16 @@ interface RoomTypeResponse {
 }
 
 export const getAllRoomTypes = async (params?: any): Promise<RoomTypeResponse> => {
-  const response = await api.get('/rooms/types', { params });
-  return response.data;
+  try {
+    const response = await api.get('/rooms/types', { params });
+    if (!response.data || !Array.isArray(response.data.roomTypes)) {
+      return { roomTypes: [], total: 0, page: 1, pages: 1 };
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error in getAllRoomTypes:", error);
+    return { roomTypes: [], total: 0, page: 1, pages: 1 };
+  }
 };
 
 export const createRoomType = async (data: any): Promise<RoomType> => {
@@ -34,8 +42,13 @@ export const getRoomTypeById = async (id: string): Promise<RoomType> => {
 };
 
 export const getAllAmenities = async (): Promise<any[]> => {
-  const response = await api.get('/rooms/amenities');
-  return response.data;
+  try {
+    const response = await api.get('/rooms/amenities');
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error("Error in getAllAmenities:", error);
+    return [];
+  }
 };
 
 export const createAmenity = async (data: any): Promise<any> => {
@@ -55,8 +68,13 @@ export const deleteAmenity = async (id: string): Promise<any> => {
 
 // Reviews
 export const getReviewsByRoomType = async (roomTypeId: string): Promise<any[]> => {
-  const response = await api.get(`/rooms/reviews/${roomTypeId}`);
-  return response.data;
+  try {
+    const response = await api.get(`/rooms/reviews/${roomTypeId}`);
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error("Error in getReviewsByRoomType:", error);
+    return [];
+  }
 };
 
 export const createReview = async (reviewData: any): Promise<any> => {
@@ -70,6 +88,11 @@ export const deleteReview = async (id: string): Promise<any> => {
 };
 
 export const getAllReviews = async (): Promise<any[]> => {
-  const response = await api.get('/rooms/reviews');
-  return response.data;
+  try {
+    const response = await api.get('/rooms/reviews');
+    return Array.isArray(response.data) ? response.data : [];
+  } catch (error) {
+    console.error("Error in getAllReviews:", error);
+    return [];
+  }
 };

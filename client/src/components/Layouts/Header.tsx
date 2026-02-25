@@ -80,7 +80,7 @@ const Header = () => {
   );
 
   return (
-    <header className="bg-card shadow-md sticky top-0 z-50 border-b border-border">
+    <header className="bg-card/60 backdrop-blur-lg shadow-md sticky top-0 z-50 border-b border-border">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <Link
           to="/"

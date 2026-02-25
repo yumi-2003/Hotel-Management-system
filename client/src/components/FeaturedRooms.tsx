@@ -14,7 +14,7 @@ const FeaturedRooms = () => {
     const fetchFeatured = async () => {
       try {
         const response = await roomService.getAllRoomTypes();
-        const rooms = response.roomTypes;
+        const rooms = response?.roomTypes || [];
         // Filter for featured rooms, or take top 3 if none featured
         const featured = rooms.filter(r => r.isFeatured);
         setFeaturedRooms(featured.length > 0 ? featured.slice(0, 3) : rooms.slice(0, 3));

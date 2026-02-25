@@ -81,9 +81,9 @@ const RoomsList = () => {
       // Let's assume we want to move logic to backend eventually. 
       // For now, the backend controller handles: search, minPrice, maxPrice, adults, children, amenities.
       
-      setRooms(data.roomTypes);
-      setTotalPages(data.pages);
-      setTotalRooms(data.total);
+      setRooms(data?.roomTypes || []);
+      setTotalPages(data?.pages || 1);
+      setTotalRooms(data?.total || 0);
       setError(null);
     } catch (err) {
       setError('Failed to load rooms. Please try again later.');
