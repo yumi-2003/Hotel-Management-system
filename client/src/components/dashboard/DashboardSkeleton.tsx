@@ -1,5 +1,6 @@
 import { Skeleton } from "../ui/skeleton";
 import { Card, CardContent, CardHeader } from "../ui/card";
+import { cn } from "../../lib/utils";
 
 export const StatsCardSkeleton = () => (
   <Card>
@@ -77,7 +78,7 @@ export const DashboardSkeleton = () => {
   );
 };
 
-export const TableSkeleton = ({ rows = 5 }: { rows?: number }) => (
+export const TableSkeleton = ({ rows = 5, cols = 4 }: { rows?: number; cols?: number }) => (
   <div className="space-y-4">
     <div className="flex justify-between items-center mb-6">
       <Skeleton className="h-9 w-48" />
@@ -87,16 +88,17 @@ export const TableSkeleton = ({ rows = 5 }: { rows?: number }) => (
       <div className="p-0">
         <div className="border-b border-border p-4">
           <div className="flex gap-4">
-            <Skeleton className="h-8 flex-1" />
-            <Skeleton className="h-8 flex-1" />
-            <Skeleton className="h-8 w-24" />
+            {[...Array(cols)].map((_, i) => (
+              <Skeleton key={i} className={`h-8 ${i === cols - 1 ? 'w-24 ml-auto' : 'flex-1'}`} />
+            ))}
           </div>
         </div>
         <div className="divide-y divide-border">
           {[...Array(rows)].map((_, i) => (
             <div key={i} className="p-4 flex gap-4 items-center">
-              <Skeleton className="h-12 flex-1 rounded-lg" />
-              <Skeleton className="h-12 flex-1 rounded-lg" />
+              {[...Array(cols - 1)].map((_, j) => (
+                <Skeleton key={j} className="h-12 flex-1 rounded-lg" />
+              ))}
               <div className="flex gap-2">
                 <Skeleton className="h-10 w-10 rounded-lg" />
                 <Skeleton className="h-10 w-10 rounded-lg" />
@@ -107,6 +109,10 @@ export const TableSkeleton = ({ rows = 5 }: { rows?: number }) => (
       </div>
     </Card>
   </div>
+);
+
+export const BadgeSkeleton = ({ className }: { className?: string }) => (
+  <Skeleton className={cn("h-6 w-24 rounded-full", className)} />
 );
 
 export const GridCardSkeleton = ({ count = 8 }: { count?: number }) => (

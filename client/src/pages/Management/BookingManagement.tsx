@@ -14,6 +14,7 @@ import {
   Mail,
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
+import { TableSkeleton } from "../../components/dashboard/DashboardSkeleton";
 
 const BookingManagement = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -142,16 +143,7 @@ const BookingManagement = () => {
               {loading ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-4">
-                    <div className="space-y-4">
-                      {[...Array(5)].map((_, i) => (
-                        <div key={i} className="flex gap-4 items-center">
-                          <div className="h-10 flex-1 bg-slate-100 animate-pulse rounded-lg" />
-                          <div className="h-10 flex-1 bg-slate-100 animate-pulse rounded-lg" />
-                          <div className="h-10 flex-1 bg-slate-100 animate-pulse rounded-lg" />
-                          <div className="h-10 w-24 bg-slate-100 animate-pulse rounded-lg" />
-                        </div>
-                      ))}
-                    </div>
+                    <TableSkeleton rows={5} cols={5} />
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (

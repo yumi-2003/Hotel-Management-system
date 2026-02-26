@@ -68,11 +68,26 @@ export default {
   				to: {
   					height: '0'
   				}
+  			},
+  			typing: {
+  				from: {
+  					width: '0'
+  				},
+  				to: {
+  					width: '100%'
+  				}
+  			},
+  			blink: {
+  				'50%': {
+  					borderColor: 'transparent'
+  				}
   			}
   		},
   		animation: {
   			'accordion-down': 'accordion-down 0.2s ease-out',
-  			'accordion-up': 'accordion-up 0.2s ease-out'
+  			'accordion-up': 'accordion-up 0.2s ease-out',
+  			typewriter: 'typing 4.5s steps(21) infinite, blink .7s infinite',
+  			'heroic-typewriter': 'typing 12s steps(110) forwards, blink .7s infinite 14s'
   		}
   	}
   },

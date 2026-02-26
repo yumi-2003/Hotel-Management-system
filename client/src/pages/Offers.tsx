@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Tag, Calendar, Sparkles, Percent, Timer, ArrowRight, Loader2 } from 'lucide-react';
+import { Tag, Calendar, Sparkles, Percent, Timer, ArrowRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import * as roomService from '../services/roomService';
 import type { RoomType } from '../types';
 import { useNavigate } from 'react-router-dom';
+import { Skeleton } from '../components/ui/skeleton';
 
 const Offers = () => {
   const [rooms, setRooms] = useState<RoomType[]>([]);
@@ -32,8 +33,36 @@ const Offers = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <Loader2 className="animate-spin text-spa-teal w-12 h-12" />
+      <div className="min-h-screen bg-background flex flex-col">
+        <section className="bg-[#0F2F2F] py-24 px-6 text-center">
+          <div className="max-w-4xl mx-auto">
+            <Skeleton className="h-6 w-32 mx-auto mb-6 rounded-full bg-white/10" />
+            <Skeleton className="h-16 w-full max-w-2xl mx-auto mb-6 bg-white/10" />
+            <Skeleton className="h-6 w-3/4 max-w-lg mx-auto bg-white/10" />
+          </div>
+        </section>
+        <section className="py-20 px-6 max-w-7xl mx-auto w-full">
+          <div className="space-y-12">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-card rounded-[2.5rem] overflow-hidden flex flex-col lg:flex-row border border-border">
+                <Skeleton className="lg:w-1/2 h-80 lg:h-[400px]" />
+                <div className="lg:w-1/2 p-10 lg:p-16 space-y-6">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-12 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <div className="space-y-4 py-8">
+                    <Skeleton className="h-10 w-48" />
+                    <Skeleton className="h-20 w-full" />
+                  </div>
+                  <div className="flex gap-4">
+                    <Skeleton className="h-16 w-40 rounded-2xl" />
+                    <Skeleton className="h-16 w-40 rounded-2xl" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
     );
   }

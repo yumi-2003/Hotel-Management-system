@@ -87,7 +87,9 @@ const Header = () => {
           onClick={closeMenu}
           className="hover:opacity-90 transition flex items-center gap-3"
         >
-          <span className="text-2xl font-bold text-spa-teal tracking-tight whitespace-nowrap">Comftay Resort Hotels</span>
+          <span className="text-2xl font-bold text-spa-teal tracking-tight whitespace-nowrap">
+            Comftay Resort Hotels
+          </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">

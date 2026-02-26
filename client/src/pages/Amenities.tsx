@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { 
   Wifi, Waves, Sparkles, Dumbbell, Utensils, Coffee, 
   Car, Wine, Sunset, 
-  Clock, Thermometer, Users, ShieldCheck, Loader2
+  Clock, Thermometer, Users, ShieldCheck
 } from 'lucide-react';
 import { getPoolStatus } from '../services/poolService';
 import type { Pool } from '../types';
+import { Skeleton } from '../components/ui/skeleton';
 
 const Amenities = () => {
   const [pool, setPool] = useState<Pool | null>(null);
@@ -77,7 +78,7 @@ const Amenities = () => {
               </p>
             </div>
             {loadingPool ? (
-              <Loader2 className="animate-spin text-spa-teal" />
+              <Skeleton className="h-12 w-48 rounded-2xl" />
             ) : pool && (
               <div className={`px-6 py-3 rounded-2xl border-2 font-black uppercase tracking-widest flex items-center gap-3 shadow-sm ${poolStatusColor(pool.status)}`}>
                 <div className="w-2 h-2 rounded-full animate-pulse bg-current" />

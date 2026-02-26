@@ -41,6 +41,7 @@ import ResetPassword from "./pages/ResetPassword";
 import BookingPage from "./pages/BookingPage";
 import BookingConfirmation from "./pages/BookingConfirmation";
 import PoolReservation from "./pages/PoolReservation";
+import NotFound from "./pages/NotFound";
 import { Toaster } from 'react-hot-toast';
 
 function App() {
@@ -239,6 +240,7 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/offers" element={<Offers />} />
           <Route path="/amenities" element={<Amenities />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </div>

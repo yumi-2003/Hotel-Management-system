@@ -17,10 +17,12 @@ const HeroSection = () => {
         <h1 className="text-6xl sm:text-7xl md:text-8xl font-black text-white leading-tight tracking-tight">
           Comftay
         </h1>
-        <p className="mt-6 text-base sm:text-lg md:text-xl text-white/90 max-w-3xl mx-auto font-medium">
-          Experience peaceful comfort with sustainable amenities and
-          personalized service in a serene natural setting
-        </p>
+        <div className="flex justify-center w-full">
+          <p className="mt-6 text-base sm:text-lg md:text-xl text-white/90 max-w-fit mx-auto font-medium overflow-hidden whitespace-nowrap border-r-2 border-white/50 animate-heroic-typewriter">
+            Experience peaceful comfort with sustainable amenities and
+            personalized service in a serene natural setting
+          </p>
+        </div>
         <div className="mt-12 flex justify-center">
           <Link
             to="/rooms"
