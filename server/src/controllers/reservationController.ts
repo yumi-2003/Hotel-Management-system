@@ -22,6 +22,13 @@ export const createReservation = async (req: AuthRequest, res: Response): Promis
       return;
     }
 
+    if (req.user?.role !== 'guest') {
+      res.status(403).json({ message: 'Only guest accounts can create reservations' });
+      await session.abortTransaction();
+      session.endSession();
+      return;
+    }
+
     if (!roomTypeId || !checkInStr || !checkOutStr || adultsCount === undefined) {
       res.status(400).json({ message: 'Missing required fields: roomType, checkInDate, checkOutDate, and adultsCount are required' });
       await session.abortTransaction();

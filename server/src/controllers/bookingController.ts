@@ -35,6 +35,13 @@ export const createBooking = async (
       return;
     }
 
+    if (req.user?.role !== "guest") {
+      res.status(403).json({ message: "Only guest accounts can create bookings" });
+      await session.abortTransaction();
+      session.endSession();
+      return;
+    }
+
     const checkInDate = new Date(checkInStr);
     const checkOutDate = new Date(checkOutStr);
 
