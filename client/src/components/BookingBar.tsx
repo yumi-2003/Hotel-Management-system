@@ -23,7 +23,7 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
   const navigate = useNavigate();
   
   const { roomTypes, loading: roomsLoading } = useAppSelector((state) => state.rooms);
-  const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const { loading: reservationLoading } = useAppSelector((state) => state.reservations);
 
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>(initialDates);
@@ -50,6 +50,11 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
   const handleBookNow = async () => {
     if (!isAuthenticated) {
       navigate("/login");
+      return;
+    }
+
+    if (user?.role !== 'guest') {
+      toast.error("Staff accounts cannot make reservations. Please use a guest account.");
       return;
     }
 
@@ -186,7 +191,7 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
             <Button
               type="button"
               onClick={handleBookNow}
-              disabled={!canSubmit || reservationLoading}
+              disabled={!canSubmit || reservationLoading || (isAuthenticated && user?.role !== 'guest')}
               className="bg-spa-teal hover:bg-spa-teal-dark text-white px-16 py-7 rounded-xl font-bold text-xl shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center gap-3"
             >
               {reservationLoading ? (

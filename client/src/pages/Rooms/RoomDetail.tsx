@@ -587,19 +587,27 @@ const RoomDetail = () => {
                   </ul>
                 </div>
 
-                <Button 
-                  size="lg" 
-                  onClick={() => {
-                    if (!isAuthenticated) {
-                      navigate('/login');
-                    } else {
-                      navigate(`/book?roomType=${room._id}`); 
-                    }
-                  }}
-                  className="w-full bg-spa-teal hover:bg-spa-teal-dark text-white rounded-2xl h-16 text-lg font-black shadow-lg shadow-spa-teal/20 transition-all hover:-translate-y-1"
-                >
-                  Reserve Now
-                </Button>
+                {!isAuthenticated || user?.role === 'guest' ? (
+                  <Button 
+                    size="lg" 
+                    onClick={() => {
+                      if (!isAuthenticated) {
+                        navigate('/login');
+                      } else {
+                        navigate(`/book?roomType=${room._id}`); 
+                      }
+                    }}
+                    className="w-full bg-spa-teal hover:bg-spa-teal-dark text-white rounded-2xl h-16 text-lg font-black shadow-lg shadow-spa-teal/20 transition-all hover:-translate-y-1"
+                  >
+                    Reserve Now
+                  </Button>
+                ) : (
+                  <div className="bg-muted/30 border border-dashed border-border p-4 rounded-2xl text-center">
+                    <p className="text-xs font-bold text-muted-foreground">
+                      Staff accounts cannot make reservations. Please log in with a guest account to book.
+                    </p>
+                  </div>
+                )}
                 
                 <p className="text-[11px] text-center text-muted-foreground font-medium px-4">
                   You won't be charged until you complete your reservation

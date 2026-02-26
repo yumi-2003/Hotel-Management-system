@@ -1,10 +1,23 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAppSelector } from '../hooks/redux';
+import { toast } from 'react-hot-toast';
 import BookingBar from '../components/BookingBar';
 
 const BookingPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  
   const searchParams = new URLSearchParams(location.search);
   const roomType = searchParams.get('roomType') || '';
+
+  useEffect(() => {
+    if (isAuthenticated && user?.role !== 'guest') {
+      toast.error('Staff accounts cannot make bookings. Please use a guest account.');
+      navigate('/');
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <div className="bg-background min-h-screen pt-24 pb-20 transition-colors">
