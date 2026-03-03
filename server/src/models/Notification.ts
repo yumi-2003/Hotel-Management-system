@@ -3,7 +3,9 @@ import mongoose, { Schema, Document } from 'mongoose';
 export enum NotificationType {
   ASSIGNMENT = 'assignment',
   STATUS_UPDATE = 'status_update',
-  SYSTEM = 'system'
+  SYSTEM = 'system',
+  CHECK_IN = 'check_in',
+  CHECK_OUT = 'check_out'
 }
 
 export interface INotification extends Document {

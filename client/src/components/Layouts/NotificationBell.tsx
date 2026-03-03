@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Bell, AlertTriangle, Calendar, CheckCircle2, Package, Loader2, Trash2 } from 'lucide-react'; // Added Loader2, Trash2
+import { Bell, Calendar, CheckCircle2, Package, Loader2, Trash2 } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { fetchNotifications, markAsRead, markAllNotificationsAsRead, deleteAllNotifications } from '../../store/slices/notificationSlice'; // Using notificationSlice
 import { formatDistanceToNow } from 'date-fns';
@@ -156,13 +156,19 @@ const NotificationBell = () => {
                       className="flex gap-3"
                     >
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                        notif.type === 'assignment' ? 'bg-spa-teal/10 text-spa-teal' : 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
+                        notif.type === 'assignment' ? 'bg-spa-teal/10 text-spa-teal' 
+                        : notif.type === 'check_in' ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                        : notif.type === 'check_out' ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
+                        : 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
                       }`}>
-                        {notif.type === 'assignment' ? <Package size={18} /> : <AlertTriangle size={18} />}
+                        {notif.type === 'assignment' ? <Package size={18} /> : <Calendar size={18} />}
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className={`text-sm mb-1 ${notif.isRead ? 'text-muted-foreground font-medium' : 'text-foreground font-bold'}`}>
-                          {notif.type === 'assignment' ? 'New Task Assigned' : 'Notification'}
+                          {notif.type === 'assignment' ? 'New Task Assigned'
+                            : notif.type === 'check_in' ? "Today's Check-ins"
+                            : notif.type === 'check_out' ? "Today's Check-outs"
+                            : 'Notification'}
                         </p>
                         <p className="text-xs text-muted-foreground leading-relaxed mb-1">{notif.message}</p>
                         <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-bold uppercase tracking-wider">

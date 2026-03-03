@@ -237,7 +237,7 @@ export interface Notification {
   _id: string;
   recipient: string | User;
   message: string;
-  type: 'assignment' | 'status_update' | 'system';
+  type: 'assignment' | 'status_update' | 'system' | 'check_in' | 'check_out';
   isRead: boolean;
   link?: string;
   createdAt: string;

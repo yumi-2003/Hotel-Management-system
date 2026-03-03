@@ -15,6 +15,7 @@ import poolRoutes from './routes/poolRoutes';
 import notificationRoutes from './routes/notificationRoutes';
 import reportRoutes from './routes/report.routes';
 import Reservation, { ReservationStatus } from './models/Reservation';
+import { scheduleDailyNotifications } from './utils/dailyNotificationJob';
 
 dotenv.config();
 
@@ -63,6 +64,8 @@ mongoose.connect(MONGODB_URI as string)
     console.log(' Successfully connected to MongoDB.');
     // Start auto-expiry job after successful connection
     startReservationExpiryJob();
+    // Start daily check-in/check-out notification job
+    scheduleDailyNotifications();
   })
   .catch((err) => {
     console.error(' MongoDB connection error:', err);

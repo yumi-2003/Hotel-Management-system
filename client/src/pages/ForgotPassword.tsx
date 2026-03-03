@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, ArrowLeft, Key, Loader2 } from 'lucide-react';
+import { Mail, ArrowLeft, Key, Loader2, Hotel } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../hooks/redux';
 import { forgotPassword, clearError, clearSuccessMessage } from '../store/slices/authSlice';
 
@@ -19,7 +19,6 @@ const ForgotPassword = () => {
     e.preventDefault();
     const result = await dispatch(forgotPassword({ email }));
     if (forgotPassword.fulfilled.match(result)) {
-      // Small delay before navigating to reset page to allow the user to see the success message
       setTimeout(() => {
         navigate('/reset-password', { state: { email } });
       }, 2000);
@@ -27,37 +26,50 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">
-      <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 border-none">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4 py-12 transition-colors duration-300">
+      {/* Decorative background blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-spa-teal/10 dark:bg-spa-teal/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-spa-mint/20 dark:bg-spa-mint/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative max-w-md w-full bg-card text-card-foreground rounded-3xl shadow-2xl border border-border p-8 transition-colors duration-300">
+        {/* Header */}
         <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-spa-teal/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <div className="flex items-center justify-center gap-2 mb-6">
+            <Hotel className="w-6 h-6 text-spa-teal" />
+            <span className="text-sm font-black tracking-[0.2em] uppercase text-spa-teal">Comftay Hotel</span>
+          </div>
+          <div className="w-16 h-16 bg-spa-teal/10 dark:bg-spa-teal/20 rounded-2xl flex items-center justify-center mx-auto mb-4 ring-1 ring-spa-teal/20">
             <Key className="w-8 h-8 text-spa-teal" />
           </div>
-          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Forgot Password?</h2>
-          <p className="text-slate-500 mt-2 font-medium">Enter your email to receive a 6-digit reset code</p>
+          <h2 className="text-3xl font-extrabold text-foreground tracking-tight">Forgot Password?</h2>
+          <p className="text-muted-foreground mt-2 font-medium">Enter your email to receive a 6-digit reset code</p>
         </div>
 
+        {/* Error */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg flex items-center gap-3">
-             <div className="flex-shrink-0 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">!</div>
-             <p className="text-sm font-semibold">{error}</p>
+          <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-400 rounded-r-lg flex items-center gap-3">
+            <div className="flex-shrink-0 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">!</div>
+            <p className="text-sm font-semibold">{error}</p>
           </div>
         )}
 
+        {/* Success */}
         {successMessage && (
-          <div className="mb-6 p-4 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-700 rounded-r-lg flex items-center gap-3">
-             <div className="flex-shrink-0 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xs font-bold">✓</div>
-             <p className="text-sm font-semibold">{successMessage}</p>
+          <div className="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border-l-4 border-emerald-500 text-emerald-700 dark:text-emerald-400 rounded-r-lg flex items-center gap-3">
+            <div className="flex-shrink-0 w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xs font-bold">✓</div>
+            <p className="text-sm font-semibold">{successMessage}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">
+            <label htmlFor="email" className="block text-xs font-bold text-muted-foreground uppercase tracking-wider ml-1">
               Email Address
             </label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-spa-teal transition-colors">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-muted-foreground group-focus-within:text-spa-teal transition-colors">
                 <Mail size={18} />
               </div>
               <input
@@ -66,7 +78,7 @@ const ForgotPassword = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full pl-11 pr-4 py-3.5 border border-slate-200 bg-slate-50 text-slate-900 rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal focus:bg-white outline-none transition-all font-medium"
+                className="w-full pl-11 pr-4 py-3.5 border border-input bg-background text-foreground rounded-2xl focus:ring-2 focus:ring-spa-teal/20 focus:border-spa-teal outline-none transition-all font-medium placeholder:text-muted-foreground/60"
                 placeholder="you@example.com"
               />
             </div>
@@ -86,8 +98,8 @@ const ForgotPassword = () => {
           </button>
         </form>
 
-        <div className="mt-8 text-center border-t border-slate-100 pt-8">
-          <Link to="/login" className="inline-flex items-center text-slate-500 hover:text-spa-teal font-bold transition-colors">
+        <div className="mt-8 text-center border-t border-border pt-8">
+          <Link to="/login" className="inline-flex items-center text-muted-foreground hover:text-spa-teal font-bold transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Login
           </Link>
