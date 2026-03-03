@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { Menu, X, Home, LogIn, UserPlus, LayoutDashboard, Calendar, LogOut, Settings, Sun, Moon } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { logoutUser } from "../../store/slices/authSlice";
@@ -93,31 +93,49 @@ const Header = () => {
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">
-          <Link
+          <NavLink
             to="/"
-            className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2 border border-border rounded-lg hover:border-spa-teal/30"
+            className={({ isActive }) => 
+              `transition font-medium text-sm lg:text-base px-4 py-2 border rounded-lg ${
+                isActive 
+                  ? "text-spa-teal border-spa-teal/50 bg-spa-teal/5 ring-1 ring-spa-teal/20" 
+                  : "text-foreground border-border hover:text-spa-teal hover:border-spa-teal/30 hover:bg-spa-teal/5"
+              }`
+            }
           >
             Home
-          </Link>
+          </NavLink>
 
           {isAuthenticated ? (
             <>
               {user?.role !== UserRole.GUEST && (
-                <Link
+                <NavLink
                   to={getDashboardLink()}
-                  className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2 border border-border rounded-lg hover:border-spa-teal/30"
+                  className={({ isActive }) => 
+                    `transition font-medium text-sm lg:text-base px-4 py-2 border rounded-lg ${
+                      isActive 
+                        ? "text-spa-teal border-spa-teal/50 bg-spa-teal/5 ring-1 ring-spa-teal/20" 
+                        : "text-foreground border-border hover:text-spa-teal hover:border-spa-teal/30 hover:bg-spa-teal/5"
+                    }`
+                  }
                 >
                   Dashboard
-                </Link>
+                </NavLink>
               )}
               
               {user?.role === UserRole.GUEST && (
-                <Link
+                <NavLink
                   to="/my-reservations"
-                  className="text-foreground hover:text-spa-teal transition font-medium text-sm lg:text-base px-4 py-2 border border-border rounded-lg hover:border-spa-teal/30"
+                  className={({ isActive }) => 
+                    `transition font-medium text-sm lg:text-base px-4 py-2 border rounded-lg ${
+                      isActive 
+                        ? "text-spa-teal border-spa-teal/50 bg-spa-teal/5 ring-1 ring-spa-teal/20" 
+                        : "text-foreground border-border hover:text-spa-teal hover:border-spa-teal/30 hover:bg-spa-teal/5"
+                    }`
+                  }
                 >
                   My Bookings
-                </Link>
+                </NavLink>
               )}
               <div className="flex items-center gap-4">
                 {isAuthenticated && <NotificationBell />}
@@ -157,14 +175,20 @@ const Header = () => {
                       </div>
 
                       <div className="p-2">
-                        <Link
+                        <NavLink
                           to="/profile"
                           onClick={() => setIsProfileOpen(false)}
-                          className="flex items-center gap-3 px-3 py-2.5 text-sm text-foreground hover:bg-spa-mint/10 hover:text-spa-teal rounded-xl transition font-medium"
+                          className={({ isActive }) => 
+                            `flex items-center gap-3 px-3 py-2.5 text-sm rounded-xl transition font-medium ${
+                              isActive 
+                                ? "bg-spa-teal/10 text-spa-teal" 
+                                : "text-foreground hover:bg-spa-mint/10 hover:text-spa-teal"
+                            }`
+                          }
                         >
                           <Settings size={16} className="text-muted-foreground" />
                           Profile Settings
-                        </Link>
+                        </NavLink>
                         <button
                           onClick={handleLogout}
                           className="flex items-center gap-3 w-full px-3 py-2.5 text-sm text-destructive hover:bg-destructive/5 rounded-xl transition font-medium"
@@ -308,14 +332,24 @@ const Header = () => {
 };
 
 const MobileNavLink = ({ to, icon, label, onClick }: { to: string; icon: React.ReactNode; label: string; onClick: () => void }) => (
-  <Link
+  <NavLink
     to={to}
     onClick={onClick}
-    className="flex items-center gap-4 p-4 text-foreground hover:text-spa-teal hover:bg-spa-mint/10 rounded-2xl transition font-bold"
+    className={({ isActive }) => 
+      `flex items-center gap-4 p-4 rounded-2xl transition font-bold ${
+        isActive 
+          ? "bg-spa-teal/10 text-spa-teal" 
+          : "text-foreground hover:text-spa-teal hover:bg-spa-mint/10"
+      }`
+    }
   >
-    <span className="text-muted-foreground">{icon}</span>
-    {label}
-  </Link>
+    {({ isActive }) => (
+      <>
+        <span className={isActive ? "text-spa-teal" : "text-muted-foreground"}>{icon}</span>
+        {label}
+      </>
+    )}
+  </NavLink>
 );
 
 export default Header;

@@ -156,15 +156,32 @@ const mapReservationToFrontend = (r: any) => {
 
 export const getMyReservations = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const reservations = await Reservation.find({ guestId: req.user?.id })
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 5;
+    const skip = (page - 1) * limit;
+
+    const query = { guestId: req.user?.id };
+    const totalReservations = await Reservation.countDocuments(query);
+    const reservations = await Reservation.find(query)
       .populate({
         path: 'reservedRooms.roomId',
         populate: { path: 'roomTypeId' }
       })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
     
     const mappedReservations = reservations.map(mapReservationToFrontend);
-    res.json(mappedReservations);
+    res.json({
+      reservations: mappedReservations,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalReservations / limit),
+        totalReservations,
+        hasNext: page * limit < totalReservations,
+        hasPrev: page > 1,
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching reservations', error });
   }
@@ -227,5 +244,49 @@ export const updateReservationStatus = async (req: Request, res: Response): Prom
     res.json(mapReservationToFrontend(reservation));
   } catch (error) {
     res.status(500).json({ message: 'Error updating reservation status', error });
+  }
+};
+export const cancelMyReservation = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const guestId = req.user?.id;
+
+    const reservation = await Reservation.findOne({ _id: id, guestId });
+
+    if (!reservation) {
+      res.status(404).json({ message: 'Reservation not found or unauthorized' });
+      return;
+    }
+
+    if (reservation.status !== ReservationStatus.PENDING) {
+      res.status(400).json({ message: 'Only pending reservations can be cancelled online. Please contact support.' });
+      return;
+    }
+
+    reservation.status = ReservationStatus.CANCELLED;
+    await reservation.save();
+
+    // Create Notification for the guest
+    try {
+      await Notification.create({
+        recipient: guestId,
+        message: `Your reservation ${reservation.reservationCode} has been cancelled successfully.`,
+        type: NotificationType.SYSTEM,
+        link: '/my-reservations'
+      });
+    } catch (notifErr) {
+      console.error(`[NOTIFICATION_ERROR] Failed to create cancellation notification for guest ${guestId}:`, notifErr);
+    }
+
+    const populatedReservation = await Reservation.findById(reservation._id)
+      .populate({
+        path: 'reservedRooms.roomId',
+        populate: { path: 'roomTypeId' }
+      });
+
+    res.json(mapReservationToFrontend(populatedReservation));
+  } catch (error) {
+    console.error('Cancel Reservation Error:', error);
+    res.status(500).json({ message: 'Error cancelling reservation', error });
   }
 };

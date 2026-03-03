@@ -6,12 +6,20 @@ interface ReservationState {
   reservations: Reservation[];
   loading: boolean;
   error: string | null;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalReservations: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  } | null;
 }
 
 const initialState: ReservationState = {
   reservations: [],
   loading: false,
   error: null,
+  pagination: null,
 };
 
 // Async thunks
@@ -33,17 +41,36 @@ export const createReservation = createAsyncThunk<
 );
 
 export const fetchMyReservations = createAsyncThunk<
-  Reservation[],
-  void,
+  { reservations: Reservation[]; pagination: any },
+  { page?: number; limit?: number } | void,
   { rejectValue: string }
 >(
   'reservations/fetchMy',
-  async (_, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const response = await api.get<Reservation[]>('/reservations/my');
+      const page = params && 'page' in params ? params.page : 1;
+      const limit = params && 'limit' in params ? params.limit : 10;
+      const response = await api.get<{ reservations: Reservation[]; pagination: any }>(`/reservations/my?page=${page}&limit=${limit}`);
       return response.data;
     } catch (error: any) {
       const message = error.response?.data?.message || 'Failed to fetch reservations';
+      return rejectWithValue(message);
+    }
+  }
+);
+
+export const cancelReservation = createAsyncThunk<
+  Reservation,
+  string,
+  { rejectValue: string }
+>(
+  'reservations/cancel',
+  async (reservationId, { rejectWithValue }) => {
+    try {
+      const response = await api.patch<Reservation>(`/reservations/my/${reservationId}/cancel`);
+      return response.data;
+    } catch (error: any) {
+      const message = error.response?.data?.message || 'Failed to cancel reservation';
       return rejectWithValue(message);
     }
   }
@@ -80,13 +107,32 @@ const reservationSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchMyReservations.fulfilled, (state, action: PayloadAction<Reservation[]>) => {
+      .addCase(fetchMyReservations.fulfilled, (state, action: PayloadAction<{ reservations: Reservation[]; pagination: any }>) => {
         state.loading = false;
-        state.reservations = action.payload;
+        state.reservations = action.payload.reservations;
+        state.pagination = action.payload.pagination;
       })
       .addCase(fetchMyReservations.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Failed to fetch reservations';
+      });
+
+    // Cancel reservation
+    builder
+      .addCase(cancelReservation.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(cancelReservation.fulfilled, (state, action: PayloadAction<Reservation>) => {
+        state.loading = false;
+        const index = state.reservations.findIndex(r => r._id === action.payload._id);
+        if (index !== -1) {
+          state.reservations[index] = action.payload;
+        }
+      })
+      .addCase(cancelReservation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to cancel reservation';
       });
   },
 });

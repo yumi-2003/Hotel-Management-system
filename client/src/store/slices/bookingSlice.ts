@@ -6,12 +6,20 @@ interface BookingState {
   bookings: Booking[];
   loading: boolean;
   error: string | null;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalBookings: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  } | null;
 }
 
 const initialState: BookingState = {
   bookings: [],
   loading: false,
   error: null,
+  pagination: null,
 };
 
 // Async thunks
@@ -50,14 +58,16 @@ export const fetchBookings = createAsyncThunk<
 );
 
 export const fetchMyBookings = createAsyncThunk<
-  Booking[],
-  void,
+  { bookings: Booking[]; pagination: any },
+  { page?: number; limit?: number } | void,
   { rejectValue: string }
 >(
   'bookings/fetchMy',
-  async (_, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const response = await api.get<Booking[]>('/bookings/my');
+      const page = params && 'page' in params ? params.page : 1;
+      const limit = params && 'limit' in params ? params.limit : 10;
+      const response = await api.get<{ bookings: Booking[]; pagination: any }>(`/bookings/my?page=${page}&limit=${limit}`);
       return response.data;
     } catch (error: any) {
       const message = error.response?.data?.message || 'Failed to fetch your bookings';
@@ -112,9 +122,10 @@ const bookingSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchMyBookings.fulfilled, (state, action: PayloadAction<Booking[]>) => {
+      .addCase(fetchMyBookings.fulfilled, (state, action: PayloadAction<{ bookings: Booking[]; pagination: any }>) => {
         state.loading = false;
-        state.bookings = action.payload;
+        state.bookings = action.payload.bookings;
+        state.pagination = action.payload.pagination;
       })
       .addCase(fetchMyBookings.rejected, (state, action) => {
         state.loading = false;

@@ -323,10 +323,28 @@ export const getMyBookings = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const bookings = await Booking.find({ guestId: req.user?.id })
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 5;
+    const skip = (page - 1) * limit;
+
+    const query = { guestId: req.user?.id };
+    const totalBookings = await Booking.countDocuments(query);
+    const bookings = await Booking.find(query)
       .populate("bookedRooms.roomId")
-      .sort({ createdAt: -1 });
-    res.json(bookings);
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.json({
+      bookings,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalBookings / limit),
+        totalBookings,
+        hasNext: page * limit < totalBookings,
+        hasPrev: page > 1,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Error fetching your bookings", error });
   }
