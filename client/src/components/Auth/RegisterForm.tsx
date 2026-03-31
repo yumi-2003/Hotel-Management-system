@@ -58,6 +58,15 @@ const RegisterForm = () => {
         <div className="max-w-md w-full animate-in zoom-in-95 duration-500 py-4">
           <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.1)] p-6 border border-border transform transition-all">
             <div className="text-center mb-4">
+              <Link
+                to="/"
+                className="inline-flex flex-col items-center gap-1 mb-3 text-spa-teal hover:text-spa-teal-dark transition-colors"
+              >
+                <span className="text-xs font-black tracking-[0.2em] uppercase">Comftay Resort</span>
+                <span className="text-[10px] font-semibold text-muted-foreground hover:text-spa-teal-dark transition-colors">
+                  Back to home
+                </span>
+              </Link>
               <div className="w-10 h-10 bg-spa-teal/10 rounded-lg flex items-center justify-center mx-auto mb-2 border border-spa-teal/20">
                 <ShieldCheck className="w-5 h-5 text-spa-teal" />
               </div>

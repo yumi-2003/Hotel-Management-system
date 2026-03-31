@@ -55,6 +55,15 @@ const LoginForm = () => {
         <div className="max-w-md w-full animate-in zoom-in-95 duration-500 py-4">
           <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.1)] p-8 border border-border transform transition-all">
             <div className="text-center mb-6">
+              <Link
+                to="/"
+                className="inline-flex flex-col items-center gap-1 mb-4 text-spa-teal hover:text-spa-teal-dark transition-colors"
+              >
+                <span className="text-sm font-black tracking-[0.2em] uppercase">Comftay Resort</span>
+                <span className="text-[11px] font-semibold text-muted-foreground hover:text-spa-teal-dark transition-colors">
+                  Back to home
+                </span>
+              </Link>
               <div className="w-12 h-12 bg-spa-teal/10 rounded-xl flex items-center justify-center mx-auto mb-3 border border-spa-teal/20">
                 <LogIn className="w-6 h-6 text-spa-teal" />
               </div>
