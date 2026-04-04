@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Navigate } from 'react-router-dom';
 import RoleBasedRoute from '../components/RoleBasedRoute';
