@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { RoomType, Amenity } from '../../types';
-import * as roomService from '../../services/roomService';
-import RoomListCard from '../../components/Rooms/RoomListCard';
-import RoomFilterSidebar from '../../components/Rooms/RoomFilterSidebar';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { RoomListCardSkeleton } from '../../components/Rooms/RoomCardSkeleton';
+import { useState, useEffect, useCallback } from "react";
+import type { RoomType, Amenity } from "../../types";
+import * as roomService from "../../services/roomService";
+import RoomListCard from "../../components/Rooms/RoomListCard";
+import RoomFilterSidebar from "../../components/Rooms/RoomFilterSidebar";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { RoomListCardSkeleton } from "../../components/Rooms/RoomCardSkeleton";
 
 const RoomsList = () => {
   const [rooms, setRooms] = useState<RoomType[]>([]);
@@ -33,21 +33,26 @@ const RoomsList = () => {
     try {
       const [allRoomsData, amenitiesData] = await Promise.all([
         roomService.getAllRoomTypes({ limit: 100 }), // Get all for filter discovery
-        roomService.getAllAmenities()
+        roomService.getAllAmenities(),
       ]);
 
       setAvailableAmenities(amenitiesData);
-      const types = Array.from(new Set(allRoomsData.roomTypes.map(r => r.typeName)));
+      const types = Array.from(
+        new Set(allRoomsData.roomTypes.map((r) => r.typeName)),
+      );
       setAvailableTypes(types);
 
+      // Determine min and max price for slider range based on available rooms
       if (allRoomsData.roomTypes.length > 0) {
-        const prices = allRoomsData.roomTypes.map(r => r.basePrice);
+        const prices = allRoomsData.roomTypes.map((r) => r.basePrice);
         const min = Math.min(...prices);
         const max = Math.max(...prices);
+        // Round to nearest 10 for better slider steps
         setMinPrice(Math.floor(min / 10) * 10);
         setMaxPrice(Math.ceil(max / 10) * 10);
         // Only set default price range if it hasn't been touched or is the default
         if (priceRange[0] === 0 && priceRange[1] === 1000) {
+          // Set initial price range to encompass all rooms
           setPriceRange([Math.floor(min / 10) * 10, Math.ceil(max / 10) * 10]);
         }
       }
@@ -56,38 +61,40 @@ const RoomsList = () => {
     }
   };
 
+  // Fetch rooms based on current filters and pagination why useCallback? Because we want to avoid unnecessary re-fetches when component re-renders for other reasons. It will only change when its dependencies change (filters, pagination).
   const fetchRooms = useCallback(async () => {
     try {
       setLoading(true);
+      // Build query params based on filters
       const params: any = {
         page: currentPage,
         limit,
         minPrice: priceRange[0],
         maxPrice: priceRange[1],
         adults: capacity.adults,
-        children: capacity.children
+        children: capacity.children,
       };
 
       if (selectedAmenities.length > 0) {
-        params.amenities = selectedAmenities.join(',');
+        params.amenities = selectedAmenities.join(",");
       }
 
       // Backend search/typeName filter could be added here if backend supported it better.
       // For now, let's keep it simple with what we implemented in the controller.
 
       const data = await roomService.getAllRoomTypes(params);
-      
-      // Since backend doesn't handle typeName filter yet, we filter client side 
-      // OR we update backend to handle typeNames as well. 
-      // Let's assume we want to move logic to backend eventually. 
+
+      // Since backend doesn't handle typeName filter yet, we filter client side
+      // OR we update backend to handle typeNames as well.
+      // Let's assume we want to move logic to backend eventually.
       // For now, the backend controller handles: search, minPrice, maxPrice, adults, children, amenities.
-      
+
       setRooms(data?.roomTypes || []);
       setTotalPages(data?.pages || 1);
       setTotalRooms(data?.total || 0);
       setError(null);
     } catch (err) {
-      setError('Failed to load rooms. Please try again later.');
+      setError("Failed to load rooms. Please try again later.");
       console.error(err);
     } finally {
       setLoading(false);
@@ -112,7 +119,7 @@ const RoomsList = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (loading && rooms.length === 0) {
@@ -120,8 +127,12 @@ const RoomsList = () => {
       <div className="bg-background min-h-screen pb-12">
         <div className="bg-primary/5 border-b border-border mb-8">
           <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold text-foreground">Find Your Perfect Room</h1>
-            <p className="text-muted-foreground mt-2">Discover comfort and luxury tailored to your needs</p>
+            <h1 className="text-3xl font-bold text-foreground">
+              Find Your Perfect Room
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Discover comfort and luxury tailored to your needs
+            </p>
           </div>
         </div>
 
@@ -148,8 +159,12 @@ const RoomsList = () => {
       {/* Header */}
       <div className="bg-primary/5 border-b border-border mb-8">
         <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl font-bold text-foreground">Find Your Perfect Room</h1>
-          <p className="text-muted-foreground mt-2">Discover comfort and luxury tailored to your needs</p>
+          <h1 className="text-3xl font-bold text-foreground">
+            Find Your Perfect Room
+          </h1>
+          <p className="text-muted-foreground mt-2">
+            Discover comfort and luxury tailored to your needs
+          </p>
         </div>
       </div>
 
@@ -159,17 +174,29 @@ const RoomsList = () => {
           <aside className="w-full lg:w-1/4">
             <RoomFilterSidebar
               priceRange={priceRange}
-              setPriceRange={(val) => { setPriceRange(val); setCurrentPage(1); }}
+              setPriceRange={(val) => {
+                setPriceRange(val);
+                setCurrentPage(1);
+              }}
               minPrice={minPrice}
               maxPrice={maxPrice}
               availableTypes={availableTypes}
               selectedTypes={selectedTypes}
-              setSelectedTypes={(val) => { setSelectedTypes(val); setCurrentPage(1); }}
+              setSelectedTypes={(val) => {
+                setSelectedTypes(val);
+                setCurrentPage(1);
+              }}
               availableAmenities={availableAmenities}
               selectedAmenities={selectedAmenities}
-              setSelectedAmenities={(val) => { setSelectedAmenities(val); setCurrentPage(1); }}
+              setSelectedAmenities={(val) => {
+                setSelectedAmenities(val);
+                setCurrentPage(1);
+              }}
               capacity={capacity}
-              setCapacity={(val) => { setCapacity(val); setCurrentPage(1); }}
+              setCapacity={(val) => {
+                setCapacity(val);
+                setCurrentPage(1);
+              }}
               onReset={handleReset}
             />
           </aside>
@@ -178,20 +205,28 @@ const RoomsList = () => {
           <main className="w-full lg:w-3/4">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold text-muted-foreground">
-                Showing <span className="text-foreground font-bold">{totalRooms}</span> rooms
+                Showing{" "}
+                <span className="text-foreground font-bold">{totalRooms}</span>{" "}
+                rooms
               </h2>
             </div>
 
             {error ? (
               <div className="text-center py-12 bg-card border border-border rounded-xl">
                 <p className="text-destructive mb-4">{error}</p>
-                <button onClick={fetchRooms} className="text-primary underline">Retry</button>
+                <button onClick={fetchRooms} className="text-primary underline">
+                  Retry
+                </button>
               </div>
             ) : rooms.length === 0 ? (
               <div className="text-center py-12 bg-card border border-border rounded-xl">
-                <h3 className="text-lg font-medium text-foreground">No rooms found</h3>
-                <p className="text-muted-foreground mb-4">Try adjusting your filters to find more options.</p>
-                <button 
+                <h3 className="text-lg font-medium text-foreground">
+                  No rooms found
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Try adjusting your filters to find more options.
+                </p>
+                <button
                   onClick={handleReset}
                   className="text-primary hover:underline font-medium"
                 >
@@ -216,20 +251,22 @@ const RoomsList = () => {
                     >
                       <ChevronLeft size={20} />
                     </button>
-                    
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => handlePageChange(page)}
-                        className={`w-10 h-10 rounded-lg border font-medium transition-colors ${
-                          currentPage === page
-                            ? 'bg-primary text-primary-foreground border-primary shadow-md'
-                            : 'bg-card text-foreground border-border hover:bg-secondary'
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    ))}
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page)}
+                          className={`w-10 h-10 rounded-lg border font-medium transition-colors ${
+                            currentPage === page
+                              ? "bg-primary text-primary-foreground border-primary shadow-md"
+                              : "bg-card text-foreground border-border hover:bg-secondary"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ),
+                    )}
 
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}

@@ -50,6 +50,11 @@ const AUTH_ROUTES = ["/login", "/register"];
 function AppLayout() {
   const location = useLocation();
   const isAuthPage = AUTH_ROUTES.includes(location.pathname);
+  const isStaffDashboard = location.pathname.startsWith('/admin') ||
+                           location.pathname.startsWith('/manager') ||
+                           location.pathname.startsWith('/receptionist') ||
+                           location.pathname.startsWith('/housekeeping') ||
+                           location.pathname.startsWith('/staff');
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -246,7 +251,7 @@ function AppLayout() {
         <Route path="/amenities" element={<Amenities />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {!isAuthPage && <Footer />}
+      {!isAuthPage && !isStaffDashboard && <Footer />}
     </div>
   );
 }
