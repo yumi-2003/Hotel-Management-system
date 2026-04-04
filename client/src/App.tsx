@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 import Header from "./components/Layouts/Header";
@@ -55,6 +56,10 @@ function AppLayout() {
                            location.pathname.startsWith('/receptionist') ||
                            location.pathname.startsWith('/housekeeping') ||
                            location.pathname.startsWith('/staff');
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div className="flex flex-col min-h-screen">
