@@ -11,30 +11,30 @@ This document provides a visual representation of the data models and their rela
 
 ```mermaid
 erDiagram
-    User ||--o{ Booking : ""
-    User ||--o{ Reservation : ""
-    User ||--o{ Payment : ""
-    User ||--o{ HousekeepingLog : ""
-    User ||--o{ Notification : ""
-    User ||--o{ Review : ""
-    User ||--o{ PoolReservation : ""
-    User ||--o{ Pool : ""
+    User ||--o{ Booking : "makes"
+    User ||--o{ Reservation : "makes"
+    User ||--o{ Payment : "makes"
+    User ||--o{ HousekeepingLog : "assigned to"
+    User ||--o{ Notification : "receives"
+    User ||--o{ Review : "writes"
+    User ||--o{ PoolReservation : "books"
+    User ||--o{ Pool : "updates"
 
-    RoomType ||--o{ Room : ""
-    RoomType ||--o{ Review : ""
-    RoomType }o--o{ Amenity : ""
+    RoomType ||--o{ Room : "categorizes"
+    RoomType ||--o{ Review : "receives"
+    RoomType }o--o{ Amenity : "includes"
 
-    Room ||--o{ Booking : ""
-    Room ||--o{ Reservation : ""
-    Room ||--o{ HousekeepingLog : ""
-    Room ||--o{ PoolReservation : ""
+    Room ||--o{ Booking : "has"
+    Room ||--o{ Reservation : "has"
+    Room ||--o{ HousekeepingLog : "has"
+    Room ||--o{ PoolReservation : "links to"
 
-    Booking ||--o| Reservation : ""
-    Booking ||--o| Payment : ""
-    Payment ||--|| Booking : ""
+    Booking ||--o| Reservation : "links to"
+    Booking ||--o| Payment : "has"
+    Payment ||--|| Booking : "pays for"
 
-    Pool ||--o{ PoolReservation : ""
-    PoolSlot ||--o{ PoolReservation : ""
+    Pool ||--o{ PoolReservation : "has"
+    PoolSlot ||--o{ PoolReservation : "reserved in"
 
     User {
         string fullName
