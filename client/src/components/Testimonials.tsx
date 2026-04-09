@@ -1,6 +1,7 @@
-import { Star, Loader2 } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import * as roomService from '../services/roomService';
+import { Skeleton } from './ui/skeleton';
 
 const testimonials = [
   {
@@ -52,8 +53,38 @@ const Testimonials = () => {
   if (loading) {
     return (
       <section className="py-16 bg-background">
-        <div className="container mx-auto px-4 flex justify-center">
-          <Loader2 className="animate-spin text-primary" />
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-4">
+              <Skeleton className="h-10 w-64" />
+            </div>
+            <div className="flex justify-center">
+              <Skeleton className="h-4 w-full max-w-2xl" />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-card p-8 rounded-2xl shadow-sm border border-border">
+                <div className="flex gap-1 mb-6">
+                  {[...Array(5)].map((_, j) => (
+                    <Skeleton key={j} className="h-4 w-4 rounded-full" />
+                  ))}
+                </div>
+                <div className="space-y-3 mb-6">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                </div>
+                <div className="flex items-center gap-4">
+                  <Skeleton className="w-12 h-12 rounded-full" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-3 w-32" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     );

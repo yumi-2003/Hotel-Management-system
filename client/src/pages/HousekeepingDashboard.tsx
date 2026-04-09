@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getDashboardStats } from '../services/api';
 import { getAllHousekeepingLogs, updateHousekeepingStatus } from '../services/housekeepingService';
+import { getPoolStatus } from '../services/poolService';
 import StatsCard from '../components/dashboard/StatsCard';
 import RoomStatusChart from '../components/dashboard/RoomStatusChart';
 import { 
@@ -10,7 +11,7 @@ import {
   Play, CheckCircle2, Clock, Waves
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import type { HousekeepingLog } from '../types';
+import type { HousekeepingLog, Pool } from '../types';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../store';
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
@@ -31,6 +32,7 @@ interface DashboardData {
 const HousekeepingDashboard = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const [data, setData] = useState<DashboardData | null>(null);
+  const [pool, setPool] = useState<Pool | null>(null);
   const [tasks, setTasks] = useState<HousekeepingLog[]>([]);
   const [history, setHistory] = useState<HousekeepingLog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,12 +43,14 @@ const HousekeepingDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [stats, activeLogs, historyLogs] = await Promise.all([
+      const [stats, activeLogs, historyLogs, poolData] = await Promise.all([
         getDashboardStats(),
         getAllHousekeepingLogs({ status: ['dirty', 'cleaning'].join(',') }),
-        getAllHousekeepingLogs({ status: 'clean' })
+        getAllHousekeepingLogs({ status: 'clean' }),
+        getPoolStatus().catch(() => null)
       ]);
       setData(stats);
+      setPool(poolData);
       
       const filterUserTasks = (logs: HousekeepingLog[]) => {
         if (user?.role === 'housekeeping') {
@@ -146,7 +150,7 @@ const HousekeepingDashboard = () => {
         />
       </div>
 
-      {data?.charts.roomStatusDistribution.find(d => d._id === 'cleaning') && (
+      {pool?.status === 'cleaning' && (
         <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-[2rem] flex items-center justify-between gap-6 animate-pulse">
           <div className="flex items-center gap-4">
              <div className="w-12 h-12 bg-blue-500 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">

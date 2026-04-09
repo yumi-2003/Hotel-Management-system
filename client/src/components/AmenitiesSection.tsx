@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import * as roomService from "../services/roomService";
-import { Loader2 } from "lucide-react";
+import { Skeleton } from "./ui/skeleton";
 import DynamicIcon from "./common/DynamicIcon";
 
 const getIconName = (name: string, iconFromDb?: string) => {
@@ -61,9 +61,25 @@ export default function AmenitiesSection() {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-12">
-        <Loader2 className="animate-spin text-spa-teal" />
-      </div>
+      <section className="bg-muted/30 dark:bg-background py-12 sm:py-16">
+        <div className="max-w-6xl mx-auto px-5 sm:px-6 text-center">
+          <div className="flex justify-center mb-4">
+            <Skeleton className="h-10 w-64" />
+          </div>
+          <div className="flex justify-center">
+            <Skeleton className="h-4 w-full max-w-2xl" />
+          </div>
+
+          <div className="mt-10 sm:mt-12 grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6 sm:gap-10">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="flex flex-col items-center gap-3 sm:gap-4">
+                <Skeleton className="w-16 h-16 sm:w-20 sm:h-20 rounded-full" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     );
   }
 

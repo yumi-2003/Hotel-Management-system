@@ -103,6 +103,44 @@ const PoolManagement = () => {
           </div>
         )}
 
+        {/* Dynamic Cleaning Offer Banner */}
+        {((new Date().getHours() >= 21) || formData.status === 'closed') && formData.status !== 'cleaning' && (
+          <div className="mb-8 p-6 rounded-3xl border bg-amber-500/10 border-amber-500/20 flex flex-col sm:flex-row items-center gap-6 justify-between animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                <Clock className="text-amber-600 dark:text-amber-400" size={24} />
+              </div>
+              <div>
+                <h3 className="font-black text-amber-600 dark:text-amber-400 text-lg uppercase tracking-widest">End of Day Procedure</h3>
+                <p className="text-foreground/80 font-bold mt-1">The pool is past 9:00 PM or closed. Hand over to Housekeeping for cleaning?</p>
+              </div>
+            </div>
+            <Button 
+              type="button"
+              disabled={saving}
+              onClick={async () => {
+                setSaving(true);
+                setMessage(null);
+                try {
+                  const updatedData = { ...formData, status: 'cleaning' };
+                  const updatedPool = await updatePoolStatus(updatedData);
+                  setPool(updatedPool);
+                  setFormData(prev => ({ ...prev, status: 'cleaning' }));
+                  setMessage({ type: 'success', text: 'Cleaning requested! Housekeeping notified.' });
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                } catch (error) {
+                  setMessage({ type: 'error', text: 'Failed to notify Housekeeping.' });
+                } finally {
+                  setSaving(false);
+                }
+              }}
+              className="shrink-0 h-14 px-8 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-amber-500/20 transition-all hover:-translate-y-1"
+            >
+              Offer Cleaning State
+            </Button>
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Status Section */}
