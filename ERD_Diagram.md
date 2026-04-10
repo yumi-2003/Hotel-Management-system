@@ -37,6 +37,7 @@ erDiagram
     PoolSlot ||--o{ PoolReservation : "reserved in"
 
     User {
+        ObjectId _id PK
         string fullName
         string email
         string phone
@@ -44,12 +45,16 @@ erDiagram
         string profileImage
         string role
         string status
-        string resetCode
-        date resetExpires
-        string tasks
+        string resetPasswordCode
+        date resetPasswordExpires
+        ObjectId[] tasksAssigned FK
+        date createdAt
+        date updatedAt
     }
 
     RoomType {
+        ObjectId _id PK
+        ObjectId[] amenities FK
         string typeName
         string description
         int basePrice
@@ -58,116 +63,150 @@ erDiagram
         int maxGuests
         string bedType
         int sizeSqm
-        string images
-        string amenities
+        string[] images
         int rating
         int numReviews
         int discount
         boolean isActive
         boolean isFeatured
+        date createdAt
+        date updatedAt
     }
 
     Room {
+        ObjectId _id PK
+        ObjectId roomTypeId FK
         string roomNumber
-        string typeId
         int floor
         string status
         string notes
+        date createdAt
+        date updatedAt
     }
 
     Amenity {
+        ObjectId _id PK
         string name
         string icon
         boolean isActive
+        date createdAt
+        date updatedAt
     }
 
     Booking {
+        ObjectId _id PK
+        ObjectId reservationId FK
+        ObjectId guestId FK
+        ObjectId paymentId FK
         string bookingCode
-        string reservationId
-        string guestId
-        date checkIn
-        date checkOut
-        int adults
-        int children
+        date checkInDate
+        date checkOutDate
+        int adultsCount
+        int childrenCount
         string status
-        int subtotal
-        int tax
-        int total
-        string paymentId
+        int subtotalAmount
+        int taxAmount
+        int totalPrice
+        date createdAt
+        date updatedAt
     }
 
     Reservation {
+        ObjectId _id PK
+        ObjectId guestId FK
         string reservationCode
-        string guestId
-        date checkIn
-        date checkOut
-        int adults
-        int children
-        int rooms
-        int subtotal
-        int tax
-        int total
+        date checkInDate
+        date checkOutDate
+        int adultsCount
+        int childrenCount
+        int roomsCount
+        int subtotalAmount
+        int taxAmount
+        int totalAmount
         string status
         date expiresAt
+        date createdAt
+        date updatedAt
     }
 
     Payment {
-        string bookingId
-        string guestId
+        ObjectId _id PK
+        ObjectId bookingId FK
+        ObjectId guestId FK
         int amount
         string currency
-        string method
+        string paymentMethod
         string status
         string transactionId
+        date createdAt
+        date updatedAt
     }
 
     HousekeepingLog {
-        string roomId
-        string staffId
+        ObjectId _id PK
+        ObjectId roomId FK
+        ObjectId staffId FK
         string status
         string task
         string note
+        date createdAt
+        date updatedAt
     }
 
     Notification {
-        string recipient
+        ObjectId _id PK
+        ObjectId recipient FK
         string message
         string type
         boolean isRead
         string link
+        date createdAt
+        date updatedAt
     }
 
     Review {
-        string userId
-        string roomTypeId
+        ObjectId _id PK
+        ObjectId userId FK
+        ObjectId roomTypeId FK
         int rating
         string comment
+        date createdAt
+        date updatedAt
     }
 
     Pool {
+        ObjectId _id PK
+        ObjectId updatedBy FK
         string name
         string status
-        int occupancy
-        int capacity
-        int temp
-        string open
-        string close
+        int currentOccupancy
+        int maxCapacity
+        int temperature
+        string openingTime
+        string closingTime
         string notes
-        string updatedBy
+        date createdAt
+        date updatedAt
     }
 
     PoolSlot {
+        ObjectId _id PK
         string startTime
         string endTime
         int maxPeople
-        int reserved
+        int currentReserved
         string date
+        date createdAt
+        date updatedAt
     }
 
     PoolReservation {
-        string userId
-        string roomId
-        string slotId
+        ObjectId _id PK
+        ObjectId userId FK
+        ObjectId roomId FK
+        ObjectId slotId FK
         string status
+        date createdAt
+        date updatedAt
     }
 ```
