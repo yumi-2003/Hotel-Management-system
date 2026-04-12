@@ -1,17 +1,347 @@
 import { useEffect, useState } from 'react';
 import { getDashboardStats } from '../services/api';
 import { updateBookingStatus, confirmBookingPayment } from '../services/bookingService';
+import { getAllHousekeepingLogs, updateHousekeepingStatus, createHousekeepingLog } from '../services/housekeepingService';
+import { getAllRooms } from '../services/individualRoomService';
+import { getAllUsers } from '../services/api';
 import { toast } from 'react-hot-toast';
 import StatsCard from '../components/dashboard/StatsCard';
 import RoomStatusChart from '../components/dashboard/RoomStatusChart';
+import type { HousekeepingLog, Room, User } from '../types';
 import { 
   Users, CheckCircle2, 
-  Key, Search, Loader2, Waves
+  Key, Search, Loader2, Waves,
+  Brush, AlertCircle, ListChecks, Clock,
+  Play, Plus, RefreshCw, ExternalLink,
+  UserPlus, Filter
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 
+/* ─────────────────────────────────────────────────────────
+   Housekeeping Panel (embedded inside Receptionist Dashboard)
+───────────────────────────────────────────────────────── */
+const HousekeepingPanel = () => {
+  const [tasks, setTasks] = useState<HousekeepingLog[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [staff, setStaff] = useState<User[]>([]);
+  const [hkLoading, setHkLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
+  const [history, setHistory] = useState<HousekeepingLog[]>([]);
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter]  = useState('');
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newLog, setNewLog] = useState({ roomId: '', staffId: '', status: 'dirty', task: 'Routine Cleaning', note: '' });
 
+  const fetchHK = async () => {
+    try {
+      setHkLoading(true);
+      const [activeLogs, historyLogs, roomsData, staffData] = await Promise.all([
+        getAllHousekeepingLogs({ status: statusFilter || ['dirty', 'cleaning'].join(',') }),
+        getAllHousekeepingLogs({ status: 'clean' }),
+        getAllRooms(),
+        getAllUsers({ role: 'housekeeping' }),
+      ]);
+      setTasks(activeLogs.filter((l: any) => l.assignedTo));
+      setHistory(historyLogs.filter((l: any) => l.assignedTo));
+      const roomList = roomsData.rooms || [];
+      setRooms(roomList);
+      setStaff(staffData.users || []);
+      if (roomList.length > 0 && !newLog.roomId) {
+        setNewLog(prev => ({ ...prev, roomId: roomList[0]._id }));
+      }
+    } catch (err) {
+      console.error('Failed to load housekeeping data', err);
+    } finally {
+      setHkLoading(false);
+    }
+  };
+
+  useEffect(() => { fetchHK(); }, [statusFilter]);
+
+  const handleStatusUpdate = async (id: string, newStatus: string) => {
+    try {
+      setUpdatingId(id);
+      await updateHousekeepingStatus(id, newStatus);
+      toast.success(`Task updated to ${newStatus}`);
+      fetchHK();
+    } catch {
+      toast.error('Failed to update task status');
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const handleAddLog = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createHousekeepingLog(newLog);
+      toast.success('Housekeeping task created!');
+      setShowAddModal(false);
+      fetchHK();
+    } catch {
+      toast.error('Failed to create task');
+    }
+  };
+
+  const getStatusStyle = (status: string) => {
+    if (status === 'clean') return 'bg-emerald-100 text-emerald-700';
+    if (status === 'cleaning') return 'bg-sky-100 text-sky-700';
+    return 'bg-rose-100 text-rose-700';
+  };
+
+  const displayList = activeTab === 'active' ? tasks : history;
+
+  return (
+    <div className="space-y-6">
+      {/* Section header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-spa-teal rounded-2xl flex items-center justify-center shadow-lg shadow-spa-teal/20">
+            <Brush size={20} className="text-white" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-foreground">Housekeeping Tasks</h2>
+            <p className="text-xs text-muted-foreground">Monitor and manage room cleaning operations</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={fetchHK}
+            className="p-2 rounded-xl border border-border hover:bg-muted transition"
+          >
+            <RefreshCw size={16} className={hkLoading ? 'animate-spin text-spa-teal' : 'text-muted-foreground'} />
+          </button>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center gap-2 bg-spa-teal hover:bg-spa-teal/90 text-white px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-spa-teal/20"
+          >
+            <Plus size={14} /> New Task
+          </button>
+          <Link
+            to="/staff/housekeeping"
+            className="flex items-center gap-2 border border-border hover:border-spa-teal text-muted-foreground hover:text-spa-teal px-4 py-2 rounded-xl font-bold text-xs uppercase tracking-wider transition-all"
+          >
+            <ExternalLink size={14} /> Full View
+          </Link>
+        </div>
+      </div>
+
+      {/* Stats strip */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-rose-100 flex items-center justify-center">
+            <AlertCircle size={16} className="text-rose-500" />
+          </div>
+          <div>
+            <div className="text-xl font-black text-foreground">{tasks.filter(t => t.status === 'dirty').length}</div>
+            <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Dirty</div>
+          </div>
+        </div>
+        <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-sky-100 flex items-center justify-center">
+            <Clock size={16} className="text-sky-500" />
+          </div>
+          <div>
+            <div className="text-xl font-black text-foreground">{tasks.filter(t => t.status === 'cleaning').length}</div>
+            <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Cleaning</div>
+          </div>
+        </div>
+        <div className="bg-card border border-border rounded-2xl p-4 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center">
+            <CheckCircle2 size={16} className="text-emerald-500" />
+          </div>
+          <div>
+            <div className="text-xl font-black text-foreground">{history.length}</div>
+            <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">Completed</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Panel */}
+      <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
+        {/* Toolbar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-6 pt-6 pb-4 border-b border-border">
+          <div className="flex bg-muted p-1 rounded-xl">
+            <button
+              onClick={() => setActiveTab('active')}
+              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'active' ? 'bg-background text-spa-teal shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              Active
+            </button>
+            <button
+              onClick={() => setActiveTab('history')}
+              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest transition-all ${activeTab === 'history' ? 'bg-background text-spa-teal shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              History
+            </button>
+          </div>
+          {activeTab === 'active' && (
+            <div className="relative">
+              <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+              <select
+                value={statusFilter}
+                onChange={e => setStatusFilter(e.target.value)}
+                className="pl-9 pr-4 py-2 rounded-xl text-xs font-bold bg-muted/30 border border-border outline-none focus:border-spa-teal appearance-none cursor-pointer"
+              >
+                <option value="">All Active</option>
+                <option value="dirty">Dirty</option>
+                <option value="cleaning">Cleaning</option>
+              </select>
+            </div>
+          )}
+        </div>
+
+        {/* Task list */}
+        <div className="divide-y divide-border">
+          {hkLoading ? (
+            <div className="py-12 flex items-center justify-center gap-3 text-muted-foreground">
+              <Loader2 size={20} className="animate-spin text-spa-teal" />
+              <span className="text-sm font-bold">Loading tasks…</span>
+            </div>
+          ) : displayList.length === 0 ? (
+            <div className="py-16 text-center">
+              <div className="w-14 h-14 bg-muted rounded-full flex items-center justify-center mx-auto mb-3">
+                {activeTab === 'active' ? <CheckCircle2 size={28} className="text-muted-foreground" /> : <ListChecks size={28} className="text-muted-foreground" />}
+              </div>
+              <p className="text-sm font-bold text-muted-foreground">
+                {activeTab === 'active' ? 'No active housekeeping tasks.' : 'Completed task history is empty.'}
+              </p>
+            </div>
+          ) : (
+            displayList.map(task => (
+              <div key={task._id} className="flex items-center justify-between gap-4 px-6 py-4 hover:bg-muted/30 transition group">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className={`w-12 h-12 rounded-2xl flex flex-col items-center justify-center font-black flex-shrink-0 ${
+                    task.status === 'clean' ? 'bg-emerald-500 text-white' :
+                    task.status === 'cleaning' ? 'bg-sky-500 text-white' :
+                    'bg-amber-100 text-amber-700'
+                  }`}>
+                    <span className="text-[9px] uppercase leading-none">Rm</span>
+                    <span className="text-base leading-none">{(task.room as any)?.roomNumber}</span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-sm text-foreground truncate">{task.task}</div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${getStatusStyle(task.status)}`}>
+                        {task.status}
+                      </span>
+                      {(task.assignedTo as any)?.fullName && (
+                        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                          <UserPlus size={10} /> {(task.assignedTo as any).fullName}
+                        </span>
+                      )}
+                      <span className="text-[10px] text-muted-foreground">• Floor {(task.room as any)?.floor || '?'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {activeTab === 'active' && (
+                  <div className="flex items-center gap-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {task.status === 'dirty' && (
+                      <button
+                        disabled={updatingId === task._id}
+                        onClick={() => handleStatusUpdate(task._id, 'cleaning')}
+                        className="flex items-center gap-1.5 bg-sky-500 hover:bg-sky-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition disabled:opacity-50"
+                      >
+                        {updatingId === task._id ? <Loader2 size={10} className="animate-spin" /> : <Play size={10} />}
+                        Start
+                      </button>
+                    )}
+                    {task.status === 'cleaning' && (
+                      <button
+                        disabled={updatingId === task._id}
+                        onClick={() => handleStatusUpdate(task._id, 'clean')}
+                        className="flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition disabled:opacity-50"
+                      >
+                        {updatingId === task._id ? <Loader2 size={10} className="animate-spin" /> : <CheckCircle2 size={10} />}
+                        Finish
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="px-6 py-4 border-t border-border bg-muted/20 flex justify-between items-center">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            {displayList.length} task{displayList.length !== 1 ? 's' : ''}
+          </p>
+          <Link to="/staff/housekeeping" className="text-xs font-bold text-spa-teal hover:underline flex items-center gap-1">
+            Manage all tasks <ExternalLink size={11} />
+          </Link>
+        </div>
+      </div>
+
+      {/* Add Task Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
+          <div className="bg-card rounded-[2rem] p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-300 border border-white/10">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-black text-foreground tracking-tight">New Housekeeping Task</h2>
+              <button onClick={() => setShowAddModal(false)} className="text-muted-foreground hover:text-foreground">
+                <Plus size={22} className="rotate-45" />
+              </button>
+            </div>
+            <form onSubmit={handleAddLog} className="space-y-5">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Room</label>
+                <select required value={newLog.roomId} onChange={e => setNewLog({ ...newLog, roomId: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground appearance-none cursor-pointer">
+                  {rooms.map(r => (
+                    <option key={r._id} value={r._id} className="bg-card">
+                      Room {r.roomNumber} ({r.roomType && typeof r.roomType === 'object' ? r.roomType.typeName : 'Standard'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Assign Staff</label>
+                <select value={newLog.staffId} onChange={e => setNewLog({ ...newLog, staffId: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground appearance-none cursor-pointer">
+                  <option value="" className="bg-card">Select Staff Member</option>
+                  {staff.map(s => <option key={s._id} value={s._id} className="bg-card">{s.fullName}</option>)}
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Task Type</label>
+                <select value={newLog.task} onChange={e => setNewLog({ ...newLog, task: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground appearance-none cursor-pointer">
+                  <option className="bg-card">Routine Cleaning</option>
+                  <option className="bg-card">Deep Cleaning</option>
+                  <option className="bg-card">Maintenance Check</option>
+                  <option className="bg-card">Turn down Service</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Notes (optional)</label>
+                <textarea value={newLog.note} onChange={e => setNewLog({ ...newLog, note: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border focus:border-spa-teal outline-none min-h-[100px] font-medium text-foreground resize-none placeholder:text-muted-foreground/40"
+                  placeholder="Special instructions…" />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowAddModal(false)}
+                  className="flex-1 py-3 rounded-xl border border-border font-bold text-muted-foreground hover:bg-muted transition text-sm">
+                  Cancel
+                </button>
+                <button type="submit"
+                  className="flex-1 py-3 rounded-xl bg-spa-teal hover:bg-spa-teal/90 text-white font-black uppercase tracking-wider text-sm shadow-lg shadow-spa-teal/20 transition">
+                  Create Task
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/* ─────────────────────────────────────────────────────────
+   Main Receptionist Dashboard
+───────────────────────────────────────────────────────── */
 const ReceptionistDashboard = () => {
   const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
@@ -91,7 +421,7 @@ const ReceptionistDashboard = () => {
               <Waves size={24} />
             </div>
             <div>
-              <h3 className="font-bold text-foreground">Pool & Spa</h3>
+              <h3 className="font-bold text-foreground">Pool &amp; Spa</h3>
               <p className="text-[10px] text-muted-foreground">Manage facility status</p>
             </div>
           </div>
@@ -210,6 +540,9 @@ const ReceptionistDashboard = () => {
             )}
           </div>
       </div>
+
+      {/* ── Housekeeping Section ── */}
+      <HousekeepingPanel />
     </div>
   );
 };

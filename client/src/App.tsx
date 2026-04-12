@@ -240,7 +240,7 @@ function AppLayout() {
         <Route
           path="/staff/housekeeping"
           element={
-            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.HOUSEKEEPING]}>
+            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.RECEPTIONIST, UserRole.HOUSEKEEPING]}>
               <HousekeepingManagement />
             </RoleBasedRoute>
           }
