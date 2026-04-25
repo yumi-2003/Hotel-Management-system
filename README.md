@@ -13,7 +13,7 @@ Comftay is a premium, full-stack hotel management solution designed to streamlin
 ### 👤 User Roles & Dashboards
 - **Admin**: Full system control, user management, and core configuration.
 - **Manager**: Operational analytics, staff performance, and revenue reporting.
-- **Receptionist**: Efficient front-desk operations including Check-in/Check-out flows and reservation oversight.
+- **Receptionist**: Efficient front-desk operations including Check-in/Check-out flows, reservation oversight, and active housekeeping management access.
 - **Housekeeping**: Mobile-optimized task list for cleaning assignments and room status reporting.
 - **Guest**: Seamless booking experience, profile management, and reservation history tracking.
 
@@ -31,6 +31,12 @@ Comftay is a premium, full-stack hotel management solution designed to streamlin
 - **Premium Aesthetics**: Glassmorphism elements, vibrant color palettes, and smooth micro-animations.
 - **Full Dark Mode**: A unified design system that adapts perfectly to dark and light modes across all modules.
 - **Responsive Design**: Fully optimized for Desktop, Tablet, and Mobile devices.
+- **Skeleton Loading UX**: Instant UI feedback with skeleton loaders for dynamic sections, ensuring zero layout shift.
+
+---
+
+## 📚 Documentation
+For detailed workflows and instructions for every user role, please refer to our full [User Guide](./USER_GUIDE.md).
 
 ---
 
@@ -45,6 +51,7 @@ Comftay is a premium, full-stack hotel management solution designed to streamlin
 | **Media** | Cloudinary (Image storage & transformation) |
 | **Comms** | Nodemailer (Email notifications) |
 | **Reporting**| ExcelJS, PDFKit, PDFKit-Table |
+| **Testing** | Jest, Supertest (Backend Integration & Unit Tests) |
 
 ---
 
