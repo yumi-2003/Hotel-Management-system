@@ -1,13 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
-export enum RoomStatus {
-  AVAILABLE = 'available',
-  RESERVED = 'reserved',
-  OCCUPIED = 'occupied',
-  CLEANING = 'cleaning',
-  DIRTY = 'dirty',
-  MAINTENANCE = 'maintenance'
-}
+import { RoomStatus } from '../types/enums';
 
 export interface IRoom extends Document {
   roomNumber: string;

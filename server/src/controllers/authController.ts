@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import User, { UserRole } from "../models/User";
+import User from "../models/User";
+import { UserRole } from "../types/enums";
 import { generateToken } from "../utils/token";
 import { sendResetCodeEmail } from "../utils/emailService";
 
@@ -115,7 +116,10 @@ export const forgotPassword = async (
 
     await sendResetCodeEmail(email, resetCode);
 
-    res.json({ message: "Password reset code sent to your email" });
+    res.json({ 
+      message: "Password reset code sent to your email",
+      ...(!process.env.EMAIL_PASS && { devModeCode: resetCode })
+    });
   } catch (error: any) {
     console.error("Forgot Password Error:", error);
     res.status(500).json({

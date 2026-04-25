@@ -129,7 +129,15 @@ function AppLayout() {
         <Route
           path="/admin/users"
           element={
-            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}>
+            <RoleBasedRoute allowedRoles={[UserRole.ADMIN]}>
+              <UserManagement />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/manager/users"
+          element={
+            <RoleBasedRoute allowedRoles={[UserRole.MANAGER]}>
               <UserManagement />
             </RoleBasedRoute>
           }
@@ -139,7 +147,7 @@ function AppLayout() {
         <Route
           path="/admin/rooms"
           element={
-            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}>
+            <RoleBasedRoute allowedRoles={[UserRole.ADMIN]}>
               <RoomTypeManagement />
             </RoleBasedRoute>
           }
@@ -147,7 +155,7 @@ function AppLayout() {
         <Route
           path="/admin/rooms/new"
           element={
-            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}>
+            <RoleBasedRoute allowedRoles={[UserRole.ADMIN]}>
               <RoomTypeForm />
             </RoleBasedRoute>
           }
@@ -155,7 +163,7 @@ function AppLayout() {
         <Route
           path="/admin/rooms/edit/:id"
           element={
-            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}>
+            <RoleBasedRoute allowedRoles={[UserRole.ADMIN]}>
               <RoomTypeForm />
             </RoleBasedRoute>
           }
@@ -163,7 +171,39 @@ function AppLayout() {
         <Route
           path="/admin/amenities"
           element={
-            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}>
+            <RoleBasedRoute allowedRoles={[UserRole.ADMIN]}>
+              <AmenityManagement />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/manager/rooms"
+          element={
+            <RoleBasedRoute allowedRoles={[UserRole.MANAGER]}>
+              <RoomTypeManagement />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/manager/rooms/new"
+          element={
+            <RoleBasedRoute allowedRoles={[UserRole.MANAGER]}>
+              <RoomTypeForm />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/manager/rooms/edit/:id"
+          element={
+            <RoleBasedRoute allowedRoles={[UserRole.MANAGER]}>
+              <RoomTypeForm />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="/manager/amenities"
+          element={
+            <RoleBasedRoute allowedRoles={[UserRole.MANAGER]}>
               <AmenityManagement />
             </RoleBasedRoute>
           }
@@ -173,7 +213,7 @@ function AppLayout() {
         <Route
           path="/manager/dashboard"
           element={
-            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}>
+            <RoleBasedRoute allowedRoles={[UserRole.MANAGER]}>
               <ManagerDashboard />
             </RoleBasedRoute>
           }
@@ -200,7 +240,7 @@ function AppLayout() {
         <Route
           path="/manager/housekeeping/assignment"
           element={
-            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}>
+            <RoleBasedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.RECEPTIONIST]}>
               <HousekeepingAssignment />
             </RoleBasedRoute>
           }

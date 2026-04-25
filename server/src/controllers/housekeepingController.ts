@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import HousekeepingLog, { HousekeepingStatus } from '../models/HousekeepingLog';
-import Room, { RoomStatus } from '../models/Room';
+import HousekeepingLog from '../models/HousekeepingLog';
+import Room from '../models/Room';
 import { AuthRequest } from '../middleware/auth';
 import User from '../models/User';
-import Notification, { NotificationType } from '../models/Notification';
+import Notification from '../models/Notification';
+import { HousekeepingStatus, RoomStatus, NotificationType } from '../types/enums';
 
 export const createHousekeepingLog = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
@@ -28,6 +29,11 @@ export const createHousekeepingLog = async (req: AuthRequest, res: Response): Pr
       task: req.body.task || 'Routine Cleaning',
       note
     });
+
+    if (!log) {
+      res.status(500).json({ message: 'Failed to create housekeeping log' });
+      return;
+    }
 
     await Room.findByIdAndUpdate(finalRoomId, { status: finalStatus });
 
@@ -139,17 +145,32 @@ export const updateHousekeepingStatus = async (req: AuthRequest, res: Response):
 export const getHousekeepingLogs = async (req: Request, res: Response): Promise<void> => {
   try {
     const { status } = req.query;
+    const page = Number.parseInt(req.query.page as string, 10) || 1;
+    const limit = Number.parseInt(req.query.limit as string, 10) || 10;
+    const skip = (page - 1) * limit;
     const query: any = {};
     if (status) {
       query.status = { $in: (status as string).split(',') };
     }
 
+    const totalHousekeepingLogs = await HousekeepingLog.countDocuments(query);
     const logs = await HousekeepingLog.find(query)
       .populate('roomId', 'roomNumber floor status')
       .populate('staffId', 'fullName email')
-      .sort({ updatedAt: -1 });
+      .sort({ updatedAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
-    res.json(logs.map(mapLogToFrontend));
+    res.json({
+      logs: logs.map(mapLogToFrontend),
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalHousekeepingLogs / limit) || 1,
+        totalHousekeepingLogs,
+        hasNext: page * limit < totalHousekeepingLogs,
+        hasPrev: page > 1,
+      },
+    });
   } catch (error) {
     console.error('Error fetching housekeeping logs:', error);
     res.status(500).json({ message: 'Error fetching housekeeping logs', error });

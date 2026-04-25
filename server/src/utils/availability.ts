@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
-import Reservation, { ReservationStatus } from '../models/Reservation';
-import Booking, { BookingStatus } from '../models/Booking';
-import Room, { RoomStatus } from '../models/Room';
+import Reservation from '../models/Reservation';
+import Booking from '../models/Booking';
+import Room from '../models/Room';
+import { ReservationStatus, BookingStatus, RoomStatus } from '../types/enums';
 
 /**
  * Checks if a specific room is available for a given date range.

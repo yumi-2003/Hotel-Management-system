@@ -1,10 +1,48 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Eye, EyeOff, LogIn, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, LogIn, Mail, Lock, Shield, Briefcase, Headphones, Sparkles, User } from 'lucide-react';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { loginUser, clearError } from '../../store/slices/authSlice';
 import { getDashboardRoute } from '../../utils/roleUtils';
 import hero1 from '../../assets/images/hero1.jpg';
+
+const demoAccounts = [
+  {
+    role: 'Admin',
+    email: 'admin@test.com',
+    password: 'Password123!',
+    icon: Shield,
+    accent: 'text-rose-600 bg-rose-50 border-rose-200',
+  },
+  {
+    role: 'Manager',
+    email: 'manager@test.com',
+    password: 'Password123!',
+    icon: Briefcase,
+    accent: 'text-indigo-600 bg-indigo-50 border-indigo-200',
+  },
+  {
+    role: 'Receptionist',
+    email: 'receptionist@test.com',
+    password: 'Password123!',
+    icon: Headphones,
+    accent: 'text-sky-600 bg-sky-50 border-sky-200',
+  },
+  {
+    role: 'Housekeeping',
+    email: 'hk@test.com',
+    password: 'Password123!',
+    icon: Sparkles,
+    accent: 'text-emerald-600 bg-emerald-50 border-emerald-200',
+  },
+  {
+    role: 'Guest',
+    email: 'guest@test.com',
+    password: 'Password123!',
+    icon: User,
+    accent: 'text-amber-600 bg-amber-50 border-amber-200',
+  },
+] as const;
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -33,8 +71,14 @@ const LoginForm = () => {
     }
   };
 
+  const applyDemoAccount = (account: (typeof demoAccounts)[number]) => {
+    dispatch(clearError());
+    setEmail(account.email);
+    setPassword(account.password);
+  };
+
   return (
-    <div className="h-screen flex items-stretch bg-background overflow-hidden">
+    <div className="min-h-screen flex items-stretch bg-background overflow-y-auto">
       {/* Hero Image Side */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <img 
@@ -51,8 +95,8 @@ const LoginForm = () => {
       </div>
 
       {/* Form Side */}
-      <div className="flex-1 flex items-center justify-center p-4 lg:p-8 bg-muted/30">
-        <div className="max-w-md w-full animate-in zoom-in-95 duration-500 py-4">
+      <div className="flex-1 flex items-center justify-center p-4 lg:p-8 bg-muted/30 min-h-screen">
+        <div className="max-w-md w-full animate-in zoom-in-95 duration-500 py-6">
           <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.1)] p-8 border border-border transform transition-all">
             <div className="text-center mb-6">
               <Link
@@ -69,6 +113,46 @@ const LoginForm = () => {
               </div>
               <h2 className="text-2xl font-extrabold text-foreground tracking-tight">Welcome Back</h2>
               <p className="text-muted-foreground mt-1 text-sm font-medium">Sign in to your account</p>
+            </div>
+
+            <div className="mb-6 rounded-2xl border border-border bg-muted/30 p-4">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <div>
+                  <h3 className="text-sm font-black text-foreground">Demo Accounts</h3>
+                  <p className="text-[11px] text-muted-foreground font-medium">
+                    Tap any role to autofill email and password.
+                  </p>
+                </div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-spa-teal">
+                  Password123!
+                </div>
+              </div>
+              <div className="space-y-2">
+                {demoAccounts.map((account) => {
+                  const Icon = account.icon;
+                  return (
+                    <button
+                      key={account.role}
+                      type="button"
+                      onClick={() => applyDemoAccount(account)}
+                      className="w-full flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-3 py-2.5 text-left hover:border-spa-teal/40 hover:bg-spa-teal/[0.03] transition-all"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={`w-9 h-9 rounded-xl border flex items-center justify-center ${account.accent}`}>
+                          <Icon size={16} />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-black text-foreground">{account.role}</div>
+                          <div className="text-[11px] text-muted-foreground truncate">{account.email}</div>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-widest text-spa-teal">
+                        Use
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
             {error && (

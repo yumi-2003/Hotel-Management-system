@@ -8,6 +8,8 @@ import {
 import { Button } from '../../components/ui/button';
 import DynamicIcon from '../../components/common/DynamicIcon';
 import { GridCardSkeleton } from '../../components/dashboard/DashboardSkeleton';
+import toast from 'react-hot-toast';
+import { showConfirmToast } from '../../lib/confirmToast';
 
 const AmenityManagement = () => {
   const [amenities, setAmenities] = useState<Amenity[]>([]);
@@ -65,13 +67,20 @@ const AmenityManagement = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this amenity?')) return;
-    try {
-      await deleteAmenity(id);
-      setAmenities(amenities.filter(a => a._id !== id));
-    } catch (error) {
-      console.error('Failed to delete amenity', error);
-    }
+    showConfirmToast({
+      message: 'Are you sure you want to delete this amenity?',
+      confirmLabel: 'Delete',
+      onConfirm: async () => {
+        try {
+          await deleteAmenity(id);
+          setAmenities((prev) => prev.filter((a) => a._id !== id));
+          toast.success('Amenity deleted successfully');
+        } catch (error) {
+          console.error('Failed to delete amenity', error);
+          toast.error('Failed to delete amenity');
+        }
+      },
+    });
   };
 
   return (

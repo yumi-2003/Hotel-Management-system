@@ -1,18 +1,21 @@
 import { Request, Response } from "express";
-import Booking, { BookingStatus } from "../models/Booking";
-import Reservation, { ReservationStatus } from "../models/Reservation";
-import Room, { RoomStatus } from "../models/Room";
-import Payment, { PaymentStatus } from "../models/Payment";
-import Notification, { NotificationType } from '../models/Notification';
+import Booking from "../models/Booking";
+import Reservation from "../models/Reservation";
+import Room from "../models/Room";
+import Payment from "../models/Payment";
+import Notification from '../models/Notification';
+import { BookingStatus, ReservationStatus, RoomStatus, PaymentStatus, NotificationType } from "../types/enums";
 import { AuthRequest } from "../middleware/auth";
 import { isRoomAvailable } from "../utils/availability";
-import mongoose from "mongoose";
+import { bindSession, getSafeSession, getSessionOptions } from "../utils/mongooseSession";
+import { getNotificationLogId, getRecipientLogValue } from "../utils/notificationLogging";
 
 export const createBooking = async (
   req: AuthRequest,
   res: Response,
 ): Promise<void> => {
-  const session = await mongoose.startSession();
+  const session = await getSafeSession();
+  const sessionOptions = getSessionOptions(session);
   session.startTransaction();
   try {
     const {
@@ -119,10 +122,10 @@ export const createBooking = async (
           status: bookingStatus,
         },
       ],
-      { session },
+      sessionOptions,
     );
 
-    const booking = bookingArray[0];
+    const booking = bookingArray[0] as any;
 
     // 3. Create Payment
     const paymentArray = await Payment.create(
@@ -139,19 +142,22 @@ export const createBooking = async (
               : undefined,
         },
       ],
-      { session },
+      sessionOptions,
     );
 
-    const payment = paymentArray[0];
+    const payment = paymentArray[0] as any;
 
     // 4. Link Payment to Booking
     booking.paymentId = payment._id;
-    await booking.save({ session });
+    await booking.save(sessionOptions);
 
     if (reservationId) {
-      await Reservation.findByIdAndUpdate(reservationId, {
-        status: ReservationStatus.CONFIRMED,
-      }).session(session);
+      await bindSession(
+        Reservation.findByIdAndUpdate(reservationId, {
+          status: ReservationStatus.CONFIRMED,
+        }),
+        session,
+      );
     }
 
     if (bookedRooms && bookedRooms.length > 0) {
@@ -161,10 +167,13 @@ export const createBooking = async (
           ? RoomStatus.OCCUPIED
           : RoomStatus.RESERVED;
 
-      await Room.updateMany(
-        { _id: { $in: roomIds } },
-        { status: newRoomStatus },
-      ).session(session);
+      await bindSession(
+        Room.updateMany(
+          { _id: { $in: roomIds } },
+          { status: newRoomStatus },
+        ),
+        session,
+      );
     }
 
     await session.commitTransaction();
@@ -178,13 +187,14 @@ export const createBooking = async (
         type: NotificationType.SYSTEM,
         link: '/my-reservations'
       });
-      console.log(`[NOTIFICATION_SUCCESS] Created booking confirmation notification for guest ${guestId}: ${notif._id}`);
+      console.log(`[NOTIFICATION_SUCCESS] Created booking confirmation notification for guest ${getRecipientLogValue(guestId)}: ${getNotificationLogId(notif)}`);
     } catch (notifErr) {
-      console.error(`[NOTIFICATION_ERROR] Failed to create booking confirmation notification for guest ${guestId}:`, notifErr);
+      console.error(`[NOTIFICATION_ERROR] Failed to create booking confirmation notification for guest ${getRecipientLogValue(guestId)}:`, notifErr);
     }
 
     res.status(201).json(booking);
   } catch (error) {
+    console.log('--- CREATE BOOKING ERROR ---', error);
     await session.abortTransaction();
     session.endSession();
     console.error("Create Booking Error:", error);
@@ -196,7 +206,8 @@ export const confirmPayment = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
-  const session = await mongoose.startSession();
+  const session = await getSafeSession();
+  const sessionOptions = getSessionOptions(session);
   session.startTransaction();
   try {
     const { id } = req.params; // Booking ID
@@ -213,14 +224,17 @@ export const confirmPayment = async (
 
     // Update Booking status
     booking.status = BookingStatus.CONFIRMED;
-    await booking.save({ session });
+    await booking.save(sessionOptions);
 
     // Update Payment status
     if (booking.paymentId) {
-      await Payment.findByIdAndUpdate(booking.paymentId, {
-        status: PaymentStatus.COMPLETED,
-        transactionId: `CASH-${Date.now()}`,
-      }).session(session);
+      await bindSession(
+        Payment.findByIdAndUpdate(booking.paymentId, {
+          status: PaymentStatus.COMPLETED,
+          transactionId: `CASH-${Date.now()}`,
+        }),
+        session,
+      );
     }
 
     await session.commitTransaction();
@@ -234,9 +248,9 @@ export const confirmPayment = async (
         type: NotificationType.STATUS_UPDATE,
         link: '/my-reservations'
       });
-      console.log(`[NOTIFICATION_SUCCESS] Created payment confirmation notification for guest ${booking.guestId}: ${notif._id}`);
+      console.log(`[NOTIFICATION_SUCCESS] Created payment confirmation notification for guest ${getRecipientLogValue(booking.guestId)}: ${getNotificationLogId(notif)}`);
     } catch (notifErr) {
-      console.error(`[NOTIFICATION_ERROR] Failed to create payment confirmation notification for guest ${booking.guestId}:`, notifErr);
+      console.error(`[NOTIFICATION_ERROR] Failed to create payment confirmation notification for guest ${getRecipientLogValue(booking.guestId)}:`, notifErr);
     }
 
     res.json({ message: "Payment confirmed successfully", booking });
@@ -387,7 +401,7 @@ export const updateBookingStatus = async (
       // For simplicity, we'll create tasks as PENDING/DIRTY
       const HousekeepingLog = (await import("../models/HousekeepingLog"))
         .default;
-      const { HousekeepingStatus } = await import("../models/HousekeepingLog");
+      const { HousekeepingStatus } = await import("../types/enums");
 
       for (const roomId of roomIds) {
         await HousekeepingLog.create({
@@ -418,15 +432,16 @@ export const updateBookingStatus = async (
 
     // Create Notification for status change
     try {
+      const guestRecipient = (updatedBooking.guestId as any)?._id || updatedBooking.guestId;
       const notif = await Notification.create({
-        recipient: updatedBooking.guestId._id,
+        recipient: guestRecipient,
         message: `Your booking ${updatedBooking.bookingCode} status has been updated to ${status}.`,
         type: NotificationType.STATUS_UPDATE,
         link: '/my-reservations'
       });
-      console.log(`[NOTIFICATION_SUCCESS] Created booking status update notification for guest ${updatedBooking.guestId._id}: ${notif._id}`);
+      console.log(`[NOTIFICATION_SUCCESS] Created booking status update notification for guest ${getRecipientLogValue(guestRecipient)}: ${getNotificationLogId(notif)}`);
     } catch (notifErr) {
-      console.error(`[NOTIFICATION_ERROR] Failed to create booking status update notification for guest ${updatedBooking.guestId._id}:`, notifErr);
+      console.error(`[NOTIFICATION_ERROR] Failed to create booking status update notification for guest ${getRecipientLogValue((updatedBooking as any).guestId)}:`, notifErr);
     }
 
     const bookingObj = updatedBooking.toObject();

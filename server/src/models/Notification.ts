@@ -1,12 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
-export enum NotificationType {
-  ASSIGNMENT = 'assignment',
-  STATUS_UPDATE = 'status_update',
-  SYSTEM = 'system',
-  CHECK_IN = 'check_in',
-  CHECK_OUT = 'check_out'
-}
+import { NotificationType } from '../types/enums';
 
 export interface INotification extends Document {
   recipient: mongoose.Types.ObjectId;

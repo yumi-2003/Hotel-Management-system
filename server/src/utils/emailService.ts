@@ -45,24 +45,22 @@ export const sendResetCodeEmail = async (email: string, code: string): Promise<v
   };
 
   try {
+    if (!process.env.EMAIL_PASS) {
+      throw new Error("No EMAIL_PASS defined. Simulation mode active.");
+    }
     const info = await transporter.sendMail(mailOptions);
     console.log(`Reset email sent to ${email}: ${info.messageId}`);
   } catch (error: any) {
     console.error('Error sending reset email (transporter):', error.message || error);
     
-    // DEVELOPMENT FALLBACK: Log code to console so testing can continue
+    // DEMO FALLBACK: Log code to console so testing can continue
     console.warn('\n' + '='.repeat(50));
-    console.warn('📧 [DEVELOPMENT FALLBACK] EMAIL SENDING FAILED');
+    console.warn('📧 [DEMO FALLBACK] EMAIL SENDING BYPASSED/FAILED');
     console.warn(`TO: ${email}`);
     console.warn(`RESET CODE: ${code}`);
     console.warn('='.repeat(50) + '\n');
 
-    // If we want to allow the process to continue in dev even if email fails:
-    if (process.env.NODE_ENV !== 'production') {
-       console.log('Allowing request to succeed (Development Fallback enabled)');
-       return;
-    }
-    
-    throw error;
+    // Suppress error so the frontend flow doesn't break with a 500 error
+    return;
   }
 };

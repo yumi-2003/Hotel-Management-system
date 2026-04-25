@@ -16,7 +16,7 @@ import {
   UserPlus, Filter
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
+import { ReceptionistDashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 
 /* ─────────────────────────────────────────────────────────
    Housekeeping Panel (embedded inside Receptionist Dashboard)
@@ -33,23 +33,96 @@ const HousekeepingPanel = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [newLog, setNewLog] = useState({ roomId: '', staffId: '', status: 'dirty', task: 'Routine Cleaning', note: '' });
 
+  const fetchAllRoomsForTaskForm = async () => {
+    const limit = 100;
+    const firstPage = await getAllRooms({ page: 1, limit });
+    const allRooms = [...(firstPage.rooms || [])];
+    const totalRoomPages = firstPage.pagination?.totalPages || 1;
+
+    for (let page = 2; page <= totalRoomPages; page++) {
+      const pageData = await getAllRooms({ page, limit });
+      allRooms.push(...(pageData.rooms || []));
+    }
+
+    return allRooms.sort((a: Room, b: Room) => {
+      if (a.floor !== b.floor) return a.floor - b.floor;
+      return a.roomNumber.localeCompare(b.roomNumber, undefined, {
+        numeric: true,
+      });
+    });
+  };
+
+  const fetchAllHousekeepingStaff = async () => {
+    const limit = 100;
+    const firstPage = await getAllUsers({
+      role: 'housekeeping',
+      status: 'active',
+      page: 1,
+      limit,
+    });
+    const allStaff = [...(firstPage.users || [])];
+    const totalStaffPages = firstPage.pagination?.totalPages || 1;
+
+    for (let page = 2; page <= totalStaffPages; page++) {
+      const pageData = await getAllUsers({
+        role: 'housekeeping',
+        status: 'active',
+        page,
+        limit,
+      });
+      allStaff.push(...(pageData.users || []));
+    }
+
+    return allStaff.sort((a: User, b: User) =>
+      a.fullName.localeCompare(b.fullName),
+    );
+  };
+
+  const getRoomTypeName = (room: Room) => {
+    const roomType =
+      typeof room.roomType === 'object'
+        ? room.roomType
+        : ((room as any).roomTypeId && typeof (room as any).roomTypeId === 'object'
+            ? (room as any).roomTypeId
+            : null);
+
+    return roomType?.typeName || 'Unknown Type';
+  };
+
+  const getRoomLocationLabel = (room: Room) =>
+    `Room ${room.roomNumber} - Floor ${room.floor} - ${getRoomTypeName(room)}`;
+
   const fetchHK = async () => {
     try {
       setHkLoading(true);
       const [activeLogs, historyLogs, roomsData, staffData] = await Promise.all([
         getAllHousekeepingLogs({ status: statusFilter || ['dirty', 'cleaning'].join(',') }),
         getAllHousekeepingLogs({ status: 'clean' }),
-        getAllRooms(),
-        getAllUsers({ role: 'housekeeping' }),
+        fetchAllRoomsForTaskForm(),
+        fetchAllHousekeepingStaff(),
       ]);
-      setTasks(activeLogs.filter((l: any) => l.assignedTo));
-      setHistory(historyLogs.filter((l: any) => l.assignedTo));
-      const roomList = roomsData.rooms || [];
-      setRooms(roomList);
-      setStaff(staffData.users || []);
-      if (roomList.length > 0 && !newLog.roomId) {
-        setNewLog(prev => ({ ...prev, roomId: roomList[0]._id }));
-      }
+      setTasks((activeLogs.logs || []).filter((l: any) => l.assignedTo));
+      setHistory((historyLogs.logs || []).filter((l: any) => l.assignedTo));
+      setRooms(roomsData || []);
+      setStaff(staffData || []);
+      setNewLog(prev => {
+        const nextRoomId = roomsData.some((room: Room) => room._id === prev.roomId)
+          ? prev.roomId
+          : (roomsData[0]?._id ?? '');
+        const nextStaffId = staffData.some((member: User) => member._id === prev.staffId)
+          ? prev.staffId
+          : (staffData[0]?._id ?? '');
+
+        if (nextRoomId === prev.roomId && nextStaffId === prev.staffId) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          roomId: nextRoomId,
+          staffId: nextStaffId,
+        };
+      });
     } catch (err) {
       console.error('Failed to load housekeeping data', err);
     } finally {
@@ -78,6 +151,13 @@ const HousekeepingPanel = () => {
       await createHousekeepingLog(newLog);
       toast.success('Housekeeping task created!');
       setShowAddModal(false);
+      setNewLog({
+        roomId: rooms[0]?._id ?? '',
+        staffId: staff[0]?._id ?? '',
+        status: 'dirty',
+        task: 'Routine Cleaning',
+        note: '',
+      });
       fetchHK();
     } catch {
       toast.error('Failed to create task');
@@ -287,12 +367,16 @@ const HousekeepingPanel = () => {
             </div>
             <form onSubmit={handleAddLog} className="space-y-5">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Room</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Room Location</label>
                 <select required value={newLog.roomId} onChange={e => setNewLog({ ...newLog, roomId: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground appearance-none cursor-pointer">
+                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground appearance-none cursor-pointer"
+                  disabled={rooms.length === 0}>
+                  {rooms.length === 0 && (
+                    <option value="" className="bg-card">No rooms available</option>
+                  )}
                   {rooms.map(r => (
                     <option key={r._id} value={r._id} className="bg-card">
-                      Room {r.roomNumber} ({r.roomType && typeof r.roomType === 'object' ? r.roomType.typeName : 'Standard'})
+                      {getRoomLocationLabel(r)}
                     </option>
                   ))}
                 </select>
@@ -300,8 +384,11 @@ const HousekeepingPanel = () => {
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Assign Staff</label>
                 <select value={newLog.staffId} onChange={e => setNewLog({ ...newLog, staffId: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground appearance-none cursor-pointer">
-                  <option value="" className="bg-card">Select Staff Member</option>
+                  className="w-full px-4 py-3 rounded-xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground appearance-none cursor-pointer"
+                  disabled={staff.length === 0}>
+                  <option value="" className="bg-card">
+                    {staff.length === 0 ? 'No active housekeeping staff available' : 'Select Staff Member'}
+                  </option>
                   {staff.map(s => <option key={s._id} value={s._id} className="bg-card">{s.fullName}</option>)}
                 </select>
               </div>
@@ -327,7 +414,8 @@ const HousekeepingPanel = () => {
                   Cancel
                 </button>
                 <button type="submit"
-                  className="flex-1 py-3 rounded-xl bg-spa-teal hover:bg-spa-teal/90 text-white font-black uppercase tracking-wider text-sm shadow-lg shadow-spa-teal/20 transition">
+                  className="flex-1 py-3 rounded-xl bg-spa-teal hover:bg-spa-teal/90 text-white font-black uppercase tracking-wider text-sm shadow-lg shadow-spa-teal/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={!newLog.roomId || !newLog.staffId}>
                   Create Task
                 </button>
               </div>
@@ -343,15 +431,21 @@ const HousekeepingPanel = () => {
    Main Receptionist Dashboard
 ───────────────────────────────────────────────────────── */
 const ReceptionistDashboard = () => {
+  const arrivalsPerPage = 4;
+  const departuresPerPage = 6;
   const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [arrivalsPage, setArrivalsPage] = useState(1);
+  const [departuresPage, setDeparturesPage] = useState(1);
 
   const fetchStats = async () => {
     try {
       setLoading(true);
       const stats = await getDashboardStats();
       setData(stats);
+      setArrivalsPage(1);
+      setDeparturesPage(1);
     } catch (err) {
       console.error('Failed to fetch receptionist dashboard stats', err);
     } finally {
@@ -378,11 +472,21 @@ const ReceptionistDashboard = () => {
   };
 
   if (loading) {
-    return <DashboardSkeleton />;
+    return <ReceptionistDashboardSkeleton />;
   }
 
   const todaysArrivals = data?.operational?.todaysArrivals || [];
   const todaysDepartures = data?.operational?.todaysDepartures || [];
+  const totalArrivalPages = Math.max(1, Math.ceil(todaysArrivals.length / arrivalsPerPage));
+  const totalDeparturePages = Math.max(1, Math.ceil(todaysDepartures.length / departuresPerPage));
+  const paginatedArrivals = todaysArrivals.slice(
+    (arrivalsPage - 1) * arrivalsPerPage,
+    arrivalsPage * arrivalsPerPage,
+  );
+  const paginatedDepartures = todaysDepartures.slice(
+    (departuresPage - 1) * departuresPerPage,
+    departuresPage * departuresPerPage,
+  );
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
@@ -437,7 +541,7 @@ const ReceptionistDashboard = () => {
                 {todaysArrivals.length === 0 ? (
                    <div className="py-6 text-center text-xs text-muted-foreground">No arrivals today</div>
                 ) : (
-                  todaysArrivals.slice(0, 10).map((booking: any) => (
+                  paginatedArrivals.map((booking: any) => (
                     <div key={booking._id} className="flex flex-col gap-3 p-4 rounded-xl bg-muted border border-border">
                       <div className="flex items-center justify-between">
                         <div>
@@ -499,6 +603,36 @@ const ReceptionistDashboard = () => {
                   ))
                 )}
              </div>
+             {todaysArrivals.length > arrivalsPerPage && (
+               <div className="mt-4 pt-4 border-t border-border flex items-center justify-between gap-4">
+                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                   Showing {(arrivalsPage - 1) * arrivalsPerPage + 1}-
+                   {Math.min(arrivalsPage * arrivalsPerPage, todaysArrivals.length)} of{" "}
+                   {todaysArrivals.length}
+                 </p>
+                 <div className="flex items-center gap-2">
+                   <button
+                     onClick={() => setArrivalsPage((prev) => Math.max(1, prev - 1))}
+                     disabled={arrivalsPage === 1}
+                     className="px-3 py-1.5 rounded-lg border border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted transition disabled:opacity-40 disabled:cursor-not-allowed"
+                   >
+                     Previous
+                   </button>
+                   <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
+                     Page {arrivalsPage} of {totalArrivalPages}
+                   </span>
+                   <button
+                     onClick={() =>
+                       setArrivalsPage((prev) => Math.min(totalArrivalPages, prev + 1))
+                     }
+                     disabled={arrivalsPage === totalArrivalPages}
+                     className="px-3 py-1.5 rounded-lg border border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted transition disabled:opacity-40 disabled:cursor-not-allowed"
+                   >
+                     Next
+                   </button>
+                 </div>
+               </div>
+             )}
              <Link to="/staff/bookings" className="block text-center mt-4 text-spa-teal font-bold text-xs hover:underline">
                 Manage all bookings
              </Link>
@@ -517,7 +651,7 @@ const ReceptionistDashboard = () => {
             {todaysDepartures.length === 0 ? (
                <div className="col-span-full py-6 text-center text-xs text-muted-foreground">No departures today</div>
             ) : (
-              todaysDepartures.map((booking: any) => (
+              paginatedDepartures.map((booking: any) => (
                 <div key={booking._id} className="p-4 rounded-xl border border-border hover:border-spa-teal transition bg-card shadow-sm flex flex-col justify-between">
                    <div className="mb-4">
                       <div className="font-bold text-foreground mb-1">{booking.guestId?.fullName || 'Guest'}</div>
@@ -539,6 +673,36 @@ const ReceptionistDashboard = () => {
               ))
             )}
           </div>
+          {todaysDepartures.length > departuresPerPage && (
+            <div className="mt-6 pt-4 border-t border-border flex items-center justify-between gap-4">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                Showing {(departuresPage - 1) * departuresPerPage + 1}-
+                {Math.min(departuresPage * departuresPerPage, todaysDepartures.length)} of{" "}
+                {todaysDepartures.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setDeparturesPage((prev) => Math.max(1, prev - 1))}
+                  disabled={departuresPage === 1}
+                  className="px-3 py-1.5 rounded-lg border border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted transition disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground px-1">
+                  Page {departuresPage} of {totalDeparturePages}
+                </span>
+                <button
+                  onClick={() =>
+                    setDeparturesPage((prev) => Math.min(totalDeparturePages, prev + 1))
+                  }
+                  disabled={departuresPage === totalDeparturePages}
+                  className="px-3 py-1.5 rounded-lg border border-border text-[10px] font-black uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted transition disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          )}
       </div>
 
       {/* ── Housekeeping Section ── */}

@@ -24,9 +24,15 @@ import { updateBookingStatus } from "../services/bookingService";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { DashboardSkeleton } from "../components/dashboard/DashboardSkeleton";
+import { ManagerDashboardSkeleton } from "../components/dashboard/DashboardSkeleton";
+import {
+  getAmenitiesManagementPath,
+  getRoomTypesManagementPath,
+  getUsersManagementPath,
+} from "../utils/roleUtils";
 
 const ManagerDashboard = () => {
+  const arrivalsPerPage = 4;
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const [data, setData] = useState<any | null>(null);
@@ -34,6 +40,7 @@ const ManagerDashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [exporting, setExporting] = useState<string | null>(null);
+  const [arrivalsPage, setArrivalsPage] = useState(1);
 
   const handleExport = async (format: 'excel' | 'pdf') => {
     try {
@@ -61,6 +68,7 @@ const ManagerDashboard = () => {
       console.log("Dashboard stats:", stats);
       console.log("Weekly revenue data:", stats?.charts?.weeklyRevenue);
       setData(stats);
+      setArrivalsPage(1);
     } catch (err: any) {
       console.error("Failed to fetch manager dashboard stats", err);
       setError(err?.response?.data?.message || "Failed to load dashboard data");
@@ -105,11 +113,22 @@ const ManagerDashboard = () => {
   }
 
   if (loading) {
-    return <DashboardSkeleton />;
+    return <ManagerDashboardSkeleton />;
   }
 
   const todaysArrivals = data?.operational?.todaysArrivals || [];
   const todaysDepartures = data?.operational?.todaysDepartures || [];
+  const roomsManagementPath = getRoomTypesManagementPath(user?.role);
+  const amenitiesManagementPath = getAmenitiesManagementPath(user?.role);
+  const usersManagementPath = getUsersManagementPath(user?.role);
+  const totalArrivalPages = Math.max(
+    1,
+    Math.ceil(todaysArrivals.length / arrivalsPerPage),
+  );
+  const paginatedArrivals = todaysArrivals.slice(
+    (arrivalsPage - 1) * arrivalsPerPage,
+    arrivalsPage * arrivalsPerPage,
+  );
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
@@ -205,7 +224,7 @@ const ManagerDashboard = () => {
                 No arrivals expected today.
               </div>
             ) : (
-              todaysArrivals.map((booking: any) => (
+              paginatedArrivals.map((booking: any) => (
                 <div
                   key={booking._id}
                   className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30"
@@ -248,6 +267,42 @@ const ManagerDashboard = () => {
               ))
             )}
           </div>
+          {todaysArrivals.length > arrivalsPerPage && (
+            <div className="mt-6 pt-6 border-t border-border flex items-center justify-between gap-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Showing {(arrivalsPage - 1) * arrivalsPerPage + 1}-
+                {Math.min(arrivalsPage * arrivalsPerPage, todaysArrivals.length)} of{" "}
+                {todaysArrivals.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setArrivalsPage((prev) => Math.max(1, prev - 1))
+                  }
+                  disabled={arrivalsPage === 1}
+                >
+                  Previous
+                </Button>
+                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground px-2">
+                  Page {arrivalsPage} of {totalArrivalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setArrivalsPage((prev) =>
+                      Math.min(totalArrivalPages, prev + 1),
+                    )
+                  }
+                  disabled={arrivalsPage === totalArrivalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
@@ -316,7 +371,7 @@ const ManagerDashboard = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
-            to="/admin/rooms"
+            to={roomsManagementPath}
             className="group p-6 rounded-2xl border border-border hover:border-spa-teal hover:bg-spa-teal/[0.02] transition-all"
           >
             <div className="w-12 h-12 rounded-xl bg-spa-teal/10 flex items-center justify-center text-spa-teal mb-4 group-hover:scale-110 transition-transform">
@@ -329,7 +384,7 @@ const ManagerDashboard = () => {
           </Link>
 
           <Link
-            to="/admin/amenities"
+            to={amenitiesManagementPath}
             className="group p-6 rounded-2xl border border-border hover:border-spa-teal hover:bg-spa-teal/[0.02] transition-all"
           >
             <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-500 mb-4 group-hover:scale-110 transition-transform">
@@ -368,7 +423,7 @@ const ManagerDashboard = () => {
           </Link>
 
           <Link
-            to="/admin/users"
+            to={usersManagementPath}
             className="group p-6 rounded-2xl border border-border hover:border-spa-teal hover:bg-spa-teal/[0.02] transition-all"
           >
             <div className="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-900/30 flex items-center justify-center text-spa-teal mb-4 group-hover:scale-110 transition-transform">

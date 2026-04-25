@@ -1,11 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
-export enum ReservationStatus {
-  PENDING = 'pending',
-  CONFIRMED = 'confirmed',
-  EXPIRED = 'expired',
-  CANCELLED = 'cancelled'
-}
+import { ReservationStatus } from '../types/enums';
 
 export interface IReservedRoom {
   roomId: mongoose.Types.ObjectId;

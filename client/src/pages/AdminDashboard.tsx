@@ -10,7 +10,7 @@ import { DollarSign, Calendar, Users, Home, FileText, FileSpreadsheet, Download 
 import { Link } from 'react-router-dom';
 import { downloadRevenueExcel, downloadRevenuePDF } from '../services/reportService';
 import { toast } from 'react-hot-toast';
-import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
+import { DashboardSkeleton as AdminDashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
 
 interface DashboardData {
   kpi: {
@@ -77,7 +77,7 @@ const AdminDashboard = () => {
   }, []);
 
   if (loading) {
-    return <DashboardSkeleton />;
+    return <AdminDashboardSkeleton />;
   }
 
   if (error) {

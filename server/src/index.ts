@@ -14,7 +14,8 @@ import userRoutes from './routes/userRoutes';
 import poolRoutes from './routes/poolRoutes';
 import notificationRoutes from './routes/notificationRoutes';
 import reportRoutes from './routes/report.routes';
-import Reservation, { ReservationStatus } from './models/Reservation';
+import Reservation from './models/Reservation';
+import { ReservationStatus } from './types/enums';
 import { scheduleDailyNotifications } from './utils/dailyNotificationJob';
 import { schedulePoolJobs } from './utils/poolCronJob';
 

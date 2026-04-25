@@ -8,10 +8,13 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import toast from 'react-hot-toast';
+import { useAppSelector } from '../../hooks/redux';
+import { getRoomTypesManagementPath } from '../../utils/roleUtils';
 
 const RoomTypeForm = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAppSelector((state) => state.auth);
   const isEdit = Boolean(id);
 
   const [loading, setLoading] = useState(isEdit);
@@ -33,6 +36,7 @@ const RoomTypeForm = () => {
     selectedAmenities: [] as string[],
     isFeatured: false,
   });
+  const roomTypesManagementPath = getRoomTypesManagementPath(user?.role);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -156,7 +160,7 @@ const RoomTypeForm = () => {
         await createRoomType(formToSend);
         toast.success('Room type created successfully!');
       }
-      navigate('/admin/rooms');
+      navigate(roomTypesManagementPath);
     } catch (error: any) {
       console.error('Failed to save room type', error);
       toast.error(error?.response?.data?.message || 'Failed to save room type. Please try again.');
@@ -178,7 +182,7 @@ const RoomTypeForm = () => {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <button 
-            onClick={() => navigate('/admin/rooms')}
+            onClick={() => navigate(roomTypesManagementPath)}
             className="flex items-center gap-2 text-muted-foreground hover:text-spa-teal font-bold transition mb-2"
           >
             <ArrowLeft size={18} /> Back to Rooms
@@ -426,7 +430,7 @@ const RoomTypeForm = () => {
           <Button 
             type="button" 
             variant="ghost" 
-            onClick={() => navigate('/admin/rooms')}
+            onClick={() => navigate(roomTypesManagementPath)}
             className="rounded-xl font-bold px-8 h-12"
           >
             Cancel

@@ -23,6 +23,14 @@ import { Button } from "../../components/ui/button";
 import { TableSkeleton } from "../../components/dashboard/DashboardSkeleton";
 import { format } from "date-fns";
 
+const DEFAULT_TASK_FORM = {
+  roomId: "",
+  staffId: "",
+  status: "dirty",
+  task: "Routine Cleaning",
+  note: "",
+};
+
 const HousekeepingManagement = () => {
   const [logs, setLogs] = useState<HousekeepingLog[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -32,33 +40,110 @@ const HousekeepingManagement = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalLogs, setTotalLogs] = useState(0);
 
-  const [newLog, setNewLog] = useState({
-    roomId: "",
-    staffId: "",
-    status: "dirty",
-    task: "Routine Cleaning",
-    note: "",
-  });
+  const [newLog, setNewLog] = useState(DEFAULT_TASK_FORM);
+
+  const fetchAllRoomsForTaskForm = async () => {
+    const limit = 100;
+    const firstPage = await getAllRooms({ page: 1, limit });
+    const allRooms = [...(firstPage.rooms || [])];
+    const totalRoomPages = firstPage.pagination?.totalPages || 1;
+
+    for (let page = 2; page <= totalRoomPages; page++) {
+      const pageData = await getAllRooms({ page, limit });
+      allRooms.push(...(pageData.rooms || []));
+    }
+
+    return allRooms.sort((a: Room, b: Room) => {
+      if (a.floor !== b.floor) return a.floor - b.floor;
+      return a.roomNumber.localeCompare(b.roomNumber, undefined, {
+        numeric: true,
+      });
+    });
+  };
+
+  const fetchAllHousekeepingStaff = async () => {
+    const limit = 100;
+    const firstPage = await getAllUsers({
+      role: "housekeeping",
+      status: "active",
+      page: 1,
+      limit,
+    });
+    const allStaff = [...(firstPage.users || [])];
+    const totalStaffPages = firstPage.pagination?.totalPages || 1;
+
+    for (let page = 2; page <= totalStaffPages; page++) {
+      const pageData = await getAllUsers({
+        role: "housekeeping",
+        status: "active",
+        page,
+        limit,
+      });
+      allStaff.push(...(pageData.users || []));
+    }
+
+    return allStaff.sort((a: User, b: User) =>
+      a.fullName.localeCompare(b.fullName),
+    );
+  };
+
+  const getRoomTypeName = (room: Room) => {
+    const roomType =
+      typeof room.roomType === "object"
+        ? room.roomType
+        : ((room as any).roomTypeId && typeof (room as any).roomTypeId === "object"
+            ? (room as any).roomTypeId
+            : null);
+
+    return roomType?.typeName || "Unknown Type";
+  };
+
+  const getRoomLocationLabel = (room: Room) =>
+    `Room ${room.roomNumber} • Floor ${room.floor} • ${getRoomTypeName(room)}`;
+
+  const roomLocationOptionLabel = (room: Room) =>
+    `Room ${room.roomNumber} - Floor ${room.floor} - ${getRoomTypeName(room)}`;
+  void getRoomLocationLabel;
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const [logsData, roomsData, staffData] = await Promise.all([
-        getAllHousekeepingLogs({ status: statusFilter }),
-        getAllRooms(),
-        getAllUsers({ role: "housekeeping" }),
+        getAllHousekeepingLogs({
+          status: statusFilter || undefined,
+          page: currentPage,
+          limit: 10,
+        }),
+        fetchAllRoomsForTaskForm(),
+        fetchAllHousekeepingStaff(),
       ]);
-      setLogs(logsData);
-      setRooms(roomsData.rooms || []);
-      setStaff(staffData.users || []);
+      setLogs(logsData.logs || []);
+      setTotalPages(logsData.pagination?.totalPages || 1);
+      setTotalLogs(logsData.pagination?.totalHousekeepingLogs || 0);
+      setRooms(roomsData || []);
+      setStaff(staffData || []);
+      setNewLog((prev) => {
+        const nextRoomId = roomsData.some((room: Room) => room._id === prev.roomId)
+          ? prev.roomId
+          : (roomsData[0]?._id ?? "");
+        const nextStaffId = staffData.some((member: User) => member._id === prev.staffId)
+          ? prev.staffId
+          : (staffData[0]?._id ?? "");
 
-      if (roomsData.rooms && roomsData.rooms.length > 0 && !newLog.roomId) {
-        setNewLog((prev) => ({ ...prev, roomId: roomsData.rooms[0]._id }));
-      }
-      if (staffData.users && staffData.users.length > 0 && !newLog.staffId) {
-        setNewLog((prev) => ({ ...prev, staffId: staffData.users[0]._id }));
-      }
+        if (nextRoomId === prev.roomId && nextStaffId === prev.staffId) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          roomId: nextRoomId,
+          staffId: nextStaffId,
+        };
+      });
     } catch (error) {
       console.error("Failed to fetch housekeeping data", error);
     } finally {
@@ -68,13 +153,13 @@ const HousekeepingManagement = () => {
 
   useEffect(() => {
     fetchData();
-  }, [statusFilter]);
+  }, [statusFilter, currentPage]);
 
   const handleStatusUpdate = async (id: string, newStatus: string) => {
     try {
       setUpdatingId(id);
       const updated = await updateHousekeepingStatus(id, newStatus);
-      setLogs(logs.map((l) => (l._id === id ? updated : l)));
+      setLogs((prev) => prev.map((l) => (l._id === id ? updated : l)));
     } catch (error) {
       console.error("Failed to update log status", error);
     } finally {
@@ -86,7 +171,7 @@ const HousekeepingManagement = () => {
     try {
       setUpdatingId(logId);
       const updated = await assignHousekeepingTask(logId, staffId);
-      setLogs(logs.map((l) => (l._id === logId ? updated : l)));
+      setLogs((prev) => prev.map((l) => (l._id === logId ? updated : l)));
     } catch (error) {
       console.error("Failed to assign staff", error);
     } finally {
@@ -97,9 +182,18 @@ const HousekeepingManagement = () => {
   const handleAddLog = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const added = await createHousekeepingLog(newLog);
-      setLogs([added, ...logs]);
+      await createHousekeepingLog(newLog);
       setShowAddModal(false);
+      setNewLog({
+        ...DEFAULT_TASK_FORM,
+        roomId: rooms[0]?._id ?? "",
+        staffId: staff[0]?._id ?? "",
+      });
+      if (currentPage !== 1) {
+        setCurrentPage(1);
+      } else {
+        await fetchData();
+      }
     } catch (error) {
       console.error("Failed to add log", error);
     }
@@ -192,7 +286,10 @@ const HousekeepingManagement = () => {
                 />
                 <select
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value);
+                    setCurrentPage(1);
+                  }}
                   className="w-full pl-11 pr-4 py-4 rounded-2xl bg-muted/30 border border-border outline-none focus:border-spa-teal appearance-none font-bold text-foreground cursor-pointer"
                 >
                   <option value="">All Statuses</option>
@@ -361,9 +458,38 @@ const HousekeepingManagement = () => {
           </div>
 
           <div className="p-8 bg-muted/30 border-t border-border flex justify-between items-center text-muted-foreground">
-            <p className="text-xs font-bold uppercase tracking-widest">
-              Showing {filtered.length} task{filtered.length !== 1 ? "s" : ""}
-            </p>
+            <div className="flex items-center gap-6">
+              <p className="text-xs font-bold uppercase tracking-widest">
+                Showing {filtered.length} of {totalLogs} task{totalLogs !== 1 ? "s" : ""}
+              </p>
+              {totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1 || loading}
+                    className="rounded-xl"
+                  >
+                    Previous
+                  </Button>
+                  <span className="text-xs font-black uppercase tracking-widest">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                    }
+                    disabled={currentPage === totalPages || loading}
+                    className="rounded-xl"
+                  >
+                    Next
+                  </Button>
+                </div>
+              )}
+            </div>
             <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
               Last updated: {format(new Date(), "HH:mm:ss")}
             </p>
@@ -374,8 +500,8 @@ const HousekeepingManagement = () => {
       {/* Add Task Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-4 animate-in fade-in duration-300">
-          <div className="bg-card rounded-[2.5rem] p-10 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-300 border border-white/10">
-            <div className="flex justify-between items-center mb-8">
+          <div className="bg-card rounded-[2.5rem] w-full max-w-3xl max-h-[90vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300 border border-white/10">
+            <div className="flex justify-between items-center px-8 md:px-10 py-6 border-b border-border/60">
               <h2 className="text-2xl font-black text-foreground tracking-tight">
                 New Housekeeping Task
               </h2>
@@ -387,81 +513,103 @@ const HousekeepingManagement = () => {
               </button>
             </div>
 
-            <form onSubmit={handleAddLog} className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-                  Location
-                </label>
-                <select
-                  required
-                  value={newLog.roomId}
-                  onChange={(e) =>
-                    setNewLog({ ...newLog, roomId: e.target.value })
-                  }
-                  className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground transition-all appearance-none cursor-pointer"
-                >
-                  {rooms.map((r) => (
-                    <option key={r._id} value={r._id} className="bg-card">
-                      Room {r.roomNumber} (
-                      {r.roomType && typeof r.roomType === "object"
-                        ? r.roomType.typeName
-                        : "Standard"}
-                      )
+            <form
+              onSubmit={handleAddLog}
+              className="px-8 md:px-10 py-8 space-y-6 overflow-y-auto max-h-[calc(90vh-88px)]"
+            >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                    Room Location
+                  </label>
+                  <select
+                    required
+                    value={newLog.roomId}
+                    onChange={(e) =>
+                      setNewLog({ ...newLog, roomId: e.target.value })
+                    }
+                    className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground transition-all appearance-none cursor-pointer min-h-14"
+                    disabled={rooms.length === 0}
+                  >
+                    {rooms.length === 0 && (
+                      <option value="" className="bg-card">
+                        No rooms available
+                      </option>
+                    )}
+                    {rooms.map((r) => (
+                      <option key={r._id} value={r._id} className="bg-card">
+                        {roomLocationOptionLabel(r)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                    Staff Member
+                  </label>
+                  <select
+                    required
+                    value={newLog.staffId}
+                    onChange={(e) =>
+                      setNewLog({ ...newLog, staffId: e.target.value })
+                    }
+                    className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground transition-all appearance-none cursor-pointer min-h-14"
+                    disabled={staff.length === 0}
+                  >
+                    <option value="" className="bg-card">
+                      {staff.length === 0
+                        ? "No active housekeeping staff available"
+                        : "Select Staff Member"}
                     </option>
-                  ))}
-                </select>
+                    {staff.map((s) => (
+                      <option key={s._id} value={s._id} className="bg-card">
+                        {s.fullName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-                  Staff Member
-                </label>
-                <select
-                  required
-                  value={newLog.staffId}
-                  onChange={(e) =>
-                    setNewLog({ ...newLog, staffId: e.target.value })
-                  }
-                  className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground transition-all appearance-none cursor-pointer"
-                >
-                  <option value="" className="bg-card">Select Staff Member</option>
-                  {staff.map((s) => (
-                    <option key={s._id} value={s._id} className="bg-card">
-                      {s.fullName}
+              <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr] gap-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                    Priority & Task
+                  </label>
+                  <select
+                    value={newLog.task}
+                    onChange={(e) =>
+                      setNewLog({ ...newLog, task: e.target.value })
+                    }
+                    className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground transition-all appearance-none cursor-pointer min-h-14"
+                  >
+                    <option value="Routine Cleaning" className="bg-card">
+                      Routine Cleaning
                     </option>
-                  ))}
-                </select>
+                    <option value="Deep Cleaning" className="bg-card">
+                      Deep Cleaning
+                    </option>
+                    <option value="Maintenance Check" className="bg-card">
+                      Maintenance Check
+                    </option>
+                    <option value="Turn down Service" className="bg-card">
+                      Turn down Service
+                    </option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
+                    Additional Instructions
+                  </label>
+                  <textarea
+                    value={newLog.note}
+                    onChange={(e) =>
+                      setNewLog({ ...newLog, note: e.target.value })
+                    }
+                    className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none min-h-[180px] md:min-h-[220px] font-medium text-foreground transition-all resize-none placeholder:text-muted-foreground/30"
+                    placeholder="Enter any special requests or notes here..."
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-                  Priority & Task
-                </label>
-                <select
-                  value={newLog.task}
-                  onChange={(e) =>
-                    setNewLog({ ...newLog, task: e.target.value })
-                  }
-                  className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none font-bold text-foreground transition-all appearance-none cursor-pointer"
-                >
-                  <option value="Routine Cleaning" className="bg-card">Routine Cleaning</option>
-                  <option value="Deep Cleaning" className="bg-card">Deep Cleaning</option>
-                  <option value="Maintenance Check" className="bg-card">Maintenance Check</option>
-                  <option value="Turn down Service" className="bg-card">Turn down Service</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">
-                  Additional Instructions
-                </label>
-                <textarea
-                  value={newLog.note}
-                  onChange={(e) =>
-                    setNewLog({ ...newLog, note: e.target.value })
-                  }
-                  className="w-full px-5 py-4 rounded-2xl bg-muted/30 border border-border focus:border-spa-teal outline-none min-h-[120px] font-medium text-foreground transition-all resize-none placeholder:text-muted-foreground/30"
-                  placeholder="Enter any special requests or notes here..."
-                />
-              </div>
-              <div className="flex gap-4 pt-4">
+              <div className="flex gap-4 pt-2 sticky bottom-0 bg-card">
                 <Button
                   type="button"
                   variant="ghost"
@@ -473,6 +621,7 @@ const HousekeepingManagement = () => {
                 <Button
                   type="submit"
                   className="flex-1 bg-spa-teal hover:bg-spa-teal-dark text-white rounded-2xl py-6 font-black uppercase tracking-widest shadow-lg shadow-spa-teal/20 h-auto transition-all hover:-translate-y-1"
+                  disabled={!newLog.roomId || !newLog.staffId}
                 >
                   Assign Task
                 </Button>

@@ -28,7 +28,7 @@ import {
 } from "../controllers/reviewController";
 import { authenticate } from "../middleware/auth";
 import { authorize } from "../middleware/roles";
-import { UserRole } from "../models/User";
+import { UserRole } from "../types/enums";
 import { upload } from "../middleware/uploadMiddleware";
 
 const router = express.Router();
@@ -86,6 +86,7 @@ router.put("/reviews/:id", authenticate, updateReview as any);
 router.delete("/reviews/:id", authenticate, deleteReview as any);
 
 // Rooms
+router.get("/", authenticate, getRooms);
 router.post(
   "/",
   authenticate,
@@ -98,8 +99,7 @@ router.post(
   authorize([UserRole.ADMIN, UserRole.MANAGER]),
   createMultipleRooms,
 );
-router.get("/count-by-type", getRoomCountByType);
-router.get("/", getRooms);
+router.get("/count-by-type", authenticate, getRoomCountByType);
 router.patch(
   "/:id/status",
   authenticate,

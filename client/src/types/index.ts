@@ -205,6 +205,7 @@ export interface Pool {
 
 export interface UpdatePoolRequest {
   notes?: string;
+  status?: 'open' | 'closed' | 'cleaning' | 'maintenance';
 }
 
 export interface PoolSlot {

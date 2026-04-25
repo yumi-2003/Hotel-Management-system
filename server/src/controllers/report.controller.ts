@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import Payment, { PaymentStatus } from '../models/Payment';
+import Payment from '../models/Payment';
+import { PaymentStatus } from '../types/enums';
 import ExcelJS from 'exceljs';
 import PDFDocument from 'pdfkit-table';
 import { format } from 'date-fns';

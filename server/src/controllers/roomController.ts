@@ -2,11 +2,12 @@ import { Request, Response } from "express";
 import Room from "../models/Room";
 import HousekeepingLog from "../models/HousekeepingLog";
 import { AuthRequest } from "../middleware/auth";
+import { RoomStatus } from "../types/enums";
 
 export const createRoom = async (
   req: Request,
   res: Response,
-): Promise<void> => {
+  ): Promise<void> => {
   try {
     const room = await Room.create(req.body);
     res.status(201).json(room);
@@ -18,53 +19,62 @@ export const createRoom = async (
 export const createMultipleRooms = async (
   req: Request,
   res: Response,
-): Promise<void> => {
+  ): Promise<void> => {
   try {
     const { roomTypeId, count, startRoomNumber, floor } = req.body;
 
-    if (!roomTypeId || !count || count <= 0) {
-      res
-        .status(400)
-        .json({ message: "Room type ID and valid count are required" });
+    const parsedCount = Number.parseInt(count, 10);
+    const parsedStartRoomNumber = Number.parseInt(startRoomNumber, 10);
+    const parsedFloor = Number.parseInt(floor, 10);
+
+    if (!roomTypeId || !count || !startRoomNumber) {
+      res.status(400).json({ message: "roomTypeId, count, and startRoomNumber are required" });
       return;
     }
 
-    const rooms = [];
-    let currentRoomNumber = startRoomNumber || 100; // Default starting room number
+    if (
+      Number.isNaN(parsedCount) ||
+      parsedCount < 1 ||
+      Number.isNaN(parsedStartRoomNumber) ||
+      parsedStartRoomNumber < 1 ||
+      Number.isNaN(parsedFloor) ||
+      parsedFloor < 1
+    ) {
+      res.status(400).json({
+        message: "count, startRoomNumber, and floor must be positive numbers",
+      });
+      return;
+    }
 
-    // Find the highest room number to avoid conflicts
-    const highestRoom = await Room.findOne(
-      {},
-      {},
-      { sort: { roomNumber: -1 } },
-    );
-    if (highestRoom) {
-      const highestNum = parseInt(highestRoom.roomNumber);
-      if (!isNaN(highestNum)) {
-        currentRoomNumber = Math.max(currentRoomNumber, highestNum + 1);
+    const createdRooms = [];
+    const skippedRoomNumbers: string[] = [];
+
+    for (let i = 0; i < parsedCount; i++) {
+      const roomNumber = (parsedStartRoomNumber + i).toString();
+      
+      // Check if room number already exists
+      const existingRoom = await Room.findOne({ roomNumber });
+      if (existingRoom) {
+        skippedRoomNumbers.push(roomNumber);
+        continue; // Or handle error
       }
-    }
 
-    for (let i = 0; i < count; i++) {
-      const roomData = {
-        roomNumber: currentRoomNumber.toString(),
+      const room = await Room.create({
+        roomNumber,
         roomTypeId,
-        floor: floor || 1,
-        status: "available",
-      };
-
-      const room = await Room.create(roomData);
-      rooms.push(room);
-      currentRoomNumber++;
+        floor: parsedFloor,
+        status: RoomStatus.AVAILABLE,
+      });
+      createdRooms.push(room);
     }
 
-    res.status(201).json({
-      message: `${count} rooms created successfully`,
-      rooms,
+    res.status(201).json({ 
+      message: `${createdRooms.length} rooms created successfully`,
+      rooms: createdRooms,
+      skippedRoomNumbers,
     });
   } catch (error) {
-    console.error("Error creating multiple rooms:", error);
-    res.status(500).json({ message: "Error creating rooms", error });
+    res.status(500).json({ message: "Error creating multiple rooms", error });
   }
 };
 
@@ -92,18 +102,17 @@ export const getRooms = async (req: Request, res: Response): Promise<void> => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Error fetching rooms", error });
+    res.status(500).json({ message: "Error fetching rooms", error: error instanceof Error ? error.message : error });
   }
 };
 
 export const updateRoomStatus = async (
   req: AuthRequest,
   res: Response,
-): Promise<void> => {
+  ): Promise<void> => {
   try {
     const { id } = req.params;
     const { status, note } = req.body;
-    const staffId = req.user?.id;
 
     const room = await Room.findByIdAndUpdate(
       id,
@@ -111,15 +120,18 @@ export const updateRoomStatus = async (
       { returnDocument: "after" },
     );
 
-    if (room) {
-      // Create a record in housekeeping logs for the status change
-      await HousekeepingLog.create({
-        roomId: id,
-        staffId,
-        status,
-        note: note || `Status updated to ${status}`,
-      });
+    if (!room) {
+      res.status(404).json({ message: "Room not found" });
+      return;
     }
+
+    await HousekeepingLog.create({
+      roomId: room._id,
+      staffId: req.user?.id,
+      status: status,
+      task: "Status Update",
+      note: note || "Manual status update from room dashboard",
+    });
 
     res.json(room);
   } catch (error) {
@@ -130,18 +142,12 @@ export const updateRoomStatus = async (
 export const getRoomCountByType = async (
   req: Request,
   res: Response,
-): Promise<void> => {
+  ): Promise<void> => {
   try {
-    const roomCounts = await Room.aggregate([
-      {
-        $group: {
-          _id: "$roomTypeId",
-          count: { $sum: 1 },
-        },
-      },
+    const counts = await Room.aggregate([
+      { $group: { _id: "$roomTypeId", count: { $sum: 1 } } },
     ]);
-
-    res.json(roomCounts);
+    res.json(counts);
   } catch (error) {
     res.status(500).json({ message: "Error fetching room counts", error });
   }

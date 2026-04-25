@@ -1,15 +1,18 @@
 import { Request, Response } from 'express';
-import Reservation, { ReservationStatus } from '../models/Reservation';
-import Booking, { BookingStatus } from '../models/Booking';
-import Room, { RoomStatus } from '../models/Room';
+import Reservation from '../models/Reservation';
+import Booking from '../models/Booking';
+import Room from '../models/Room';
 import RoomType from '../models/RoomType';
-import Notification, { NotificationType } from '../models/Notification';
+import Notification from '../models/Notification';
+import { ReservationStatus, BookingStatus, RoomStatus, NotificationType } from '../types/enums';
 import { AuthRequest } from '../middleware/auth';
 import { getAvailableRooms } from '../utils/availability';
-import mongoose from 'mongoose';
+import { bindSession, getSafeSession, getSessionOptions } from '../utils/mongooseSession';
+import { getNotificationLogId, getRecipientLogValue } from '../utils/notificationLogging';
 
 export const createReservation = async (req: AuthRequest, res: Response): Promise<void> => {
-  const session = await mongoose.startSession();
+  const session = await getSafeSession();
+  const sessionOptions = getSessionOptions(session);
   session.startTransaction();
   try {
     const { roomType: roomTypeId, checkInDate: checkInStr, checkOutDate: checkOutStr, adultsCount, childrenCount } = req.body;
@@ -54,7 +57,7 @@ export const createReservation = async (req: AuthRequest, res: Response): Promis
     }
 
     // Get RoomType details
-    const roomType = await RoomType.findById(roomTypeId).session(session);
+    const roomType = await bindSession(RoomType.findById(roomTypeId), session);
     if (!roomType) {
       res.status(404).json({ message: 'Room type not found' });
       await session.abortTransaction();
@@ -108,7 +111,7 @@ export const createReservation = async (req: AuthRequest, res: Response): Promis
         subtotal: subtotalAmount
       }],
       status: ReservationStatus.PENDING
-    }], { session });
+    }], sessionOptions);
 
     await session.commitTransaction();
     session.endSession();
@@ -121,9 +124,9 @@ export const createReservation = async (req: AuthRequest, res: Response): Promis
         type: NotificationType.SYSTEM,
         link: '/my-reservations'
       });
-      console.log(`[NOTIFICATION_SUCCESS] Created notification for guest ${guestId}: ${notif._id}`);
+      console.log(`[NOTIFICATION_SUCCESS] Created notification for guest ${getRecipientLogValue(guestId)}: ${getNotificationLogId(notif)}`);
     } catch (notifErr) {
-      console.error(`[NOTIFICATION_ERROR] Failed to create notification for guest ${guestId}:`, notifErr);
+      console.error(`[NOTIFICATION_ERROR] Failed to create notification for guest ${getRecipientLogValue(guestId)}:`, notifErr);
     }
 
     res.status(201).json(reservation[0]);
@@ -204,7 +207,8 @@ export const getReservations = async (req: Request, res: Response): Promise<void
     const mappedReservations = reservations.map(mapReservationToFrontend);
     res.json(mappedReservations);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching reservations', error });
+    console.log('--- UPDATE BOOKING STATUS ERROR ---', error);
+    res.status(500).json({ message: "Error updating booking status", error });
   }
 };
 
@@ -229,16 +233,18 @@ export const updateReservationStatus = async (req: Request, res: Response): Prom
     }
 
     // Create Notification for the guest about status update
-    try {
-      const notif = await Notification.create({
-        recipient: (reservation.guestId as any)._id || reservation.guestId,
+  try {
+    const guestRecipient = (reservation.guestId as any)?._id || reservation.guestId;
+
+    const notif = await Notification.create({
+        recipient: guestRecipient,
         message: `Your reservation ${reservation.reservationCode} status has been updated to ${status}.`,
         type: NotificationType.STATUS_UPDATE,
         link: '/my-reservations'
       });
-      console.log(`[NOTIFICATION_SUCCESS] Created status update notification for guest ${reservation.guestId}: ${notif._id}`);
+      console.log(`[NOTIFICATION_SUCCESS] Created status update notification for guest ${getRecipientLogValue(guestRecipient)}: ${getNotificationLogId(notif)}`);
     } catch (notifErr) {
-      console.error(`[NOTIFICATION_ERROR] Failed to create status update notification for guest ${reservation.guestId}:`, notifErr);
+      console.error(`[NOTIFICATION_ERROR] Failed to create status update notification for guest ${getRecipientLogValue((reservation as any).guestId)}:`, notifErr);
     }
 
     res.json(mapReservationToFrontend(reservation));
@@ -275,7 +281,7 @@ export const cancelMyReservation = async (req: AuthRequest, res: Response): Prom
         link: '/my-reservations'
       });
     } catch (notifErr) {
-      console.error(`[NOTIFICATION_ERROR] Failed to create cancellation notification for guest ${guestId}:`, notifErr);
+      console.error(`[NOTIFICATION_ERROR] Failed to create cancellation notification for guest ${getRecipientLogValue(guestId)}:`, notifErr);
     }
 
     const populatedReservation = await Reservation.findById(reservation._id)

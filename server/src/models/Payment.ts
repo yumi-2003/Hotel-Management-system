@@ -1,11 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
-export enum PaymentStatus {
-  PENDING = 'pending',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-  REFUNDED = 'refunded'
-}
+import { PaymentStatus } from '../types/enums';
 
 export interface IPayment extends Document {
   bookingId: mongoose.Types.ObjectId;

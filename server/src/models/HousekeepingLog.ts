@@ -1,11 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
-export enum HousekeepingStatus {
-  DIRTY = 'dirty',
-  CLEANING = 'cleaning',
-  CLEAN = 'clean',
-  OUT_OF_SERVICE = 'out_of_service'
-}
+import { HousekeepingStatus } from '../types/enums';
 
 export interface IHousekeepingLog extends Document {
   roomId: mongoose.Types.ObjectId;

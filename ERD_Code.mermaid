@@ -1,199 +1,253 @@
-erDiagram
-    User ||--o{ Booking : "makes"
-    User ||--o{ Reservation : "makes"
-    User ||--o{ Payment : "makes"
-    User ||--o{ HousekeepingLog : "assigned to"
-    User ||--o{ Notification : "receives"
-    User ||--o{ Review : "writes"
-    User ||--o{ PoolReservation : "books"
-    User ||--o{ Pool : "updates"
+classDiagram
+    User "1" -- "*" Booking : makes
+    User "1" -- "*" Reservation : makes
+    User "1" -- "*" Payment : makes
+    User "1" -- "*" HousekeepingLog : assigned to
+    User "1" -- "*" Notification : receives
+    User "1" -- "*" Review : writes
+    User "1" -- "*" PoolReservation : books
+    User "1" -- "*" Pool : updates
 
-    RoomType ||--o{ Room : "categorizes"
-    RoomType ||--o{ Review : "receives"
-    RoomType }o--o{ Amenity : "includes"
+    RoomType "1" -- "*" Room : categorizes
+    RoomType "1" -- "*" Review : receives
+    RoomType "*" -- "*" Amenity : includes
 
-    Room ||--o{ Booking : "has"
-    Room ||--o{ Reservation : "has"
-    Room ||--o{ HousekeepingLog : "has"
-    Room ||--o{ PoolReservation : "links to"
+    Room "1" -- "*" Booking : has
+    Room "1" -- "*" Reservation : has
+    Room "1" -- "*" HousekeepingLog : has
+    Room "1" -- "*" PoolReservation : links to
 
-    Booking ||--o| Reservation : "links to"
-    Booking ||--o| Payment : "has"
-    Payment ||--|| Booking : "pays for"
+    Booking "1" -- "0..1" Reservation : links to
+    Booking "1" -- "0..1" Payment : has
+    Payment "1" -- "1" Booking : pays for
 
-    Pool ||--o{ PoolReservation : "has"
-    PoolSlot ||--o{ PoolReservation : "reserved in"
+    Pool "1" -- "*" PoolReservation : has
+    PoolSlot "1" -- "*" PoolReservation : reserved in
 
-    User {
-        ObjectId _id PK
-        string fullName
-        string email
-        string phone
-        string passwordHash
-        string profileImage
-        string role
-        string status
-        string resetPasswordCode
-        date resetPasswordExpires
-        ObjectId[] tasksAssigned FK
-        date createdAt
-        date updatedAt
+    class User {
+        +ObjectId _id
+        +string fullName
+        +string email
+        +string phone
+        +string passwordHash
+        +string profileImage
+        +string role
+        +string status
+        +string resetPasswordCode
+        +date resetPasswordExpires
+        +ObjectId[] tasksAssigned
+        +date createdAt
+        +date updatedAt
+        +register()
+        +login()
+        +forgotPassword()
+        +resetPassword()
+        +getProfile()
+        +updateProfile()
     }
 
-    RoomType {
-        ObjectId _id PK
-        ObjectId[] amenities FK
-        string typeName
-        string description
-        int basePrice
-        int maxAdults
-        int maxChildren
-        int maxGuests
-        string bedType
-        int sizeSqm
-        string[] images
-        int rating
-        int numReviews
-        int discount
-        boolean isActive
-        boolean isFeatured
-        date createdAt
-        date updatedAt
+    class RoomType {
+        +ObjectId _id
+        +ObjectId[] amenities
+        +string typeName
+        +string description
+        +int basePrice
+        +int maxAdults
+        +int maxChildren
+        +int maxGuests
+        +string bedType
+        +int sizeSqm
+        +string[] images
+        +int rating
+        +int numReviews
+        +int discount
+        +boolean isActive
+        +boolean isFeatured
+        +date createdAt
+        +date updatedAt
+        +createRoomType()
+        +getRoomTypes()
+        +getRoomTypeById()
+        +updateRoomType()
+        +deleteRoomType()
     }
 
-    Room {
-        ObjectId _id PK
-        ObjectId roomTypeId FK
-        string roomNumber
-        int floor
-        string status
-        string notes
-        date createdAt
-        date updatedAt
+    class Room {
+        +ObjectId _id
+        +ObjectId roomTypeId
+        +string roomNumber
+        +int floor
+        +string status
+        +string notes
+        +date createdAt
+        +date updatedAt
+        +createRoom()
+        +getAllRooms()
+        +getRoomById()
+        +updateRoom()
+        +deleteRoom()
+        +updateStatus()
     }
 
-    Amenity {
-        ObjectId _id PK
-        string name
-        string icon
-        boolean isActive
-        date createdAt
-        date updatedAt
+    class Amenity {
+        +ObjectId _id
+        +string name
+        +string icon
+        +boolean isActive
+        +date createdAt
+        +date updatedAt
+        +createAmenity()
+        +getAmenities()
+        +updateAmenity()
+        +deleteAmenity()
     }
 
-    Booking {
-        ObjectId _id PK
-        ObjectId reservationId FK
-        ObjectId guestId FK
-        ObjectId paymentId FK
-        string bookingCode
-        date checkInDate
-        date checkOutDate
-        int adultsCount
-        int childrenCount
-        string status
-        int subtotalAmount
-        int taxAmount
-        int totalPrice
-        date createdAt
-        date updatedAt
+    class Booking {
+        +ObjectId _id
+        +ObjectId reservationId
+        +ObjectId guestId
+        +ObjectId paymentId
+        +string bookingCode
+        +date checkInDate
+        +date checkOutDate
+        +int adultsCount
+        +int childrenCount
+        +string status
+        +int subtotalAmount
+        +int taxAmount
+        +int totalPrice
+        +date createdAt
+        +date updatedAt
+        +createBooking()
+        +getAllBookings()
+        +getBookingById()
+        +updateBooking()
+        +cancelBooking()
+        +checkIn()
+        +checkOut()
     }
 
-    Reservation {
-        ObjectId _id PK
-        ObjectId guestId FK
-        string reservationCode
-        date checkInDate
-        date checkOutDate
-        int adultsCount
-        int childrenCount
-        int roomsCount
-        int subtotalAmount
-        int taxAmount
-        int totalAmount
-        string status
-        date expiresAt
-        date createdAt
-        date updatedAt
+    class Reservation {
+        +ObjectId _id
+        +ObjectId guestId
+        +string reservationCode
+        +date checkInDate
+        +date checkOutDate
+        +int adultsCount
+        +int childrenCount
+        +int roomsCount
+        +int subtotalAmount
+        +int taxAmount
+        +int totalAmount
+        +string status
+        +date expiresAt
+        +date createdAt
+        +date updatedAt
+        +createReservation()
+        +getAllReservations()
+        +getReservationById()
+        +updateReservation()
+        +cancelReservation()
+        +confirmReservation()
     }
 
-    Payment {
-        ObjectId _id PK
-        ObjectId bookingId FK
-        ObjectId guestId FK
-        int amount
-        string currency
-        string paymentMethod
-        string status
-        string transactionId
-        date createdAt
-        date updatedAt
+    class Payment {
+        +ObjectId _id
+        +ObjectId bookingId
+        +ObjectId guestId
+        +int amount
+        +string currency
+        +string paymentMethod
+        +string status
+        +string transactionId
+        +date createdAt
+        +date updatedAt
+        +processPayment()
+        +getPaymentDetails()
+        +refundPayment()
     }
 
-    HousekeepingLog {
-        ObjectId _id PK
-        ObjectId roomId FK
-        ObjectId staffId FK
-        string status
-        string task
-        string note
-        date createdAt
-        date updatedAt
+    class HousekeepingLog {
+        +ObjectId _id
+        +ObjectId roomId
+        +ObjectId staffId
+        +string status
+        +string task
+        +string note
+        +date createdAt
+        +date updatedAt
+        +createTask()
+        +getAllTasks()
+        +getMyTasks()
+        +updateTaskStatus()
+        +deleteTask()
     }
 
-    Notification {
-        ObjectId _id PK
-        ObjectId recipient FK
-        string message
-        string type
-        boolean isRead
-        string link
-        date createdAt
-        date updatedAt
+    class Notification {
+        +ObjectId _id
+        +ObjectId recipient
+        +string message
+        +string type
+        +boolean isRead
+        +string link
+        +date createdAt
+        +date updatedAt
+        +getNotifications()
+        +markAsRead()
+        +deleteNotification()
     }
 
-    Review {
-        ObjectId _id PK
-        ObjectId userId FK
-        ObjectId roomTypeId FK
-        int rating
-        string comment
-        date createdAt
-        date updatedAt
+    class Review {
+        +ObjectId _id
+        +ObjectId userId
+        +ObjectId roomTypeId
+        +int rating
+        +string comment
+        +date createdAt
+        +date updatedAt
+        +addReview()
+        +getRoomTypeReviews()
+        +deleteReview()
     }
 
-    Pool {
-        ObjectId _id PK
-        ObjectId updatedBy FK
-        string name
-        string status
-        int currentOccupancy
-        int maxCapacity
-        int temperature
-        string openingTime
-        string closingTime
-        string notes
-        date createdAt
-        date updatedAt
+    class Pool {
+        +ObjectId _id
+        +ObjectId updatedBy
+        +string name
+        +string status
+        +int currentOccupancy
+        +int maxCapacity
+        +int temperature
+        +string openingTime
+        +string closingTime
+        +string notes
+        +date createdAt
+        +date updatedAt
+        +getPoolStatus()
+        +updatePoolStatus()
     }
 
-    PoolSlot {
-        ObjectId _id PK
-        string startTime
-        string endTime
-        int maxPeople
-        int currentReserved
-        string date
-        date createdAt
-        date updatedAt
+    class PoolSlot {
+        +ObjectId _id
+        +string startTime
+        +string endTime
+        +int maxPeople
+        +int currentReserved
+        +string date
+        +date createdAt
+        +date updatedAt
+        +getPoolSlots()
     }
 
-    PoolReservation {
-        ObjectId _id PK
-        ObjectId userId FK
-        ObjectId roomId FK
-        ObjectId slotId FK
-        string status
-        date createdAt
-        date updatedAt
+    class PoolReservation {
+        +ObjectId _id
+        +ObjectId userId
+        +ObjectId roomId
+        +ObjectId slotId
+        +string status
+        +date createdAt
+        +date updatedAt
+        +bookPoolSlot()
+        +getMyPoolReservations()
+        +cancelPoolReservation()
     }

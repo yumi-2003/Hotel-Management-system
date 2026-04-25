@@ -2,7 +2,7 @@ import express from 'express';
 import { createBooking, getBookings, updateBookingStatus, confirmPayment, getInvoice, getMyBookings } from '../controllers/bookingController';
 import { authenticate } from '../middleware/auth';
 import { authorize } from '../middleware/roles';
-import { UserRole } from '../models/User';
+import { UserRole } from '../types/enums';
 
 const router = express.Router();
 

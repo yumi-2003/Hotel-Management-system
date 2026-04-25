@@ -20,10 +20,23 @@ import {
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import toast from "react-hot-toast";
-import { GridCardSkeleton } from "../../components/dashboard/DashboardSkeleton";
+import { RoomTypeGridSkeleton } from "../../components/dashboard/DashboardSkeleton";
+import { showConfirmToast } from "../../lib/confirmToast";
+import { useAppSelector } from "../../hooks/redux";
+import {
+  getRoomTypeCreatePath,
+  getRoomTypeEditPath,
+} from "../../utils/roleUtils";
+
+const defaultBulkForm = {
+  count: 1,
+  startRoomNumber: 100,
+  floor: 1,
+};
 
 const RoomTypeManagement = () => {
   const navigate = useNavigate();
+  const { user } = useAppSelector((state) => state.auth);
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [roomCounts, setRoomCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -32,11 +45,7 @@ const RoomTypeManagement = () => {
   const [selectedRoomType, setSelectedRoomType] = useState<RoomType | null>(
     null,
   );
-  const [bulkForm, setBulkForm] = useState({
-    count: 1,
-    startRoomNumber: 100,
-    floor: 1,
-  });
+  const [bulkForm, setBulkForm] = useState(defaultBulkForm);
   const [creating, setCreating] = useState(false);
 
   // Pagination state
@@ -78,24 +87,29 @@ const RoomTypeManagement = () => {
 
 
   const handleDelete = async (id: string) => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this room type (soft delete)?",
-      )
-    )
-      return;
-    try {
-      await deleteRoomType(id);
-      setRoomTypes(roomTypes.filter((rt) => rt._id !== id));
-      toast.success("Room type deleted successfully");
-    } catch (error: any) {
-      console.error("Failed to delete room type", error);
-      toast.error("Failed to delete room type");
-    }
+    showConfirmToast({
+      message: "Are you sure you want to delete this room type (soft delete)?",
+      confirmLabel: "Delete",
+      onConfirm: async () => {
+        try {
+          await deleteRoomType(id);
+          setRoomTypes((prev) => prev.filter((rt) => rt._id !== id));
+          toast.success("Room type deleted successfully");
+        } catch (error: any) {
+          console.error("Failed to delete room type", error);
+          toast.error("Failed to delete room type");
+        }
+      },
+    });
   };
 
   const handleCreateRooms = async () => {
     if (!selectedRoomType) return;
+
+    if (bulkForm.count < 1 || bulkForm.startRoomNumber < 1 || bulkForm.floor < 1) {
+      toast.error("Count, starting room number, and floor must be at least 1");
+      return;
+    }
 
     try {
       setCreating(true);
@@ -109,9 +123,7 @@ const RoomTypeManagement = () => {
       toast.success(
         `${bulkForm.count} rooms created successfully for ${selectedRoomType.typeName}`,
       );
-      setShowBulkModal(false);
-      setSelectedRoomType(null);
-      setBulkForm({ count: 1, startRoomNumber: 100, floor: 1 });
+      closeBulkModal();
 
       // Refresh room counts
       await fetchRoomTypes();
@@ -123,14 +135,22 @@ const RoomTypeManagement = () => {
     }
   };
 
+  const closeBulkModal = () => {
+    setShowBulkModal(false);
+    setSelectedRoomType(null);
+    setBulkForm(defaultBulkForm);
+  };
+
   const openBulkModal = (roomType: RoomType) => {
     setSelectedRoomType(roomType);
+    setBulkForm(defaultBulkForm);
     setShowBulkModal(true);
   };
 
   const filtered = roomTypes.filter((rt) =>
     rt.typeName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+  const createRoomTypePath = getRoomTypeCreatePath(user?.role);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -144,7 +164,7 @@ const RoomTypeManagement = () => {
           </p>
         </div>
         <Button
-          onClick={() => navigate("/admin/rooms/new")}
+          onClick={() => navigate(createRoomTypePath)}
           className="bg-spa-teal hover:bg-spa-teal-dark text-white rounded-xl font-bold flex items-center gap-2"
         >
           <Plus size={18} /> Add Room Type
@@ -170,7 +190,7 @@ const RoomTypeManagement = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
           {loading ? (
-            <GridCardSkeleton count={6} />
+            <RoomTypeGridSkeleton count={6} />
           ) : filtered.length === 0 ? (
             <div className="col-span-full py-12 text-center text-muted-foreground">
               No room types found.
@@ -238,7 +258,9 @@ const RoomTypeManagement = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => navigate(`/admin/rooms/edit/${rt._id}`)}
+                        onClick={() =>
+                          navigate(getRoomTypeEditPath(user?.role, rt._id))
+                        }
                         className="text-spa-teal hover:bg-spa-teal/5 font-bold flex items-center gap-1.5"
                       >
                         <Edit2 size={14} /> Edit
@@ -335,7 +357,7 @@ const RoomTypeManagement = () => {
 
             <div className="flex gap-3 mt-6">
               <Button
-                onClick={() => setShowBulkModal(false)}
+                onClick={closeBulkModal}
                 variant="outline"
                 className="flex-1"
                 disabled={creating}

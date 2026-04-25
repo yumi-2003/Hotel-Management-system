@@ -1,17 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
-
-export enum UserRole {
-  GUEST = 'guest',
-  RECEPTIONIST = 'receptionist',
-  HOUSEKEEPING = 'housekeeping',
-  MANAGER = 'manager',
-  ADMIN = 'admin'
-}
-
-export enum UserStatus {
-  ACTIVE = 'active',
-  BLOCKED = 'blocked'
-}
+import { UserRole, UserStatus } from '../types/enums';
 
 export interface IUser extends Document {
   fullName: string;

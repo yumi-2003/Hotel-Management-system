@@ -47,3 +47,31 @@ export const getDashboardRoute = (role: string | undefined): string => {
       return '/my-reservations';
   }
 };
+
+export const getManagementBasePath = (role: string | undefined): string => {
+  switch (role) {
+    case UserRole.MANAGER:
+      return "/manager";
+    case UserRole.ADMIN:
+    default:
+      return "/admin";
+  }
+};
+
+export const getUsersManagementPath = (role: string | undefined): string =>
+  `${getManagementBasePath(role)}/users`;
+
+export const getRoomTypesManagementPath = (role: string | undefined): string =>
+  `${getManagementBasePath(role)}/rooms`;
+
+export const getRoomTypeCreatePath = (role: string | undefined): string =>
+  `${getRoomTypesManagementPath(role)}/new`;
+
+export const getRoomTypeEditPath = (
+  role: string | undefined,
+  id: string,
+): string => `${getRoomTypesManagementPath(role)}/edit/${id}`;
+
+export const getAmenitiesManagementPath = (
+  role: string | undefined,
+): string => `${getManagementBasePath(role)}/amenities`;

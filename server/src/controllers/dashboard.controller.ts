@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import Booking, { BookingStatus } from '../models/Booking';
-import Room, { RoomStatus } from '../models/Room';
+import Booking from '../models/Booking';
+import Room from '../models/Room';
 import RoomType from '../models/RoomType';
-import Payment, { PaymentStatus } from '../models/Payment';
+import Payment from '../models/Payment';
+import { BookingStatus, RoomStatus, PaymentStatus } from '../types/enums';
 
 export const getDashboardStats = async (req: Request, res: Response) => {
   try {

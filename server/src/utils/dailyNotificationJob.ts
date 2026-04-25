@@ -1,7 +1,7 @@
-import Booking, { BookingStatus } from '../models/Booking';
+import Booking from '../models/Booking';
 import User from '../models/User';
-import Notification, { NotificationType } from '../models/Notification';
-import { UserRole } from '../models/User';
+import Notification from '../models/Notification';
+import { BookingStatus, NotificationType, UserRole } from '../types/enums';
 
 /**
  * Generates two Date objects representing the start (00:00:00) and

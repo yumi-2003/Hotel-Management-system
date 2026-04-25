@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getDashboardStats } from '../services/api';
 import { getAllHousekeepingLogs, updateHousekeepingStatus } from '../services/housekeepingService';
-import { getPoolStatus } from '../services/poolService';
+import { getPoolStatus, updatePoolStatus } from '../services/poolService';
 import StatsCard from '../components/dashboard/StatsCard';
 import RoomStatusChart from '../components/dashboard/RoomStatusChart';
 import { 
@@ -43,7 +43,7 @@ const HousekeepingDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const [stats, activeLogs, historyLogs, poolData] = await Promise.all([
+      const [stats, activeLogsData, historyLogsData, poolData] = await Promise.all([
         getDashboardStats(),
         getAllHousekeepingLogs({ status: ['dirty', 'cleaning'].join(',') }),
         getAllHousekeepingLogs({ status: 'clean' }),
@@ -53,19 +53,34 @@ const HousekeepingDashboard = () => {
       setPool(poolData);
       
       const filterUserTasks = (logs: HousekeepingLog[]) => {
+        if (!Array.isArray(logs)) return [];
         if (user?.role === 'housekeeping') {
           return logs.filter((l: any) => l.assignedTo?._id === user._id);
         }
         return logs.filter((l: any) => l.assignedTo);
       };
 
-      setTasks(filterUserTasks(activeLogs));
-      setHistory(filterUserTasks(historyLogs));
+      const activeLogsArray = (activeLogsData as any)?.logs || activeLogsData || [];
+      const historyLogsArray = (historyLogsData as any)?.logs || historyLogsData || [];
+
+      setTasks(filterUserTasks(activeLogsArray));
+      setHistory(filterUserTasks(historyLogsArray));
     } catch (err) {
       console.error('Failed to fetch housekeeping dashboard data', err);
       toast.error('Failed to refresh task list');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePoolCleaned = async () => {
+    try {
+      await updatePoolStatus({ status: 'open' });
+      toast.success('Pool marked as cleaned and ready to open!');
+      fetchDashboardData();
+    } catch (err) {
+      console.error('Failed to update pool status', err);
+      toast.error('Failed to update pool status');
     }
   };
 
@@ -161,9 +176,17 @@ const HousekeepingDashboard = () => {
                 <p className="text-sm font-bold text-blue-500/70">Please check the Pool Management section for details.</p>
              </div>
           </div>
-          <Link to="/staff/pool" className="bg-blue-500 text-white px-6 py-3 rounded-2xl font-black text-xs hover:bg-blue-600 transition shadow-lg shadow-blue-500/20 whitespace-nowrap">
-            View Details
-          </Link>
+          <div className="flex items-center gap-3">
+             <button 
+               onClick={handlePoolCleaned}
+               className="bg-blue-600 text-white px-6 py-3 rounded-2xl font-black text-xs hover:bg-blue-700 transition shadow-lg shadow-blue-600/20 whitespace-nowrap"
+            >
+               Mark Cleaned & Open
+            </button>
+            <Link to="/staff/pool" className="bg-blue-500/20 text-blue-600 dark:text-blue-400 px-6 py-3 rounded-2xl font-black text-xs hover:bg-blue-500/30 transition shadow-lg shadow-blue-500/10 whitespace-nowrap border border-blue-500/20">
+              View Details
+            </Link>
+          </div>
         </div>
       )}
 

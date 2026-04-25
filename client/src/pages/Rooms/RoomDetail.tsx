@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { useAppSelector } from '../../hooks/redux';
 import { Skeleton } from '../../components/ui/skeleton';
+import toast from 'react-hot-toast';
+import { showConfirmToast } from '../../lib/confirmToast';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL as string)?.replace('/api', '') || '';
 
@@ -122,19 +124,27 @@ const RoomDetail = () => {
   };
 
   const handleDeleteReview = async (reviewId: string) => {
-    if (!window.confirm('Are you sure you want to delete this review?')) return;
-    try {
-      await roomService.deleteReview(reviewId);
-      setReviews(reviews.filter(r => r._id !== reviewId));
-      
-      // Refresh room for rating
-      if (id) {
-        const updatedRoom = await roomService.getRoomTypeById(id);
-        setRoom(updatedRoom);
-      }
-    } catch (error) {
-      console.error("Failed to delete review", error);
-    }
+    showConfirmToast({
+      message: 'Are you sure you want to delete this review?',
+      confirmLabel: 'Delete',
+      onConfirm: async () => {
+        try {
+          await roomService.deleteReview(reviewId);
+          setReviews((prev) => prev.filter((r) => r._id !== reviewId));
+
+          // Refresh room for rating
+          if (id) {
+            const updatedRoom = await roomService.getRoomTypeById(id);
+            setRoom(updatedRoom);
+          }
+
+          toast.success('Review deleted successfully');
+        } catch (error) {
+          console.error("Failed to delete review", error);
+          toast.error('Failed to delete review');
+        }
+      },
+    });
   };
 
   if (loading) {

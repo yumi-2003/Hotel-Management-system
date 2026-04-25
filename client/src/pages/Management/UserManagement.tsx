@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { TableSkeleton } from "../../components/dashboard/DashboardSkeleton";
+import { showConfirmToast } from "../../lib/confirmToast";
 
 // Role badge styles
 const ROLE_STYLES: Record<string, string> = {
@@ -349,18 +350,22 @@ const UserManagement = () => {
   };
 
   const handleDeleteUser = async (id: string, name: string) => {
-    if (!window.confirm(`Delete ${name}? This action cannot be undone.`))
-      return;
-    try {
-      setProcessingId(id);
-      await deleteUser(id);
-      setUsers(users.filter((u) => u._id !== id));
-      toast.success("User deleted");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to delete user");
-    } finally {
-      setProcessingId(null);
-    }
+    showConfirmToast({
+      message: `Delete ${name}? This action cannot be undone.`,
+      confirmLabel: "Delete",
+      onConfirm: async () => {
+        try {
+          setProcessingId(id);
+          await deleteUser(id);
+          setUsers((prev) => prev.filter((u) => u._id !== id));
+          toast.success("User deleted");
+        } catch (err: any) {
+          toast.error(err?.response?.data?.message || "Failed to delete user");
+        } finally {
+          setProcessingId(null);
+        }
+      },
+    });
   };
 
   const handleCreated = (newUser: User) => {
