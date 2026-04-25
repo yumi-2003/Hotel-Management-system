@@ -64,7 +64,11 @@ const PoolManagement = () => {
     setSaving(true);
     setMessage(null);
     try {
-      const updatedPool = await updatePoolStatus(formData);
+      const payload = {
+        ...formData,
+        status: formData.status as "open" | "closed" | "cleaning" | "maintenance"
+      };
+      const updatedPool = await updatePoolStatus(payload);
       setPool(updatedPool);
       setMessage({ type: 'success', text: 'Pool status updated successfully!' });
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -122,8 +126,11 @@ const PoolManagement = () => {
                 setSaving(true);
                 setMessage(null);
                 try {
-                  const updatedData = { ...formData, status: 'cleaning' };
-                  const updatedPool = await updatePoolStatus(updatedData);
+                  const payload = {
+                    ...formData,
+                    status: "cleaning" as const
+                  };
+                  const updatedPool = await updatePoolStatus(payload);
                   setPool(updatedPool);
                   setFormData(prev => ({ ...prev, status: 'cleaning' }));
                   setMessage({ type: 'success', text: 'Cleaning requested! Housekeeping notified.' });

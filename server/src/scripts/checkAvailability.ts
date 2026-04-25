@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import Room from '../models/Room';
 import RoomType from '../models/RoomType';
-import Reservation, { ReservationStatus } from '../models/Reservation';
+import Reservation from '../models/Reservation';
+import { ReservationStatus } from '../types/enums';
 
 dotenv.config();
 

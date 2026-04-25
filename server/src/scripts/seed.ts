@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import RoomType from '../models/RoomType';
-import Room, { RoomStatus } from '../models/Room';
+import Room from '../models/Room';
+import { RoomStatus } from '../types/enums';
 
 dotenv.config();
 

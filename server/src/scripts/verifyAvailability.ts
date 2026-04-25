@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import Room, { RoomStatus } from '../models/Room';
-import Reservation, { ReservationStatus } from '../models/Reservation';
-import Booking, { BookingStatus } from '../models/Booking';
+import Room from '../models/Room';
+import Reservation from '../models/Reservation';
+import Booking from '../models/Booking';
+import { RoomStatus, ReservationStatus, BookingStatus } from '../types/enums';
 import { isRoomAvailable, getAvailableRooms } from '../utils/availability';
 
 dotenv.config();
