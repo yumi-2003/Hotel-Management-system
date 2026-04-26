@@ -47,6 +47,13 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
     dispatch(fetchRoomTypes());
   }, [dispatch]);
 
+  const isOverCapacity = React.useMemo(() => {
+    if (!selectedRoomType) return false;
+    const type = roomTypes.find(t => t._id === selectedRoomType);
+    if (!type) return false;
+    return adults > type.maxAdults || children > type.maxChildren;
+  }, [selectedRoomType, roomTypes, adults, children]);
+
   const handleBookNow = async () => {
     if (!isAuthenticated) {
       navigate("/login");
@@ -60,6 +67,14 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
 
     if (!dateRange?.from || !dateRange?.to || !selectedRoomType) {
       toast.error("Please select dates and room type");
+      return;
+    }
+
+    if (isOverCapacity) {
+      const type = roomTypes.find(t => t._id === selectedRoomType);
+      toast.error(`Booking not allowed: Guest count exceeds ${type?.typeName} capacity (${type?.maxAdults} Adults, ${type?.maxChildren} Children).`, {
+        icon: '🚫'
+      });
       return;
     }
 
@@ -87,11 +102,19 @@ export default function BookingBar({ initialRoomType, initialDates }: BookingBar
   };
 
   const canSubmit =
-    !!dateRange?.from && !!dateRange?.to && !!selectedRoomType && (adults + children) >= 1;
+    !!dateRange?.from && !!dateRange?.to && !!selectedRoomType && (adults + children) >= 1 && !isOverCapacity;
 
   return (
     <div className="w-full max-w-6xl mx-auto -mt-16 relative z-30">
       <div className="bg-card rounded-3xl shadow-xl p-8 border border-border">
+        {isOverCapacity && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+            <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 flex-shrink-0 font-bold">!</div>
+            <p className="text-sm font-bold text-red-700">
+              Selected guest count exceeds the maximum capacity for this room type. Please reduce guest count or select a different room.
+            </p>
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
           {/* Check-in */}
           <div className="flex flex-col gap-2">
