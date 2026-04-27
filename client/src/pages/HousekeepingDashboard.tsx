@@ -39,10 +39,13 @@ const HousekeepingDashboard = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
   const [finishingTask, setFinishingTask] = useState<string | null>(null);
   const [completionData, setCompletionData] = useState({ roomStatus: 'available', note: '' });
+  const [refreshing, setRefreshing] = useState(false);
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (isInitial = false) => {
     try {
-      setLoading(true);
+      if (isInitial) setLoading(true);
+      else setRefreshing(true);
+      
       const [stats, activeLogsData, historyLogsData, poolData] = await Promise.all([
         getDashboardStats(),
         getAllHousekeepingLogs({ status: ['dirty', 'cleaning'].join(',') }),
@@ -69,7 +72,8 @@ const HousekeepingDashboard = () => {
       console.error('Failed to fetch housekeeping dashboard data', err);
       toast.error('Failed to refresh task list');
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -85,7 +89,7 @@ const HousekeepingDashboard = () => {
   };
 
   useEffect(() => {
-    fetchDashboardData();
+    fetchDashboardData(true);
   }, [user]);
 
   const handleStatusUpdate = async (taskId: string, newStatus: string) => {
@@ -137,7 +141,8 @@ const HousekeepingDashboard = () => {
           <p className="text-muted-foreground font-medium">Cleaning tasks and real-time room readiness</p>
         </div>
         <div className="flex flex-col items-end">
-          <div className="bg-spa-teal text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-spa-teal/20 mb-1">
+          <div className="bg-spa-teal text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-spa-teal/20 mb-1 flex items-center gap-2">
+             {refreshing && <Clock size={12} className="animate-spin" />}
              Status: Online
           </div>
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Team: Alpha Squad</p>

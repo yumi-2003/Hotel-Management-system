@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAppSelector } from "../hooks/redux";
 import { getDashboardStats } from "../services/api";
 import StatsCard from "../components/dashboard/StatsCard";
@@ -39,10 +39,13 @@ const ManagerDashboard = () => {
   const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const [exporting, setExporting] = useState<string | null>(null);
   const [arrivalsPage, setArrivalsPage] = useState(1);
   const [departuresPage, setDeparturesPage] = useState(1);
+  const [refreshing, setRefreshing] = useState(false);
+  
+  const requestVersion = useRef(0);
 
   const handleExport = async (format: 'excel' | 'pdf') => {
     try {
@@ -62,31 +65,41 @@ const ManagerDashboard = () => {
     }
   };
 
-  const fetchStats = async () => {
+  const fetchStats = async (isInitial = false) => {
+    const version = ++requestVersion.current;
     try {
-      setLoading(true);
-      setError(null);
+      if (isInitial) {
+        setLoading(true);
+        setError(null);
+      } else {
+        setRefreshing(true);
+      }
+      
       const stats = await getDashboardStats();
-      console.log("Dashboard stats:", stats);
-      console.log("Weekly revenue data:", stats?.charts?.weeklyRevenue);
-      setData(stats);
-      setArrivalsPage(1);
-      setDeparturesPage(1);
+      
+      if (version === requestVersion.current) {
+        setData(stats);
+      }
     } catch (err: any) {
       console.error("Failed to fetch manager dashboard stats", err);
-      setError(err?.response?.data?.message || "Failed to load dashboard data");
+      if (isInitial) setError(err?.response?.data?.message || "Failed to load dashboard data");
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchStats();
+    fetchStats(true);
   }, []);
 
   const handleStatusUpdate = async (id: string, newStatus: string) => {
     try {
-      setProcessingId(id);
+      setProcessingIds(prev => {
+        const next = new Set(prev);
+        next.add(id);
+        return next;
+      });
       await updateBookingStatus(id, newStatus);
       toast.success(`Booking status updated to ${newStatus.replace("_", " ")}`);
       await fetchStats();
@@ -94,7 +107,11 @@ const ManagerDashboard = () => {
       toast.error(error?.response?.data?.message || "Failed to update status");
       console.error("Failed to update booking status", error);
     } finally {
-      setProcessingId(null);
+      setProcessingIds(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
   };
 
@@ -106,7 +123,7 @@ const ManagerDashboard = () => {
           <p>{error}</p>
         </div>
         <button
-          onClick={fetchStats}
+          onClick={() => fetchStats(true)}
           className="px-4 py-2 bg-spa-teal text-white rounded-lg hover:bg-spa-teal/90"
         >
           Try Again
@@ -155,7 +172,8 @@ const ManagerDashboard = () => {
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
-          <div className="bg-spa-mint/10 text-spa-teal px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider hidden sm:block">
+          <div className="bg-spa-mint/10 text-spa-teal px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider hidden sm:flex items-center gap-2">
+            {refreshing && <Loader2 size={14} className="animate-spin" />}
             {new Date().toLocaleDateString(undefined, {
               weekday: "long",
               month: "long",
@@ -257,13 +275,13 @@ const ManagerDashboard = () => {
                     booking.status === "confirmed_unpaid" ? (
                       <Button
                         size="sm"
-                        disabled={processingId === booking._id}
+                        disabled={processingIds.has(booking._id)}
                         onClick={() =>
                           handleStatusUpdate(booking._id, "checked_in")
                         }
                         className="bg-spa-teal hover:bg-spa-teal/90 text-white text-[10px] font-bold h-8 px-3"
                       >
-                        {processingId === booking._id ? (
+                        {processingIds.has(booking._id) ? (
                           <Loader2 size={12} className="animate-spin" />
                         ) : (
                           "Check In"
@@ -347,13 +365,13 @@ const ManagerDashboard = () => {
                     {booking.status === "checked_in" && (
                       <Button
                         size="sm"
-                        disabled={processingId === booking._id}
+                        disabled={processingIds.has(booking._id)}
                         onClick={() =>
                           handleStatusUpdate(booking._id, "checked_out")
                         }
                         className="bg-orange-500 hover:bg-orange-600 text-white text-[10px] font-bold h-8 px-3"
                       >
-                        {processingId === booking._id ? (
+                        {processingIds.has(booking._id) ? (
                           <Loader2 size={12} className="animate-spin" />
                         ) : (
                           "Check Out"
