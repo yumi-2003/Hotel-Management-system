@@ -538,7 +538,8 @@ const ReceptionistDashboard = () => {
           <h1 className="text-3xl font-bold text-foreground">Receptionist Dashboard</h1>
           <p className="text-muted-foreground">Guest services and front desk operations</p>
         </div>
-        <div className="bg-spa-mint/10 text-spa-teal px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider">
+        <div className="bg-spa-mint/10 text-spa-teal px-4 py-2 rounded-xl font-bold text-sm uppercase tracking-wider flex items-center gap-2">
+           {refreshing && <Loader2 size={14} className="animate-spin" />}
            ID: FRONT-DESK-01
         </div>
       </div>
