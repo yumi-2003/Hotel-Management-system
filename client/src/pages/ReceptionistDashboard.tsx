@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { getDashboardStats } from '../services/api';
 import { updateBookingStatus, confirmBookingPayment } from '../services/bookingService';
 import { getAllHousekeepingLogs, updateHousekeepingStatus, createHousekeepingLog } from '../services/housekeepingService';
@@ -427,6 +427,7 @@ const HousekeepingPanel = () => {
   );
 };
 
+
 /* ─────────────────────────────────────────────────────────
    Main Receptionist Dashboard
 ───────────────────────────────────────────────────────── */
@@ -435,31 +436,44 @@ const ReceptionistDashboard = () => {
   const departuresPerPage = 6;
   const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const [arrivalsPage, setArrivalsPage] = useState(1);
   const [departuresPage, setDeparturesPage] = useState(1);
+  
+  const requestVersion = useRef(0);
 
-  const fetchStats = async () => {
+  const fetchStats = async (isInitial = false) => {
+    const version = ++requestVersion.current;
     try {
-      setLoading(true);
+      if (isInitial) setLoading(true);
+      else setRefreshing(true);
+      
       const stats = await getDashboardStats();
-      setData(stats);
-      setArrivalsPage(1);
-      setDeparturesPage(1);
+      
+      // Only update if this is still the latest request
+      if (version === requestVersion.current) {
+        setData(stats);
+      }
     } catch (err) {
       console.error('Failed to fetch receptionist dashboard stats', err);
     } finally {
-      setLoading(false);
+      if (isInitial) setLoading(false);
+      setRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchStats();
+    fetchStats(true);
   }, []);
 
   const handleStatusUpdate = async (id: string, newStatus: string) => {
     try {
-      setProcessingId(id);
+      setProcessingIds(prev => {
+        const next = new Set(prev);
+        next.add(id);
+        return next;
+      });
       await updateBookingStatus(id, newStatus);
       toast.success(`Booking status updated to ${newStatus.replace('_', ' ')}`);
       await fetchStats();
@@ -467,7 +481,11 @@ const ReceptionistDashboard = () => {
       toast.error(error?.response?.data?.message || 'Failed to update status');
       console.error('Failed to update booking status', error);
     } finally {
-      setProcessingId(null);
+      setProcessingIds(prev => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
   };
 
@@ -475,15 +493,40 @@ const ReceptionistDashboard = () => {
     return <ReceptionistDashboardSkeleton />;
   }
 
-  const todaysArrivals = data?.operational?.todaysArrivals || [];
-  const todaysDepartures = data?.operational?.todaysDepartures || [];
-  const totalArrivalPages = Math.max(1, Math.ceil(todaysArrivals.length / arrivalsPerPage));
-  const totalDeparturePages = Math.max(1, Math.ceil(todaysDepartures.length / departuresPerPage));
-  const paginatedArrivals = todaysArrivals.slice(
+  const sortStays = (bookings: any[], dateField: string) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayTime = today.getTime();
+
+    return [...bookings].sort((a, b) => {
+      const dateA = new Date(a[dateField]);
+      dateA.setHours(0, 0, 0, 0);
+      const timeA = dateA.getTime();
+
+      const dateB = new Date(b[dateField]);
+      dateB.setHours(0, 0, 0, 0);
+      const timeB = dateB.getTime();
+
+      // Priority 1: Today
+      if (timeA === todayTime && timeB !== todayTime) return -1;
+      if (timeA !== todayTime && timeB === todayTime) return 1;
+
+      // Then by date ascending
+      return timeA - timeB;
+    });
+  };
+
+  const allArrivals = sortStays(data?.operational?.todaysArrivals || [], 'checkInDate');
+  const allDepartures = sortStays(data?.operational?.todaysDepartures || [], 'checkOutDate');
+
+  const totalArrivalPages = Math.max(1, Math.ceil(allArrivals.length / arrivalsPerPage));
+  const totalDeparturePages = Math.max(1, Math.ceil(allDepartures.length / departuresPerPage));
+
+  const paginatedArrivals = allArrivals.slice(
     (arrivalsPage - 1) * arrivalsPerPage,
     arrivalsPage * arrivalsPerPage,
   );
-  const paginatedDepartures = todaysDepartures.slice(
+  const paginatedDepartures = allDepartures.slice(
     (departuresPage - 1) * departuresPerPage,
     departuresPage * departuresPerPage,
   );
@@ -535,80 +578,102 @@ const ReceptionistDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
              <h2 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-                <Search size={20} className="text-spa-teal" /> Arrivals Today
+                <Search size={20} className="text-spa-teal" /> Guest Arrivals
              </h2>
              <div className="space-y-3">
-                {todaysArrivals.length === 0 ? (
-                   <div className="py-6 text-center text-xs text-muted-foreground">No arrivals today</div>
+                {allArrivals.length === 0 ? (
+                   <div className="py-6 text-center text-xs text-muted-foreground">No arrivals scheduled</div>
                 ) : (
-                  paginatedArrivals.map((booking: any) => (
-                    <div key={booking._id} className="flex flex-col gap-3 p-4 rounded-xl bg-muted border border-border">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-bold text-sm text-foreground">{booking.guestId?.fullName || 'Guest'}</div>
-                          <div className="text-[10px] text-muted-foreground">Room: {booking.bookedRooms?.map((r: any) => r.roomId?.roomNumber).join(', ')}</div>
+                  paginatedArrivals.map((booking: any) => {
+                    const isToday = new Date(booking.checkInDate).setHours(0,0,0,0) === new Date().setHours(0,0,0,0);
+                    return (
+                      <div key={booking._id} className={`flex flex-col gap-3 p-4 rounded-xl border ${isToday ? 'bg-spa-mint/5 border-spa-teal/30 ring-1 ring-spa-teal/10' : 'bg-muted border-border'}`}>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <div className="font-bold text-sm text-foreground">{booking.guestId?.fullName || 'Guest'}</div>
+                              {isToday && (
+                                <span className="bg-spa-teal text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest animate-pulse">Today</span>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <div className="text-[10px] text-muted-foreground uppercase font-black">Room: {booking.bookedRooms?.map((r: any) => r.roomId?.roomNumber).join(', ')}</div>
+                              <span className="text-[10px] text-muted-foreground">•</span>
+                              <div className="text-[10px] text-spa-teal font-black uppercase">
+                                {new Date(booking.checkInDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                              </div>
+                            </div>
+                          </div>
+                          <div className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
+                            booking.status === 'confirmed_unpaid' 
+                              ? 'bg-amber-100 text-amber-600 border-amber-200' 
+                              : booking.status === 'checked_in'
+                              ? 'bg-green-100 text-green-700 border-green-200'
+                              : 'bg-spa-teal/10 text-spa-teal border-spa-teal/20'
+                          }`}>
+                            {booking.status.replace('_', ' ')}
+                          </div>
                         </div>
-                        <div className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
-                          booking.status === 'confirmed_unpaid' 
-                            ? 'bg-amber-100 text-amber-600 border-amber-200' 
-                            : booking.status === 'checked_in'
-                            ? 'bg-green-100 text-green-700 border-green-200'
-                            : 'bg-spa-teal/10 text-spa-teal border-spa-teal/20'
-                        }`}>
-                          {booking.status.replace('_', ' ')}
-                        </div>
-                      </div>
 
-                      <div className="flex gap-2">
-                        {booking.status === 'confirmed_unpaid' && (
-                          <button 
-                            disabled={processingId === booking._id}
-                            onClick={async () => {
-                              if (window.confirm('Confirm cash payment for this booking?')) {
-                                try {
-                                  setProcessingId(booking._id);
-                                  await confirmBookingPayment(booking._id);
-                                  toast.success('Payment confirmed!');
-                                  await fetchStats();
-                                } catch (err: any) { 
-                                  toast.error(err?.response?.data?.message || 'Failed to confirm payment');
-                                } finally { 
-                                  setProcessingId(null); 
+                        <div className="flex gap-2">
+                          {booking.status === 'confirmed_unpaid' && (
+                            <button 
+                              disabled={processingIds.has(booking._id)}
+                              onClick={async () => {
+                                if (window.confirm('Confirm cash payment for this booking?')) {
+                                  try {
+                                    setProcessingIds(prev => {
+                                      const next = new Set(prev);
+                                      next.add(booking._id);
+                                      return next;
+                                    });
+                                    await confirmBookingPayment(booking._id);
+                                    toast.success('Payment confirmed!');
+                                    await fetchStats();
+                                  } catch (err: any) { 
+                                    toast.error(err?.response?.data?.message || 'Failed to confirm payment');
+                                  } finally { 
+                                    setProcessingIds(prev => {
+                                      const next = new Set(prev);
+                                      next.delete(booking._id);
+                                      return next;
+                                    });
+                                  }
                                 }
-                              }
-                            }}
-                            className="flex-1 py-1.5 bg-amber-500 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-amber-600 transition-all disabled:opacity-50"
-                          >
-                            {processingId === booking._id ? <Loader2 size={12} className="animate-spin mx-auto" /> : 'Confirm Cash'}
-                          </button>
-                        )}
-                        
-                        {(booking.status === 'confirmed' || booking.status === 'confirmed_unpaid') && (
-                          <button 
-                            disabled={processingId === booking._id}
-                            onClick={() => handleStatusUpdate(booking._id, 'checked_in')}
-                            className="flex-1 py-1.5 bg-spa-teal text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-spa-teal/90 transition-all disabled:opacity-50"
-                          >
-                            {processingId === booking._id ? <Loader2 size={12} className="animate-spin mx-auto" /> : 'Check In'}
-                          </button>
-                        )}
+                              }}
+                              className="flex-1 py-1.5 bg-amber-500 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-amber-600 transition-all disabled:opacity-50"
+                            >
+                              {processingIds.has(booking._id) ? <Loader2 size={12} className="animate-spin mx-auto" /> : 'Confirm Cash'}
+                            </button>
+                          )}
+                          
+                          {(booking.status === 'confirmed' || booking.status === 'confirmed_unpaid') && (
+                            <button 
+                              disabled={processingIds.has(booking._id)}
+                              onClick={() => handleStatusUpdate(booking._id, 'checked_in')}
+                              className="flex-1 py-1.5 bg-spa-teal text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-spa-teal/90 transition-all disabled:opacity-50"
+                            >
+                              {processingIds.has(booking._id) ? <Loader2 size={12} className="animate-spin mx-auto" /> : 'Check In'}
+                            </button>
+                          )}
 
-                        {booking.status === 'checked_in' && (
-                           <div className="flex-1 text-center py-1.5 bg-green-50 text-green-600 rounded-lg text-[10px] font-bold border border-green-100">
-                             Currently In-House
-                           </div>
-                        )}
+                          {booking.status === 'checked_in' && (
+                             <div className="flex-1 text-center py-1.5 bg-green-50 text-green-600 rounded-lg text-[10px] font-bold border border-green-100">
+                               Currently In-House
+                             </div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
              </div>
-             {todaysArrivals.length > arrivalsPerPage && (
+             {allArrivals.length > arrivalsPerPage && (
                <div className="mt-4 pt-4 border-t border-border flex items-center justify-between gap-4">
                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                    Showing {(arrivalsPage - 1) * arrivalsPerPage + 1}-
-                   {Math.min(arrivalsPage * arrivalsPerPage, todaysArrivals.length)} of{" "}
-                   {todaysArrivals.length}
+                   {Math.min(arrivalsPage * arrivalsPerPage, allArrivals.length)} of{" "}
+                   {allArrivals.length}
                  </p>
                  <div className="flex items-center gap-2">
                    <button
@@ -645,40 +710,54 @@ const ReceptionistDashboard = () => {
 
       <div className="bg-card border border-border rounded-3xl p-8 shadow-sm">
           <h2 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-            <Key size={20} className="text-orange-400" /> Departures Today
+            <Key size={20} className="text-orange-400" /> Guest Departures
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {todaysDepartures.length === 0 ? (
-               <div className="col-span-full py-6 text-center text-xs text-muted-foreground">No departures today</div>
+            {allDepartures.length === 0 ? (
+               <div className="col-span-full py-6 text-center text-xs text-muted-foreground">No departures scheduled</div>
             ) : (
-              paginatedDepartures.map((booking: any) => (
-                <div key={booking._id} className="p-4 rounded-xl border border-border hover:border-spa-teal transition bg-card shadow-sm flex flex-col justify-between">
-                   <div className="mb-4">
-                      <div className="font-bold text-foreground mb-1">{booking.guestId?.fullName || 'Guest'}</div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-black">Room: {booking.bookedRooms?.map((r: any) => r.roomId?.roomNumber).join(', ')}</div>
-                   </div>
-                   <div className="flex gap-2">
-                      {booking.status === 'checked_in' && (
-                        <button 
-                          disabled={processingId === booking._id}
-                          onClick={() => handleStatusUpdate(booking._id, 'checked_out')}
-                          className="flex-1 py-2 bg-orange-500 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-orange-600 transition-all disabled:opacity-50"
-                        >
-                          {processingId === booking._id ? <Loader2 size={12} className="animate-spin mx-auto" /> : 'Check Out'}
-                        </button>
-                      )}
-                      <Link to="/staff/bookings" className="flex-1 py-2 text-center bg-muted text-muted-foreground rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-muted/80 transition-all">Details</Link>
-                   </div>
-                </div>
-              ))
+              paginatedDepartures.map((booking: any) => {
+                const isToday = new Date(booking.checkOutDate).setHours(0,0,0,0) === new Date().setHours(0,0,0,0);
+                return (
+                  <div key={booking._id} className={`p-4 rounded-xl border transition shadow-sm flex flex-col justify-between ${isToday ? 'bg-orange-50/30 border-orange-200 ring-1 ring-orange-100' : 'bg-card border-border'}`}>
+                     <div className="mb-4">
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="font-bold text-foreground">{booking.guestId?.fullName || 'Guest'}</div>
+                          {isToday && (
+                            <span className="bg-orange-500 text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest animate-pulse">Today</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="text-[10px] text-muted-foreground uppercase font-black">Room: {booking.bookedRooms?.map((r: any) => r.roomId?.roomNumber).join(', ')}</div>
+                          <span className="text-[10px] text-muted-foreground">•</span>
+                          <div className="text-[10px] text-orange-500 font-black uppercase">
+                            {new Date(booking.checkOutDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                          </div>
+                        </div>
+                     </div>
+                     <div className="flex gap-2">
+                        {booking.status === 'checked_in' && (
+                          <button 
+                            disabled={processingIds.has(booking._id)}
+                            onClick={() => handleStatusUpdate(booking._id, 'checked_out')}
+                            className="flex-1 py-2 bg-orange-500 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-orange-600 transition-all disabled:opacity-50"
+                          >
+                            {processingIds.has(booking._id) ? <Loader2 size={12} className="animate-spin mx-auto" /> : 'Check Out'}
+                          </button>
+                        )}
+                        <Link to="/staff/bookings" className="flex-1 py-2 text-center bg-muted text-muted-foreground rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-muted/80 transition-all">Details</Link>
+                     </div>
+                  </div>
+                );
+              })
             )}
           </div>
-          {todaysDepartures.length > departuresPerPage && (
+          {allDepartures.length > departuresPerPage && (
             <div className="mt-6 pt-4 border-t border-border flex items-center justify-between gap-4">
               <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                 Showing {(departuresPage - 1) * departuresPerPage + 1}-
-                {Math.min(departuresPage * departuresPerPage, todaysDepartures.length)} of{" "}
-                {todaysDepartures.length}
+                {Math.min(departuresPage * departuresPerPage, allDepartures.length)} of{" "}
+                {allDepartures.length}
               </p>
               <div className="flex items-center gap-2">
                 <button

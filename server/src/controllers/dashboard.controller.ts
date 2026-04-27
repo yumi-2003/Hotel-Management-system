@@ -39,13 +39,13 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     
     // Detailed Arrivals Today
     const todaysArrivals = await Booking.find({
-      checkInDate: { $gte: startOfDay, $lte: endOfDay },
+      checkInDate: { $gte: startOfDay },
       status: { $in: [BookingStatus.CONFIRMED, BookingStatus.PENDING_PAYMENT, BookingStatus.CONFIRMED_UNPAID] }
     }).populate('guestId', 'fullName email').populate('bookedRooms.roomId', 'roomNumber');
 
     // Detailed Departures Today
     const todaysDepartures = await Booking.find({
-      checkOutDate: { $gte: startOfDay, $lte: endOfDay },
+      checkOutDate: { $gte: startOfDay },
       status: BookingStatus.CHECKED_IN
     }).populate('guestId', 'fullName email').populate('bookedRooms.roomId', 'roomNumber');
 
