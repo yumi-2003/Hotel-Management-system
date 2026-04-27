@@ -33,6 +33,7 @@ import {
 
 const ManagerDashboard = () => {
   const arrivalsPerPage = 4;
+  const departuresPerPage = 6;
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const [data, setData] = useState<any | null>(null);
@@ -41,6 +42,7 @@ const ManagerDashboard = () => {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [exporting, setExporting] = useState<string | null>(null);
   const [arrivalsPage, setArrivalsPage] = useState(1);
+  const [departuresPage, setDeparturesPage] = useState(1);
 
   const handleExport = async (format: 'excel' | 'pdf') => {
     try {
@@ -69,6 +71,7 @@ const ManagerDashboard = () => {
       console.log("Weekly revenue data:", stats?.charts?.weeklyRevenue);
       setData(stats);
       setArrivalsPage(1);
+      setDeparturesPage(1);
     } catch (err: any) {
       console.error("Failed to fetch manager dashboard stats", err);
       setError(err?.response?.data?.message || "Failed to load dashboard data");
@@ -125,9 +128,18 @@ const ManagerDashboard = () => {
     1,
     Math.ceil(todaysArrivals.length / arrivalsPerPage),
   );
+  const totalDeparturePages = Math.max(
+    1,
+    Math.ceil(todaysDepartures.length / departuresPerPage),
+  );
+
   const paginatedArrivals = todaysArrivals.slice(
     (arrivalsPage - 1) * arrivalsPerPage,
     arrivalsPage * arrivalsPerPage,
+  );
+  const paginatedDepartures = todaysDepartures.slice(
+    (departuresPage - 1) * departuresPerPage,
+    departuresPage * departuresPerPage,
   );
 
   return (
@@ -315,7 +327,7 @@ const ManagerDashboard = () => {
                 No departures today.
               </div>
             ) : (
-              todaysDepartures.map((booking: any) => (
+              paginatedDepartures.map((booking: any) => (
                 <div
                   key={booking._id}
                   className="flex items-center justify-between p-4 rounded-xl border border-border bg-muted/30"
@@ -361,6 +373,42 @@ const ManagerDashboard = () => {
               ))
             )}
           </div>
+          {todaysDepartures.length > departuresPerPage && (
+            <div className="mt-6 pt-6 border-t border-border flex items-center justify-between gap-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Showing {(departuresPage - 1) * departuresPerPage + 1}-
+                {Math.min(departuresPage * departuresPerPage, todaysDepartures.length)} of{" "}
+                {todaysDepartures.length}
+              </p>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setDeparturesPage((prev) => Math.max(1, prev - 1))
+                  }
+                  disabled={departuresPage === 1}
+                >
+                  Previous
+                </Button>
+                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground px-2">
+                  Page {departuresPage} of {totalDeparturePages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setDeparturesPage((prev) =>
+                      Math.min(totalDeparturePages, prev + 1),
+                    )
+                  }
+                  disabled={departuresPage === totalDeparturePages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
