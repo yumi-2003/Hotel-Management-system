@@ -32,8 +32,8 @@ import {
 } from "../utils/roleUtils";
 
 const ManagerDashboard = () => {
-  const arrivalsPerPage = 6;
-  const departuresPerPage = 6;
+  const arrivalsPerPage = 4;
+  const departuresPerPage = 4;
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
   const [data, setData] = useState<any | null>(null);
