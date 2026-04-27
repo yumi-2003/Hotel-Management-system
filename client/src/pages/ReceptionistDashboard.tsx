@@ -432,7 +432,7 @@ const HousekeepingPanel = () => {
    Main Receptionist Dashboard
 ───────────────────────────────────────────────────────── */
 const ReceptionistDashboard = () => {
-  const arrivalsPerPage = 4;
+  const arrivalsPerPage = 6;
   const departuresPerPage = 6;
   const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);

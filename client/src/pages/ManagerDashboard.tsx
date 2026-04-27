@@ -32,7 +32,7 @@ import {
 } from "../utils/roleUtils";
 
 const ManagerDashboard = () => {
-  const arrivalsPerPage = 4;
+  const arrivalsPerPage = 6;
   const departuresPerPage = 6;
   const navigate = useNavigate();
   const { user } = useAppSelector((state) => state.auth);
